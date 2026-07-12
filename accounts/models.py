@@ -65,7 +65,33 @@ class SocialPlatform(models.Model):
     name = models.CharField(max_length=50)
     icon = models.ImageField(upload_to='social_platform')
     base_url = models.URLField()
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return self.name
+
+# ProfileSocialLink model
+class ProfileSocialLink(models.Model):
+    profile = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='social_links'
+    )
+
+    platform = models.ForeignKey(
+        SocialPlatform,
+        on_delete=models.CASCADE
+    )
+
+    username = models.CharField(max_length=100)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def url(self):
+        return f"{self.platform.base_url}{self.username}"
+
+    def __str__(self):
+        return f"{self.profile.user.username} - {self.platform.name}"
