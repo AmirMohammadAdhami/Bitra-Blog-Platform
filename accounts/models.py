@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
+from blog.models import Article
 
 
 # Base User Model and Base User Manager --------------- 1 ---------------
@@ -53,6 +54,8 @@ class Profile(models.Model):
     city = models.CharField(max_length=50, null=True, blank=True)
     country = models.CharField(max_length=50, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
+    bookmarks = models.ManyToManyField('Bookmark', related_name='bookmarked_articles')
+    likes = models.ManyToManyField('Like', related_name='liked_articles')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -124,3 +127,41 @@ class AuthorRequest(models.Model):
     reviewed_at = models.DateTimeField(null=True, blank=True)
     def __str__(self):
         return self.user.username
+
+
+class Like(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    article = models.ForeignKey(
+        'Article',
+        on_delete=models.CASCADE
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'article'],
+                name='unique_like'
+            )
+        ]
+
+
+class Bookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    article = models.ForeignKey('Article', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'article'],
+                name='unique_like'
+            )
+        ]
