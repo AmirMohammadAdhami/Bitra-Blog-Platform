@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sarah Chen - Author Profile - Bitra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../index.html" class="navbar-brand">
+        <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="#112D4E"/><path d="M10 12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6v-8z" fill="#3F72AF"/><path d="M10 20h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6v-8z" fill="#DBE2EF"/><circle cx="25" cy="14" r="3" fill="#3F72AF"/><circle cx="25" cy="24" r="3" fill="#3F72AF" opacity="0.5"/></svg>
+        Bitra
+      </a>
+      <div class="navbar-links">
+        <a href="../index.html">Home</a>
+        <a href="article.html">Articles</a>
+        <a href="category.html">Categories</a>
+        <a href="profile.html" class="active">Authors</a>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#contact">Contact</a>
+      </div>
+      <div class="navbar-actions">
+        <button class="navbar-search" data-search-toggle aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </button>
+        <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Sign up</a>
+        <button class="mobile-menu-btn" aria-label="Menu"><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="mobile-nav">
+    <a href="../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg> Home</a>
+    <a href="article.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg> Articles</a>
+    <a href="category.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Categories</a>
+    <a href="profile.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/></svg> Authors</a>
+    <div class="mobile-nav-actions">
+      <a href="login.html" class="btn btn-outline" style="width:100%">Log in</a>
+      <a href="register.html" class="btn btn-primary" style="width:100%">Sign up</a>
+    </div>
+  </div>
+
+  <!-- Profile Header -->
+  <header class="profile-header">
+    <div class="profile-cover"></div>
+    <div class="profile-info">
+      <div class="profile-info-inner">
+        <div class="profile-avatar">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face" alt="Sarah Chen">
+        </div>
+        <div class="profile-details">
+          <h1 class="profile-name">Sarah Chen</h1>
+          <p class="profile-role">AI Researcher & Technical Writer</p>
+          <div class="profile-location">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            San Francisco, CA
+          </div>
+        </div>
+        <div class="profile-actions">
+          <button class="btn btn-primary btn-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Follow
+          </button>
+          <button class="btn btn-outline btn-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            Message
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Profile Stats -->
+  <div class="profile-stats-bar">
+    <div class="profile-stat-item">
+      <div class="profile-stat-value" data-count="86">0</div>
+      <div class="profile-stat-label">Articles</div>
+    </div>
+    <div class="profile-stat-item">
+      <div class="profile-stat-value" data-count="12400">0</div>
+      <div class="profile-stat-label">Likes</div>
+    </div>
+    <div class="profile-stat-item">
+      <div class="profile-stat-value" data-count="245000">0</div>
+      <div class="profile-stat-label">Views</div>
+    </div>
+    <div class="profile-stat-item">
+      <div class="profile-stat-value" data-count="8900">0</div>
+      <div class="profile-stat-label">Followers</div>
+    </div>
+  </div>
+
+  <!-- Profile Bio -->
+  <div class="profile-bio">
+    <p>Sarah Chen is an AI researcher and technical writer with over 8 years of experience in machine learning and natural language processing. She has contributed to several open-source projects and her writing has been featured in major tech publications. Sarah holds a Ph.D. in Computer Science from Stanford University and currently leads an AI research team at a leading tech company.</p>
+    <div class="profile-social-links">
+      <a href="#" class="profile-social-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+        Twitter
+      </a>
+      <a href="#" class="profile-social-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+        GitHub
+      </a>
+      <a href="#" class="profile-social-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        LinkedIn
+      </a>
+      <a href="#" class="profile-social-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        Website
+      </a>
+    </div>
+  </div>
+
+  <!-- Published Articles -->
+  <section class="profile-articles-section">
+    <div class="profile-articles-header">
+      <h2>Published Articles</h2>
+      <div class="filter-bar" style="padding: 0;">
+        <button class="filter-chip active">All</button>
+        <button class="filter-chip">AI</button>
+        <button class="filter-chip">ML</button>
+        <button class="filter-chip">NLP</button>
+      </div>
+    </div>
+
+    <div class="articles-grid" data-stagger-group>
+      <a href="article.html" class="article-card">
+        <div class="article-card-image">
+          <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=380&fit=crop" alt="LLM Article" loading="lazy">
+          <span class="article-card-category">AI</span>
+        </div>
+        <div class="article-card-body">
+          <h3 class="article-card-title">Understanding Large Language Models: A Deep Dive</h3>
+          <p class="article-card-excerpt">Explore the inner workings of modern LLMs, from attention mechanisms to tokenization.</p>
+          <div class="article-card-footer">
+            <div class="article-card-author">
+              <div class="article-card-author-info">
+                <span class="article-card-date">Dec 14, 2025</span>
+              </div>
+            </div>
+            <div class="article-card-stats">
+              <span class="article-card-stat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                4.2K
+              </span>
+              <span class="article-card-stat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                328
+              </span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a href="article.html" class="article-card">
+        <div class="article-card-image">
+          <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&h=380&fit=crop" alt="Fine-tuning Article" loading="lazy">
+          <span class="article-card-category">ML</span>
+        </div>
+        <div class="article-card-body">
+          <h3 class="article-card-title">Fine-Tuning LLMs: A Practical Guide</h3>
+          <p class="article-card-excerpt">Step-by-step guide to fine-tuning large language models for your specific use case.</p>
+          <div class="article-card-footer">
+            <div class="article-card-author">
+              <div class="article-card-author-info">
+                <span class="article-card-date">Dec 10, 2025</span>
+              </div>
+            </div>
+            <div class="article-card-stats">
+              <span class="article-card-stat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                3.8K
+              </span>
+              <span class="article-card-stat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                256
+              </span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a href="article.html" class="article-card">
+        <div class="article-card-image">
+          <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=380&fit=crop" alt="RAG Article" loading="lazy">
+          <span class="article-card-category">AI</span>
+        </div>
+        <div class="article-card-body">
+          <h3 class="article-card-title">Building RAG Systems with Vector Databases</h3>
+          <p class="article-card-excerpt">Learn how to build retrieval-augmented generation systems that actually work.</p>
+          <div class="article-card-footer">
+            <div class="article-card-author">
+              <div class="article-card-author-info">
+                <span class="article-card-date">Dec 5, 2025</span>
+              </div>
+            </div>
+            <div class="article-card-stats">
+              <span class="article-card-stat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                5.1K
+              </span>
+              <span class="article-card-stat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                412
+              </span>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-brand-name">
+            <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="#112D4E"/><path d="M10 12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6v-8z" fill="#3F72AF"/><path d="M10 20h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6v-8z" fill="#DBE2EF"/><circle cx="25" cy="14" r="3" fill="#3F72AF"/><circle cx="25" cy="24" r="3" fill="#3F72AF" opacity="0.5"/></svg>
+            Bitra
+          </div>
+          <p>Explore the Future of Technology.</p>
+        </div>
+        <div class="footer-col"><h4>Content</h4><ul><li><a href="category.html">Articles</a></li><li><a href="category.html">Categories</a></li><li><a href="profile.html">Authors</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Careers</a></li><li><a href="#">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Resources</h4><ul><li><a href="#">Help Center</a></li><li><a href="#">Write for Us</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2025 Bitra. All rights reserved.</span>
+        <div class="footer-bottom-links"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="search-overlay" role="dialog" aria-label="Search">
+    <div class="search-modal">
+      <div class="search-input-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" class="search-input" placeholder="Search articles..." aria-label="Search">
+      </div>
+      <div class="search-results"></div>
+      <div class="search-hint">Press <kbd style="padding:2px 6px;background:var(--bg);border-radius:4px;font-size:0.75rem;border:1px solid var(--border);">Esc</kbd> to close</div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/animations.js"></script>
+</body>
+</html>

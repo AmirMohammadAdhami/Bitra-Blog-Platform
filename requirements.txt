@@ -1,0 +1,3 @@
+python-dotenv
+Django~=6.0.7
+Pillow
