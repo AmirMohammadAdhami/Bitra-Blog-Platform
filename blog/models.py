@@ -58,3 +58,53 @@ class Article(models.Model):
     views = models.PositiveIntegerField(default=0)
     bookmarks = models.PositiveIntegerField(default=0)
     comments = models.ForeignKey(None, on_delete=models.DO_NOTHING)
+
+
+class Comment(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "PENDING", 'Pending'
+        APPROVED = "APPROVED", 'Approved'
+        REJECTED = "REJECTED", 'Rejected'
+
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, null=True)
+    content = models.TextField()
+    status = models.CharField(
+        max_length=25,
+        choices=Status.choices,
+        default=Status.DRAFT,
+    )
+    likes = PositiveIntegerField(default=0)
+    parent = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        related_name='children',
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class CommentLike(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    comment = models.ForeignKey(
+        Comment,
+        on_delete=models.CASCADE,
+        related_name='likes'
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'comment'],
+                name='unique_comment_like'
+            )
+        ]
