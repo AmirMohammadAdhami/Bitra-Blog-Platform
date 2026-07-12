@@ -27,7 +27,7 @@ class UserManager(BaseUserManager):
         return self.create_user(username, email, password, **extra_fields)
 
 
-class Base(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, unique=True, db_index=True)
     email = models.EmailField(unique=True, db_index=True)
     first_name = models.CharField(max_length=50)
@@ -44,3 +44,17 @@ class Base(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+
+
+# Profile Model
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    profile_image = models.ImageField(upload_to='profile_images', null=True, blank=True)
+    city = models.CharField(max_length=50, null=True, blank=True)
+    country = models.CharField(max_length=50, null=True, blank=True)
+    bio = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user.username
