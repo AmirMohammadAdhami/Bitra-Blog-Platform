@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Bitra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    .sidebar-toggle { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="sidebar-toggle btn-icon" style="display:none;" aria-label="Toggle sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <a href="../index.html" class="navbar-brand">
+          <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="#112D4E"/><path d="M10 12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6v-8z" fill="#3F72AF"/><path d="M10 20h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6v-8z" fill="#DBE2EF"/><circle cx="25" cy="14" r="3" fill="#3F72AF"/><circle cx="25" cy="24" r="3" fill="#3F72AF" opacity="0.5"/></svg>
+          Bitra
+        </a>
+      </div>
+      <div class="navbar-actions">
+        <button class="navbar-search" data-search-toggle aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </button>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:var(--white);font-size:0.8rem;font-weight:700;">SC</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Overview
+        </a>
+        <a href="#" class="sidebar-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+          My Articles
+        </a>
+        <a href="#" class="sidebar-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Create Article
+        </a>
+        <a href="#" class="sidebar-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Drafts
+        </a>
+
+        <div class="sidebar-divider"></div>
+        <span class="sidebar-label">Analytics</span>
+
+        <a href="#" class="sidebar-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Statistics
+        </a>
+        <a href="#" class="sidebar-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          Readers
+        </a>
+
+        <div class="sidebar-divider"></div>
+        <span class="sidebar-label">Account</span>
+
+        <a href="#" class="sidebar-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Settings
+        </a>
+        <a href="#" class="sidebar-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <div class="dashboard-header">
+        <div>
+          <h1>Welcome back, Sarah</h1>
+          <p class="text-muted" style="font-size:0.9rem;">Here's what's happening with your articles</p>
+        </div>
+        <a href="#" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Article
+        </a>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="dash-stats">
+        <div class="dash-stat-card">
+          <div class="dash-stat-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+          </div>
+          <div class="dash-stat-value">86</div>
+          <div class="dash-stat-label">Total Articles</div>
+          <div class="dash-stat-change up">+12% this month</div>
+        </div>
+
+        <div class="dash-stat-card">
+          <div class="dash-stat-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div class="dash-stat-value">245K</div>
+          <div class="dash-stat-label">Total Views</div>
+          <div class="dash-stat-change up">+8.5% this month</div>
+        </div>
+
+        <div class="dash-stat-card">
+          <div class="dash-stat-icon orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </div>
+          <div class="dash-stat-value">12.4K</div>
+          <div class="dash-stat-label">Total Likes</div>
+          <div class="dash-stat-change up">+15% this month</div>
+        </div>
+
+        <div class="dash-stat-card">
+          <div class="dash-stat-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="dash-stat-value">8.9K</div>
+          <div class="dash-stat-label">Followers</div>
+          <div class="dash-stat-change up">+22% this month</div>
+        </div>
+      </div>
+
+      <!-- Panels -->
+      <div class="dash-panels">
+        <!-- Recent Articles -->
+        <div class="dash-panel">
+          <div class="dash-panel-header">
+            <h3>Recent Articles</h3>
+            <a href="#" class="btn btn-ghost btn-sm">View All</a>
+          </div>
+          <div class="dash-panel-body">
+            <div class="dash-article-row">
+              <div class="dash-article-thumb">
+                <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=128&h=96&fit=crop" alt="Article thumbnail" loading="lazy">
+              </div>
+              <div class="dash-article-info">
+                <div class="dash-article-title">Understanding Large Language Models</div>
+                <div class="dash-article-meta">Dec 14, 2025 &middot; 4.2K views</div>
+              </div>
+              <span class="dash-article-status published">Published</span>
+            </div>
+            <div class="dash-article-row">
+              <div class="dash-article-thumb">
+                <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=128&h=96&fit=crop" alt="Article thumbnail" loading="lazy">
+              </div>
+              <div class="dash-article-info">
+                <div class="dash-article-title">Fine-Tuning LLMs: A Practical Guide</div>
+                <div class="dash-article-meta">Dec 10, 2025 &middot; 3.8K views</div>
+              </div>
+              <span class="dash-article-status published">Published</span>
+            </div>
+            <div class="dash-article-row">
+              <div class="dash-article-thumb">
+                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=128&h=96&fit=crop" alt="Article thumbnail" loading="lazy">
+              </div>
+              <div class="dash-article-info">
+                <div class="dash-article-title">Building RAG Systems with Vector Databases</div>
+                <div class="dash-article-meta">Dec 5, 2025 &middot; 5.1K views</div>
+              </div>
+              <span class="dash-article-status published">Published</span>
+            </div>
+            <div class="dash-article-row">
+              <div class="dash-article-thumb">
+                <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=128&h=96&fit=crop" alt="Article thumbnail" loading="lazy">
+              </div>
+              <div class="dash-article-info">
+                <div class="dash-article-title">AI Safety: Ensuring Responsible Development</div>
+                <div class="dash-article-meta">Draft &middot; Last edited 2 hours ago</div>
+              </div>
+              <span class="dash-article-status draft">Draft</span>
+            </div>
+            <div class="dash-article-row">
+              <div class="dash-article-thumb">
+                <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=128&h=96&fit=crop" alt="Article thumbnail" loading="lazy">
+              </div>
+              <div class="dash-article-info">
+                <div class="dash-article-title">The Future of Multimodal AI</div>
+                <div class="dash-article-meta">Draft &middot; Last edited yesterday</div>
+              </div>
+              <span class="dash-article-status draft">Draft</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="dash-panel">
+          <div class="dash-panel-header">
+            <h3>Recent Activity</h3>
+          </div>
+          <div class="dash-panel-body">
+            <div class="dash-activity-list">
+              <div class="dash-activity-item">
+                <div class="dash-activity-dot green"></div>
+                <div>
+                  <div class="dash-activity-text">Your article "Understanding LLMs" reached <strong>4,000 views</strong></div>
+                  <div class="dash-activity-time">2 hours ago</div>
+                </div>
+              </div>
+              <div class="dash-activity-item">
+                <div class="dash-activity-dot blue"></div>
+                <div>
+                  <div class="dash-activity-text"><strong>Alex Rivera</strong> commented on your article</div>
+                  <div class="dash-activity-time">5 hours ago</div>
+                </div>
+              </div>
+              <div class="dash-activity-item">
+                <div class="dash-activity-dot orange"></div>
+                <div>
+                  <div class="dash-activity-text">You have a <strong>new follower</strong>: Marcus Johnson</div>
+                  <div class="dash-activity-time">1 day ago</div>
+                </div>
+              </div>
+              <div class="dash-activity-item">
+                <div class="dash-activity-dot green"></div>
+                <div>
+                  <div class="dash-activity-text">Your article "Fine-Tuning LLMs" was <strong>featured</strong></div>
+                  <div class="dash-activity-time">2 days ago</div>
+                </div>
+              </div>
+              <div class="dash-activity-item">
+                <div class="dash-activity-dot blue"></div>
+                <div>
+                  <div class="dash-activity-text"><strong>15 new likes</strong> on your recent articles</div>
+                  <div class="dash-activity-time">3 days ago</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="search-overlay" role="dialog" aria-label="Search">
+    <div class="search-modal">
+      <div class="search-input-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" class="search-input" placeholder="Search articles..." aria-label="Search">
+      </div>
+      <div class="search-results"></div>
+      <div class="search-hint">Press <kbd style="padding:2px 6px;background:var(--bg);border-radius:4px;font-size:0.75rem;border:1px solid var(--border);">Esc</kbd> to close</div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/animations.js"></script>
+  <script>
+    // Dashboard sidebar toggle for mobile
+    var sidebarToggle = document.querySelector('.sidebar-toggle');
+    var sidebar = document.querySelector('.dashboard-sidebar');
+    if (sidebarToggle && sidebar) {
+      sidebarToggle.style.display = window.innerWidth <= 1024 ? 'flex' : 'none';
+      window.addEventListener('resize', function() {
+        sidebarToggle.style.display = window.innerWidth <= 1024 ? 'flex' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

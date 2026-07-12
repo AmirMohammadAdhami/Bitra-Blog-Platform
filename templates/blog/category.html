@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories - Bitra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../index.html" class="navbar-brand">
+        <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="#112D4E"/><path d="M10 12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6v-8z" fill="#3F72AF"/><path d="M10 20h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6v-8z" fill="#DBE2EF"/><circle cx="25" cy="14" r="3" fill="#3F72AF"/><circle cx="25" cy="24" r="3" fill="#3F72AF" opacity="0.5"/></svg>
+        Bitra
+      </a>
+      <div class="navbar-links">
+        <a href="../index.html">Home</a>
+        <a href="article.html">Articles</a>
+        <a href="category.html" class="active">Categories</a>
+        <a href="profile.html">Authors</a>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#contact">Contact</a>
+      </div>
+      <div class="navbar-actions">
+        <button class="navbar-search" data-search-toggle aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </button>
+        <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Sign up</a>
+        <button class="mobile-menu-btn" aria-label="Menu"><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="mobile-nav">
+    <a href="../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg> Home</a>
+    <a href="article.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg> Articles</a>
+    <a href="category.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Categories</a>
+    <a href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/></svg> Authors</a>
+    <div class="mobile-nav-actions">
+      <a href="login.html" class="btn btn-outline" style="width:100%">Log in</a>
+      <a href="register.html" class="btn btn-primary" style="width:100%">Sign up</a>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="page-header-inner">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Home</a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        <span>Categories</span>
+      </nav>
+      <h1>All Categories</h1>
+      <p>Browse articles by topic. Find the technology content that matters to you.</p>
+    </div>
+  </header>
+
+  <!-- Categories Overview -->
+  <section class="section-sm">
+    <div class="container">
+      <div class="categories-grid" data-stagger-group>
+        <a href="#" class="category-card">
+          <div class="category-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4v1a4 4 0 01-8 0V6a4 4 0 014-4z"/><path d="M16 14h.01M8 14h.01M12 17v4M8 21h8"/></svg>
+          </div>
+          <span class="category-card-name">Artificial Intelligence</span>
+          <span class="category-card-count">342 articles</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span class="category-card-name">Cyber Security</span>
+          <span class="category-card-count">189 articles</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
+          </div>
+          <span class="category-card-name">Cloud Computing</span>
+          <span class="category-card-count">267 articles</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <span class="category-card-name">Programming</span>
+          <span class="category-card-count">456 articles</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <span class="category-card-name">Mobile Technology</span>
+          <span class="category-card-count">198 articles</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <span class="category-card-name">Hardware</span>
+          <span class="category-card-count">134 articles</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          </div>
+          <span class="category-card-name">Gaming</span>
+          <span class="category-card-count">112 articles</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <span class="category-card-name">Startups</span>
+          <span class="category-card-count">87 articles</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          </div>
+          <span class="category-card-name">Web Technologies</span>
+          <span class="category-card-count">312 articles</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <span class="category-card-name">Future Tech</span>
+          <span class="category-card-count">98 articles</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter Bar & Articles -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <div class="filter-bar">
+        <button class="filter-chip active">All</button>
+        <button class="filter-chip">Latest</button>
+        <button class="filter-chip">Trending</button>
+        <button class="filter-chip">Most Liked</button>
+        <button class="filter-chip">Most Viewed</button>
+      </div>
+
+      <div class="articles-grid" data-stagger-group>
+        <a href="article.html" class="article-card">
+          <div class="article-card-image">
+            <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=380&fit=crop" alt="AI Article" loading="lazy">
+            <span class="article-card-category">AI</span>
+          </div>
+          <div class="article-card-body">
+            <h3 class="article-card-title">Understanding Large Language Models: A Deep Dive</h3>
+            <p class="article-card-excerpt">Explore the inner workings of modern LLMs, from attention mechanisms to tokenization.</p>
+            <div class="article-card-footer">
+              <div class="article-card-author">
+                <div class="article-card-avatar">SC</div>
+                <div class="article-card-author-info">
+                  <span class="article-card-author-name">Sarah Chen</span>
+                  <span class="article-card-date">Dec 14, 2025</span>
+                </div>
+              </div>
+              <div class="article-card-stats">
+                <span class="article-card-stat">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  4.2K
+                </span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <a href="article.html" class="article-card">
+          <div class="article-card-image">
+            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=380&fit=crop" alt="Cloud Article" loading="lazy">
+            <span class="article-card-category">Cloud</span>
+          </div>
+          <div class="article-card-body">
+            <h3 class="article-card-title">Kubernetes vs. Docker Swarm: The Complete Comparison</h3>
+            <p class="article-card-excerpt">A practical comparison of container orchestration platforms for modern deployments.</p>
+            <div class="article-card-footer">
+              <div class="article-card-author">
+                <div class="article-card-avatar">MJ</div>
+                <div class="article-card-author-info">
+                  <span class="article-card-author-name">Marcus Johnson</span>
+                  <span class="article-card-date">Dec 13, 2025</span>
+                </div>
+              </div>
+              <div class="article-card-stats">
+                <span class="article-card-stat">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  2.8K
+                </span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <a href="article.html" class="article-card">
+          <div class="article-card-image">
+            <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&h=380&fit=crop" alt="Security Article" loading="lazy">
+            <span class="article-card-category">Security</span>
+          </div>
+          <div class="article-card-body">
+            <h3 class="article-card-title">OAuth 2.0: Modern Authentication Guide</h3>
+            <p class="article-card-excerpt">Secure your applications with industry-standard authentication protocols.</p>
+            <div class="article-card-footer">
+              <div class="article-card-author">
+                <div class="article-card-avatar">AR</div>
+                <div class="article-card-author-info">
+                  <span class="article-card-author-name">Alex Rivera</span>
+                  <span class="article-card-date">Dec 11, 2025</span>
+                </div>
+              </div>
+              <div class="article-card-stats">
+                <span class="article-card-stat">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  3.1K
+                </span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <a href="article.html" class="article-card">
+          <div class="article-card-image">
+            <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&h=380&fit=crop" alt="Mobile Article" loading="lazy">
+            <span class="article-card-category">Mobile</span>
+          </div>
+          <div class="article-card-body">
+            <h3 class="article-card-title">Flutter in 2026: The Cross-Platform King</h3>
+            <p class="article-card-excerpt">Master Flutter development with the latest features and best practices.</p>
+            <div class="article-card-footer">
+              <div class="article-card-author">
+                <div class="article-card-avatar">PP</div>
+                <div class="article-card-author-info">
+                  <span class="article-card-author-name">Priya Patel</span>
+                  <span class="article-card-date">Dec 9, 2025</span>
+                </div>
+              </div>
+              <div class="article-card-stats">
+                <span class="article-card-stat">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  1.9K
+                </span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <a href="article.html" class="article-card">
+          <div class="article-card-image">
+            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=380&fit=crop" alt="Hardware Article" loading="lazy">
+            <span class="article-card-category">Hardware</span>
+          </div>
+          <div class="article-card-body">
+            <h3 class="article-card-title">Apple M4 Ultra: The New Creative Standard</h3>
+            <p class="article-card-excerpt">Comprehensive performance analysis of Apple's latest chip architecture.</p>
+            <div class="article-card-footer">
+              <div class="article-card-author">
+                <div class="article-card-avatar">DK</div>
+                <div class="article-card-author-info">
+                  <span class="article-card-author-name">David Kim</span>
+                  <span class="article-card-date">Dec 7, 2025</span>
+                </div>
+              </div>
+              <div class="article-card-stats">
+                <span class="article-card-stat">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  5.6K
+                </span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <a href="article.html" class="article-card">
+          <div class="article-card-image">
+            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=380&fit=crop" alt="Gaming Article" loading="lazy">
+            <span class="article-card-category">Gaming</span>
+          </div>
+          <div class="article-card-body">
+            <h3 class="article-card-title">Unreal Engine 6: Next-Gen Game Development</h3>
+            <p class="article-card-excerpt">Exploring the future of game engines and real-time rendering technology.</p>
+            <div class="article-card-footer">
+              <div class="article-card-author">
+                <div class="article-card-avatar">JK</div>
+                <div class="article-card-author-info">
+                  <span class="article-card-author-name">Jordan Kim</span>
+                  <span class="article-card-date">Dec 5, 2025</span>
+                </div>
+              </div>
+              <div class="article-card-stats">
+                <span class="article-card-stat">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  3.4K
+                </span>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Pagination -->
+      <nav class="pagination" aria-label="Pagination">
+        <button class="pagination-btn" aria-label="Previous">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="pagination-btn active">1</button>
+        <button class="pagination-btn">2</button>
+        <button class="pagination-btn">3</button>
+        <button class="pagination-btn">...</button>
+        <button class="pagination-btn">12</button>
+        <button class="pagination-btn" aria-label="Next">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-brand-name">
+            <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="#112D4E"/><path d="M10 12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6v-8z" fill="#3F72AF"/><path d="M10 20h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6v-8z" fill="#DBE2EF"/><circle cx="25" cy="14" r="3" fill="#3F72AF"/><circle cx="25" cy="24" r="3" fill="#3F72AF" opacity="0.5"/></svg>
+            Bitra
+          </div>
+          <p>Explore the Future of Technology.</p>
+        </div>
+        <div class="footer-col"><h4>Content</h4><ul><li><a href="category.html">Articles</a></li><li><a href="category.html">Categories</a></li><li><a href="profile.html">Authors</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Careers</a></li><li><a href="#">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Resources</h4><ul><li><a href="#">Help Center</a></li><li><a href="#">Write for Us</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2025 Bitra. All rights reserved.</span>
+        <div class="footer-bottom-links"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="search-overlay" role="dialog" aria-label="Search">
+    <div class="search-modal">
+      <div class="search-input-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" class="search-input" placeholder="Search articles..." aria-label="Search">
+      </div>
+      <div class="search-results"></div>
+      <div class="search-hint">Press <kbd style="padding:2px 6px;background:var(--bg);border-radius:4px;font-size:0.75rem;border:1px solid var(--border);">Esc</kbd> to close</div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/animations.js"></script>
+</body>
+</html>
