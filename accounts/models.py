@@ -60,7 +60,7 @@ class Profile(models.Model):
         return self.user.username
 
 
-#SocialPlatform Model
+# SocialPlatform Model
 class SocialPlatform(models.Model):
     name = models.CharField(max_length=50)
     icon = models.ImageField(upload_to='social_platform')
@@ -71,6 +71,7 @@ class SocialPlatform(models.Model):
 
     def __str__(self):
         return self.name
+
 
 # ProfileSocialLink model
 class ProfileSocialLink(models.Model):
@@ -95,3 +96,31 @@ class ProfileSocialLink(models.Model):
 
     def __str__(self):
         return f"{self.profile.user.username} - {self.platform.name}"
+
+
+# author request model
+class AuthorRequest(models.Model):
+
+    class Status(models.TextChoices):
+        PENDING = "PENDING", 'Pending'
+        APPROVED = "APPROVED", 'Approved'
+        REJECTED = "REJECTED", 'Rejected'
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='author_request')
+    status = models.CharField(
+        max_length=10,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
+    reviewed_by = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='reviewed_requests',
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    def __str__(self):
+        return self.user.username
