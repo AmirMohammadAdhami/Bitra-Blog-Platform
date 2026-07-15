@@ -35,7 +35,7 @@
                 <form class="auth-form" method="POST" action="{% url 'accounts:register' %}">
                     {% csrf_token %}
                     <div class="form-row-2">
-                        <div class="form-group">
+                        <div class="form-group{% if form.full_name.errors %} form-group--error{% endif %}">
                             <label for="full_name" class="form-label">Full Name</label>
                             <div class="input-wrapper">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -53,10 +53,19 @@
                                         value="{{ form.full_name.value|default_if_none:'' }}"
                                         required>
                             </div>
-                            {{ form.full_name.errors }}
+                            {% if form.full_name.errors %}
+                            <div class="form-error">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                                <span>{{ form.full_name.errors.0 }}</span>
+                            </div>
+                            {% endif %}
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group{% if form.username.errors %} form-group--error{% endif %}">
                             <label for="username" class="form-label">Username</label>
                             <div class="input-wrapper">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -74,11 +83,20 @@
                                         value="{{ form.username.value|default_if_none:'' }}"
                                         required>
                             </div>
-                            {{ form.username.errors }}
+                            {% if form.username.errors %}
+                            <div class="form-error">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                                <span>This Username already exists.</span>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group{% if form.email.errors %} form-group--error{% endif %}">
                         <label for="email" class="form-label">Email Address</label>
                         <div class="input-wrapper">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -96,10 +114,19 @@
                                     value="{{ form.email.value|default_if_none:'' }}"
                                     required>
                         </div>
-                        {{ form.email.errors }}
+                        {% if form.email.errors %}
+                        <div class="form-error">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            <span>{{ form.email.errors.0 }}</span>
+                        </div>
+                        {% endif %}
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group{% if form.password1.errors %} form-group--error{% endif %}">
                         <label for="password" class="form-label">Password</label>
                         <div class="input-wrapper">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -132,10 +159,19 @@
                             <div class="strength-bar"></div>
                         </div>
 
-                        {{ form.password1.errors }}
+                        {% if form.password1.errors %}
+                        <div class="form-error">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            <span>{{ form.password1.errors.0 }}</span>
+                        </div>
+                        {% endif %}
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group{% if form.password2.errors %} form-group--error{% endif %}">
                         <label for="confirm_password" class="form-label">Confirm Password</label>
                         <div class="input-wrapper">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -152,15 +188,19 @@
                                     placeholder="Confirm your password"
                                     required>
                         </div>
-
-                        {{ form.password2.errors }}
+                        {% if form.password2.errors %}
+                        <div class="form-error">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            <span>{{ form.password2.errors.0 }}</span>
+                        </div>
+                        {% endif %}
                     </div>
 
-                    {% if form.non_field_errors %}
-                        <div class="form-errors">
-                            {{ form.non_field_errors }}
-                        </div>
-                    {% endif %}
+
 
                     <label class="checkbox-wrapper">
                         <input type="checkbox" class="checkbox-input" required>

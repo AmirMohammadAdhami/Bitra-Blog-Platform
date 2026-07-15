@@ -1734,6 +1734,52 @@ p {
     border-radius: 2px;
 }
 
+/* Form Validation Errors */
+.form-group--error .form-input {
+    border-color: var(--error);
+}
+
+.form-group--error .form-input:focus {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.form-group--error .input-wrapper svg {
+    color: var(--error);
+}
+
+.form-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: rgba(239, 68, 68, 0.06);
+    border: 1px solid rgba(239, 68, 68, 0.12);
+    border-radius: var(--radius-sm);
+    color: var(--error);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    font-weight: 500;
+    animation: formErrorSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.form-error svg {
+    flex-shrink: 0;
+    opacity: 0.8;
+}
+
+@keyframes formErrorSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .form-row {
     display: flex;
     justify-content: space-between;
@@ -2399,86 +2445,189 @@ p {
    TOAST NOTIFICATIONS
    ========================================== */
 
-.toast-container {
+/* ==========================================
+   NOTIFICATIONS
+   ========================================== */
+
+.bitra-notifications {
     position: fixed;
     top: calc(var(--nav-height) + var(--space-lg));
     right: var(--space-lg);
     z-index: 3000;
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: var(--space-sm);
+    pointer-events: none;
 }
 
-.toast {
+.bitra-notify {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: var(--space-md);
-    padding: var(--space-lg);
+    padding: var(--space-md) var(--space-lg);
     background: white;
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-xl);
-    min-width: 320px;
-    max-width: 400px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 30px rgba(17, 45, 78, 0.12), 0 2px 8px rgba(17, 45, 78, 0.06);
+    min-width: 340px;
+    max-width: 420px;
     position: relative;
     overflow: hidden;
-    transform: translateX(120%);
-    transition: transform var(--transition-base);
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateX(calc(100% + var(--space-lg)));
+    transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1),
+                transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-.toast.show {
+.bitra-notify--visible {
+    opacity: 1;
     transform: translateX(0);
 }
 
-.toast-icon {
+.bitra-notify--dismissing {
+    opacity: 0;
+    transform: translateX(calc(100% + var(--space-lg)));
+    transition: opacity 250ms ease, transform 250ms ease;
+}
+
+.bitra-notify__accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: 4px 0 0 4px;
+}
+
+.bitra-notify--success .bitra-notify__accent { background: var(--success); }
+.bitra-notify--error .bitra-notify__accent { background: var(--error); }
+.bitra-notify--info .bitra-notify__accent { background: var(--warning); }
+
+.bitra-notify__icon {
     flex-shrink: 0;
-    width: 24px;
-    height: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.toast-success .toast-icon { color: var(--success); }
-.toast-error .toast-icon { color: var(--error); }
-.toast-warning .toast-icon { color: var(--warning); }
-.toast-info .toast-icon { color: var(--primary); }
+.bitra-notify--success .bitra-notify__icon {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
 
-.toast-content {
+.bitra-notify--error .bitra-notify__icon {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+}
+
+.bitra-notify--info .bitra-notify__icon {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.bitra-notify--success .bitra-notify__icon svg {
+    animation: notifyIconPop 400ms cubic-bezier(0.34, 1.56, 0.64, 1) 200ms both;
+}
+
+.bitra-notify--error .bitra-notify__icon svg {
+    animation: notifyIconShake 500ms cubic-bezier(0.36, 0.07, 0.19, 0.97) 200ms both;
+}
+
+.bitra-notify--info .bitra-notify__icon svg {
+    animation: notifyIconPulse 600ms ease 200ms both;
+}
+
+@keyframes notifyIconPop {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes notifyIconShake {
+    0%, 100% { transform: translateX(0); }
+    15% { transform: translateX(-4px) rotate(-3deg); }
+    30% { transform: translateX(4px) rotate(3deg); }
+    45% { transform: translateX(-3px) rotate(-2deg); }
+    60% { transform: translateX(2px) rotate(1deg); }
+    75% { transform: translateX(-1px); }
+}
+
+@keyframes notifyIconPulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.bitra-notify__body {
     flex: 1;
+    min-width: 0;
 }
 
-.toast-title {
-    font-weight: 600;
-    color: var(--dark);
-    margin-bottom: var(--space-xs);
-    font-size: 0.9rem;
-}
-
-.toast-message {
+.bitra-notify__title {
+    font-weight: 700;
     font-size: 0.85rem;
+    color: var(--dark);
+    margin-bottom: 2px;
+    line-height: 1.3;
+}
+
+.bitra-notify__message {
+    font-size: 0.82rem;
     color: var(--text-secondary);
     margin-bottom: 0;
+    line-height: 1.5;
+    word-break: break-word;
 }
 
-.toast-close {
-    color: var(--text-muted);
-    padding: var(--space-xs);
+.bitra-notify__close {
     flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    transition: all var(--transition-fast);
 }
 
-.toast-progress {
+.bitra-notify__close:hover {
+    background: var(--light);
+    color: var(--text-primary);
+}
+
+.bitra-notify__timer {
     position: absolute;
     bottom: 0;
     left: 0;
     height: 3px;
-    background: var(--primary);
-    animation: progress 5s linear forwards;
+    width: 100%;
+    border-radius: 0 0 0 var(--radius-lg);
+    transform-origin: left;
 }
 
-.toast-success .toast-progress { background: var(--success); }
-.toast-error .toast-progress { background: var(--error); }
-.toast-warning .toast-progress { background: var(--warning); }
+.bitra-notify--success .bitra-notify__timer {
+    background: var(--success);
+    animation: notifyTimerShrink 5s linear forwards;
+}
 
-@keyframes progress {
-    from { width: 100%; }
-    to { width: 0%; }
+.bitra-notify--error .bitra-notify__timer {
+    background: var(--error);
+    animation: notifyTimerShrink 6s linear forwards;
+}
+
+.bitra-notify--info .bitra-notify__timer {
+    background: var(--warning);
+    animation: notifyTimerShrink 5s linear forwards;
+}
+
+@keyframes notifyTimerShrink {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
 }
 
 /* ==========================================

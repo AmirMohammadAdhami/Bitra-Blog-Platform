@@ -89,55 +89,49 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ==========================================
-    // Toast Notifications
+    // Bitra Notifications
     // ==========================================
-    const toastContainer = document.getElementById('toastContainer');
+    const notificationsContainer = document.getElementById('bitraNotifications');
+    const NOTIFICATION_DURATION = 5000;
+    const NOTIFICATION_EXIT_MS = 260;
 
-    window.showToast = function (type, title, message, duration = 5000) {
-        if (!toastContainer) return;
-
-        const toast = toastContainer.querySelector(`.toast-${type}`);
-        if (!toast) return;
-
-        const titleEl = toast.querySelector('.toast-title');
-        const messageEl = toast.querySelector('.toast-message');
-
-        if (titleEl) titleEl.textContent = title;
-        if (messageEl) messageEl.textContent = message;
-
-        // Clone and append
-        const newToast = toast.cloneNode(true);
-        newToast.classList.add('show');
-        toastContainer.appendChild(newToast);
-
-        // Close button
-        const closeBtn = newToast.querySelector('.toast-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function () {
-                dismissToast(newToast);
-            });
-        }
-
-        // Auto dismiss
-        setTimeout(() => {
-            dismissToast(newToast);
-        }, duration);
-    };
-
-    function dismissToast(toast) {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
+    function dismissNotify(el) {
+        if (el.classList.contains('bitra-notify--dismissing')) return;
+        el.classList.remove('bitra-notify--visible');
+        el.classList.add('bitra-notify--dismissing');
+        setTimeout(() => el.remove(), NOTIFICATION_EXIT_MS);
     }
 
-    // Show success toast on form submission (demo)
-    document.querySelectorAll('.comment-form, .newsletter-form').forEach(form => {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            showToast('success', 'Success', 'Your action was completed successfully.');
+    if (notificationsContainer) {
+        const notifications = notificationsContainer.querySelectorAll('.bitra-notify');
+
+        notifications.forEach(function (notify) {
+            // Animate in after paint
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    notify.classList.add('bitra-notify--visible');
+                });
+            });
+
+            // Close button
+            var closeBtn = notify.querySelector('.bitra-notify__close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function () {
+                    dismissNotify(notify);
+                });
+            }
+
+            // Auto dismiss via timer bar
+            var duration = NOTIFICATION_DURATION;
+            if (notify.classList.contains('bitra-notify--error')) {
+                duration = 6000;
+            }
+
+            setTimeout(function () {
+                dismissNotify(notify);
+            }, duration);
         });
-    });
+    }
 
     // ==========================================
     // Sidebar Toggle (Dashboard)
@@ -264,6 +258,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
+    });
+
+    // ==========================================
+    // Form Validation Errors
+    // ==========================================
+    document.querySelectorAll('.form-error').forEach(function (errorEl) {
+        var formGroup = errorEl.closest('.form-group');
+        if (formGroup) {
+            var input = formGroup.querySelector('.form-input');
+            if (input) {
+                input.addEventListener('input', function () {
+                    if (errorEl.parentNode) {
+                        errorEl.style.animation = 'none';
+                        errorEl.offsetHeight;
+                        errorEl.style.animation = '';
+                    }
+                });
+            }
+        }
     });
 
 });

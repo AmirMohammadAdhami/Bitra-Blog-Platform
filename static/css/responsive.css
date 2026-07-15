@@ -340,6 +340,11 @@
         flex-direction: column;
     }
 
+    .form-error {
+        font-size: 0.78rem;
+        padding: 6px 10px;
+    }
+
     /* Dashboard */
     .dashboard-page {
         padding-top: calc(var(--nav-height) + var(--space-lg));
@@ -418,13 +423,13 @@
         text-align: center;
     }
 
-    /* Toast */
-    .toast-container {
+    /* Notifications */
+    .bitra-notifications {
         left: var(--space-md);
         right: var(--space-md);
     }
 
-    .toast {
+    .bitra-notify {
         min-width: auto;
         max-width: none;
     }
@@ -523,6 +528,14 @@
         transition-duration: 0.01ms !important;
     }
 
+    .bitra-notify__icon svg {
+        animation: none !important;
+    }
+
+    .bitra-notify__timer {
+        animation: none !important;
+    }
+
     .hero-scroll-indicator {
         animation: none;
     }
@@ -557,7 +570,7 @@
 @media print {
     .navbar,
     .footer,
-    .toast-container,
+    .bitra-notifications,
     .hero-scroll-indicator,
     .back-to-top {
         display: none !important;
