@@ -160,3 +160,30 @@ class Bookmark(models.Model):
                 name='unique_article_bookmark'
             )
         ]
+
+
+class PasswordResetCode(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='password_reset_codes'
+    )
+
+    code = models.CharField(
+        max_length=6
+    )
+
+    attempts = models.PositiveSmallIntegerField(default=0)
+
+    is_used = models.BooleanField(
+        default=False
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    expires_at = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.user.email} - {self.code}"

@@ -207,6 +207,66 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ==========================================
+    // Verification Code Input
+    // ==========================================
+    const codeInput = document.getElementById('verification_code');
+    if (codeInput) {
+        codeInput.addEventListener('input', function (e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    }
+
+    // ==========================================
+    // Password Strength Indicator
+    // ==========================================
+    const newPasswordInput = document.getElementById('new_password');
+    if (newPasswordInput) {
+        const strengthBars = newPasswordInput.closest('.form-group').querySelectorAll('.strength-bar');
+
+        newPasswordInput.addEventListener('input', function () {
+            const password = this.value;
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+            if (/[A-Z]/.test(password) && /[a-z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            strength = Math.min(strength, 4);
+
+            strengthBars.forEach(function (bar, index) {
+                bar.classList.remove('active', 'strength-weak', 'strength-fair', 'strength-good', 'strength-strong');
+                if (index < strength) {
+                    bar.classList.add('active');
+                    if (strength === 1) bar.classList.add('strength-weak');
+                    else if (strength === 2) bar.classList.add('strength-fair');
+                    else if (strength === 3) bar.classList.add('strength-good');
+                    else bar.classList.add('strength-strong');
+                }
+            });
+        });
+    }
+
+    // ==========================================
+    // Password Match Validation
+    // ==========================================
+    const confirmInput = document.getElementById('confirm_password');
+    if (confirmInput && newPasswordInput) {
+        const validateMatch = function () {
+            const formGroup = confirmInput.closest('.form-group');
+            if (confirmInput.value && newPasswordInput.value !== confirmInput.value) {
+                formGroup.classList.add('form-group--mismatch');
+            } else {
+                formGroup.classList.remove('form-group--mismatch');
+            }
+        };
+
+        confirmInput.addEventListener('input', validateMatch);
+        newPasswordInput.addEventListener('input', validateMatch);
+    }
+
+    // ==========================================
     // Follow Button Toggle
     // ==========================================
     document.querySelectorAll('.btn-follow').forEach(btn => {

@@ -77,6 +77,8 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+
+
 WSGI_APPLICATION = 'Best_Project.wsgi.application'
 
 
@@ -135,3 +137,6 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

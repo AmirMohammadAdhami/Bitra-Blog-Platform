@@ -9,7 +9,7 @@ from .models import (
     ProfileSocialLink,
     AuthorRequest,
     Like,
-    Bookmark,
+    Bookmark, PasswordResetCode,
 )
 
 
@@ -170,4 +170,15 @@ class BookmarkAdmin(admin.ModelAdmin):
     search_fields = (
         'user__username',
         'article__title',
+    )
+
+@admin.register(PasswordResetCode)
+class PasswordResetAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'code',
+        'created_at',
+    )
+    list_filter = (
+        'user',
     )
