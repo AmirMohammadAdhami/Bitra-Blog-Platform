@@ -51,9 +51,9 @@ class Profile(models.Model):
     city = models.CharField(max_length=50, null=True, blank=True)
     country = models.CharField(max_length=50, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
+    slug = models.SlugField(max_length=100, unique=True, null=True, blank=True, allow_unicode=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
     def __str__(self):
         return self.user.username
 
