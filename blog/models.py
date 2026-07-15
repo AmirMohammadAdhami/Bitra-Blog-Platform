@@ -1,6 +1,5 @@
 from django.db import models
 from django.db.models.fields import PositiveIntegerField
-
 from accounts.models import User
 
 
@@ -56,8 +55,10 @@ class Article(models.Model):
     )
     likes = PositiveIntegerField(default=0)
     views = models.PositiveIntegerField(default=0)
-    bookmarks = models.PositiveIntegerField(default=0)
-    comments = models.ForeignKey(None, on_delete=models.DO_NOTHING)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.title
 
 
 class Comment(models.Model):
@@ -72,9 +73,8 @@ class Comment(models.Model):
     status = models.CharField(
         max_length=25,
         choices=Status.choices,
-        default=Status.DRAFT,
+        default=Status.PENDING,
     )
-    likes = PositiveIntegerField(default=0)
     parent = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,

@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}Bitra - Explore the Future of Technology. Premium articles on AI, Cybersecurity, Cloud Computing, and more.{% endblock %}">
+    <meta name="keywords" content="technology, blog, AI, cybersecurity, cloud computing, software development">
+    <meta name="author" content="Bitra">
+
+    <title>{% block title %}Bitra | Explore the Future of Technology{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% include "includes/navbar.html" %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include "includes/footer.html" %}
+    {% include "includes/error_popup.html" %}
+
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/animations.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

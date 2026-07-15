@@ -1,23 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
-from blog.models import Article
-
 
 # Base User Model and Base User Manager --------------- 1 ---------------
 class UserManager(BaseUserManager):
-    def create_user(self, username, email, password, **extra_fields):
+    def create_user(self, email, username, password=None, **extra_fields):
         if not username:
             raise ValueError(_('Users must have username'))
         if not email:
             raise ValueError(_('Users must have email'))
 
-        user = self.model(username=username, email=self.normalize_email(email), **extra_fields)
+        user = self.model(email=self.normalize_email(email),username=username,  **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password, **extra_fields):
+    def create_superuser(self, email, username, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
@@ -25,22 +23,21 @@ class UserManager(BaseUserManager):
             raise ValueError('Superuser must have is_staff=True.')
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
-        return self.create_user(username, email, password, **extra_fields)
+        return self.create_user(email, username, password, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, unique=True, db_index=True)
     email = models.EmailField(unique=True, db_index=True)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    full_name = models.CharField(max_length=100)
     is_author = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
     objects = UserManager()
 
     def __str__(self):
@@ -54,8 +51,6 @@ class Profile(models.Model):
     city = models.CharField(max_length=50, null=True, blank=True)
     country = models.CharField(max_length=50, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
-    bookmarks = models.ManyToManyField('Bookmark', related_name='bookmarked_articles')
-    likes = models.ManyToManyField('Like', related_name='liked_articles')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -136,7 +131,7 @@ class Like(models.Model):
     )
 
     article = models.ForeignKey(
-        'Article',
+        'blog.Article',
         on_delete=models.CASCADE
     )
 
@@ -148,20 +143,47 @@ class Like(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'article'],
-                name='unique_like'
+                name='unique_article_like'
             )
         ]
 
 
 class Bookmark(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    article = models.ForeignKey('Article', on_delete=models.CASCADE)
+    article = models.ForeignKey('blog.Article', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'article'],
-                name='unique_like'
+                name='unique_article_bookmark'
             )
         ]
+
+
+class PasswordResetCode(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='password_reset_codes'
+    )
+
+    code = models.CharField(
+        max_length=6
+    )
+
+    attempts = models.PositiveSmallIntegerField(default=0)
+
+    is_used = models.BooleanField(
+        default=False
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    expires_at = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.user.email} - {self.code}"

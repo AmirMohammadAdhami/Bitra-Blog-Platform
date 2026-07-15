@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Verify Code | Bitra{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+    <div class="auth-bg">
+        <div class="gradient-mesh gradient-mesh-sm"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+    </div>
+    <div class="auth-container">
+        <div class="auth-card glass-card">
+            <div class="auth-header">
+                <a href="/" class="auth-logo">
+                    <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+                        <rect width="32" height="32" rx="8" fill="url(#verify-gradient)"/>
+                        <path d="M8 12h16M8 16h12M8 20h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        <defs>
+                            <linearGradient id="verify-gradient" x1="0" y1="0" x2="32" y2="32">
+                                <stop stop-color="#3F72AF"/>
+                                <stop offset="1" stop-color="#6C63FF"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </a>
+                <div class="auth-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="11" width="18" height="11" rx="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        <circle cx="12" cy="16" r="1"/>
+                    </svg>
+                </div>
+                <h1 class="auth-title">Verify Your Code</h1>
+                <p class="auth-subtitle">Enter the 6-digit code sent to your email address.</p>
+            </div>
+
+            <form class="auth-form" method="POST" action="{% url 'accounts:verify_code' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="verification_code" class="form-label">Verification Code</label>
+                    <div class="input-wrapper">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                        <input type="text" id="verification_code" name="code" class="form-input form-input--code" placeholder="000000" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg">Verify Code</button>
+            </form>
+
+            <p class="auth-footer">
+                <a href="{% url 'accounts:forgot_password' %}" class="form-link form-link-back">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back to Forgot Password
+                </a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

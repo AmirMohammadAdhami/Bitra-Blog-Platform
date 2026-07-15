@@ -1,0 +1,55 @@
+{% load static %}
+{% if messages %}
+<div class="bitra-notifications" id="bitraNotifications" aria-live="polite" aria-atomic="true">
+    {% for message in messages %}
+    <div class="bitra-notify bitra-notify--{{ message.tags }}" role="alert">
+        <div class="bitra-notify__accent"></div>
+        <div class="bitra-notify__icon">
+            {% if message.tags == 'success' %}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <path d="M22 4L12 14.01l-3-3"/>
+            </svg>
+            {% elif message.tags == 'error' %}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M15 9l-6 6"/>
+                <path d="M9 9l6 6"/>
+            </svg>
+            {% elif message.tags == 'info' %}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4"/>
+                <path d="M12 8h.01"/>
+            </svg>
+            {% else %}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4"/>
+                <path d="M12 8h.01"/>
+            </svg>
+            {% endif %}
+        </div>
+        <div class="bitra-notify__body">
+            {% if message.tags == 'success' %}
+            <p class="bitra-notify__title">Success</p>
+            {% elif message.tags == 'error' %}
+            <p class="bitra-notify__title">Error</p>
+            {% elif message.tags == 'info' %}
+            <p class="bitra-notify__title">Info</p>
+            {% else %}
+            <p class="bitra-notify__title">Notice</p>
+            {% endif %}
+            <p class="bitra-notify__message">{{ message }}</p>
+        </div>
+        <button class="bitra-notify__close" aria-label="Close notification">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6L6 18"/>
+                <path d="M6 6l12 12"/>
+            </svg>
+        </button>
+        <div class="bitra-notify__timer"></div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
