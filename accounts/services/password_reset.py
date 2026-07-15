@@ -6,7 +6,6 @@ from accounts.services.otp import generate_otp, hash_otp
 
 
 def create_password_reset(user):
-    # Delete previous unused codes
     PasswordResetCode.objects.filter(
         user=user,
         is_used=False
