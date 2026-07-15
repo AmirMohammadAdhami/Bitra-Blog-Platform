@@ -48,11 +48,15 @@
                     <path d="M21 21l-4.35-4.35"/>
                 </svg>
             </button>
+             {% if user.is_authenticated %}
+                         <a href="#" class="btn btn-primary">Profile</a>
 
+            {% else %}
             <div class="nav-auth">
                 <a href="/login/" class="btn btn-ghost">Log In</a>
-                <a href="/register/" class="btn btn-primary">Sign Up</a>
+                <a href='{% url 'accounts:register' %}' class="btn btn-primary">Sign Up</a>
             </div>
+            {% endif %}
 
             <button class="nav-toggle" id="navToggle" aria-label="Menu">
                 <span></span>

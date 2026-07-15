@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
+
 from .models import (
     User,
     Profile,
@@ -17,9 +18,7 @@ class UserAdmin(BaseUserAdmin):
     list_display = (
         'username',
         'email',
-        'first_name',
-        'last_name',
-        'is_author',
+        'full_name',
         'is_staff',
         'is_active',
     )
@@ -47,8 +46,7 @@ class UserAdmin(BaseUserAdmin):
         ('Personal Information', {
             'fields': (
                 'email',
-                'first_name',
-                'last_name',
+                'full_name',
             )
         }),
         ('Permissions', {
