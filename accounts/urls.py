@@ -1,5 +1,8 @@
 from django.urls import path
-from .views import RegisterCreateView, logout_view, LoginUserView, PasswordResetRequestView,VerifyCodeView,ResetPasswordView
+from .views.LogoutView import *
+from .views.RegisterView import *
+from .views.PasswordResetView import *
+from .views.LoginView import *
 
 app_name = 'accounts'
 urlpatterns = [

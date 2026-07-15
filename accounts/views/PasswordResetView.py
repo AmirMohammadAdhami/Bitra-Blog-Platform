@@ -1,68 +1,14 @@
-from django.contrib import messages
-from django.contrib.auth import login, logout
-from django.contrib.auth.views import LoginView, FormView
-from django.shortcuts import redirect
-from django.views.generic import CreateView
-from .forms import RegisterForm, LoginForm, PasswordResetRequestForm, VerifyCodeForm
-from .models import User, PasswordResetCode
-from .services.password_reset import create_password_reset
-from .services.otp import check_password
-from django.utils import timezone
+from accounts.forms import PasswordResetRequestForm
+from accounts.services.password_reset import create_password_reset
+from accounts.models import User, PasswordResetCode
 from django.contrib.auth.forms import SetPasswordForm
-
-
-
-
-# Create your views here.
-class RegisterCreateView(CreateView):
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            messages.error(request, 'You are already registered.')
-            return redirect('blog:home')
-        return super(RegisterCreateView, self).dispatch(request, *args, **kwargs)
-    form_class = RegisterForm
-    model = User
-    template_name = 'accounts/register.html'
-    success_url = '/'
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        login(self.request, self.object)
-        messages.success(
-            self.request,
-            "Your account has been created successfully."
-        )
-        return response
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request,
-            "Please fix the errors below."
-        )
-        return super().form_invalid(form)
-
-def logout_view(request):
-    if request.user.is_authenticated:
-        logout(request)
-        messages.success(request, 'You are now logged out.')
-        return redirect('blog:home')
-    else:
-        messages.error(request, 'You are not logged in.')
-        return redirect('accounts:login')
-
-
-class LoginUserView(LoginView):
-    template_name = 'accounts/login.html'
-    form_class = LoginForm
-    next_page = 'blog:home'
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            messages.error(request, 'You are already logged in.')
-            return redirect('blog:home')
-        return super(LoginUserView, self).dispatch(request, *args, **kwargs)
-
-    def form_valid(self ,form):
-        messages.success(self.request, f'You are now logged in.')
-        return super().form_valid(form)
+from django.contrib.auth import login
+from django.contrib.auth.views import FormView
+from accounts.forms import VerifyCodeForm
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.utils import timezone
+from accounts.services.otp import check_password
 
 
 class PasswordResetRequestView(FormView):
@@ -145,7 +91,7 @@ class VerifyCodeView(FormView):
 
 class ResetPasswordView(FormView):
     template_name = "accounts/reset-password.html"
-    success_url = "/" # یا صفحه لاگین
+    success_url = "/"  # یا صفحه لاگین
 
     def dispatch(self, request, *args, **kwargs):
         user_id = request.session.get("password_reset_user")
