@@ -53,7 +53,7 @@
 
             {% else %}
             <div class="nav-auth">
-                <a href="/login/" class="btn btn-ghost">Log In</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-ghost">Log In</a>
                 <a href='{% url 'accounts:register' %}' class="btn btn-primary">Sign Up</a>
             </div>
             {% endif %}
