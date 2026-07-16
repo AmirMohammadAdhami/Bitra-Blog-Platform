@@ -50,17 +50,40 @@
                         </div>
                         <div class="form-row-2">
                             <div class="form-group">
-                                <label class="form-label">City</label>
-                                <input type="text" class="form-input" value="{{ profile.city|default:'' }}" placeholder="Your city" style="padding-left: var(--space-md);">
+                                <label class="form-label">City
+                                <input type="text" class="form-input" value="{{ profile.city|default:'' }}" placeholder="Your city" style="padding-left: var(--space-md);" name="city">
+                                    </label>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Country</label>
-                                {{ form.country }}
+                                <div class="country-select" data-country-select>
+                                    <!-- Hidden native <select> for Django form submission -->
+                                    {{ form.country }}
+                                    <!-- Custom trigger button -->
+                                    <button type="button" class="country-select-trigger" data-country-trigger>
+                                        <span class="country-select-value" data-country-value>Select your country</span>
+                                        <svg class="country-select-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M6 9l6 6 6-6"/>
+                                        </svg>
+                                    </button>
+                                    <!-- Custom dropdown panel -->
+                                    <div class="country-select-dropdown" data-country-dropdown>
+                                        <div class="country-select-search-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="11" cy="11" r="8"/>
+                                                <path d="M21 21l-4.35-4.35"/>
+                                            </svg>
+                                            <input type="text" class="country-select-search" data-country-search placeholder="Search countries...">
+                                        </div>
+                                        <ul class="country-select-options" data-country-options></ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Bio</label>
-                            <textarea class="form-textarea" rows="4" placeholder="Tell us about yourself..." style="padding-left: var(--space-md);">{{ profile.bio }}</textarea>
+                            <label class="form-label">Bio
+                            <textarea class="form-textarea" rows="4" placeholder="Tell us about yourself..." style="padding-left: var(--space-md);" name="bio">{{ profile.bio|default:'' }}</textarea>
+                                </label>
                         </div>
 
                         <!-- ============================================

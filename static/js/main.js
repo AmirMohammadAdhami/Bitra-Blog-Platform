@@ -403,4 +403,219 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     })();
 
+    // ==========================================
+    // Country Select - Custom Animated Dropdown
+    // ==========================================
+    (function () {
+        var container = document.querySelector('[data-country-select]');
+        if (!container) return;
+
+        var nativeSelect = container.querySelector('select');
+        var trigger = container.querySelector('[data-country-trigger]');
+        var valueDisplay = container.querySelector('[data-country-value]');
+        var dropdown = container.querySelector('[data-country-dropdown]');
+        var searchInput = container.querySelector('[data-country-search]');
+        var optionsList = container.querySelector('[data-country-options]');
+
+        if (!nativeSelect || !trigger || !dropdown || !optionsList) return;
+
+        var highlightedIndex = -1;
+        var visibleOptions = [];
+
+        // Build custom options from native <select>
+        function init() {
+            var options = nativeSelect.querySelectorAll('option');
+            var fragment = document.createDocumentFragment();
+
+            options.forEach(function (opt) {
+                if (!opt.value && !opt.textContent.trim()) return;
+
+                var li = document.createElement('li');
+                li.className = 'country-select-option';
+                li.setAttribute('data-value', opt.value);
+                li.setAttribute('data-label', opt.textContent.trim());
+                li.textContent = opt.textContent.trim();
+
+                if (opt.value === nativeSelect.value) {
+                    li.classList.add('selected');
+                    valueDisplay.textContent = opt.textContent.trim();
+                    valueDisplay.classList.add('has-value');
+                }
+
+                fragment.appendChild(li);
+            });
+
+            optionsList.appendChild(fragment);
+            rebuildVisible();
+        }
+
+        function rebuildVisible() {
+            visibleOptions = Array.prototype.slice.call(
+                optionsList.querySelectorAll('.country-select-option:not(.hidden)')
+            );
+        }
+
+        function open() {
+            container.classList.add('is-open');
+            searchInput.value = '';
+            filterOptions('');
+            highlightedIndex = -1;
+            clearHighlight();
+            setTimeout(function () { searchInput.focus(); }, 50);
+        }
+
+        function close() {
+            container.classList.remove('is-open');
+            highlightedIndex = -1;
+            clearHighlight();
+        }
+
+        function toggle() {
+            if (container.classList.contains('is-open')) {
+                close();
+            } else {
+                open();
+            }
+        }
+
+        function selectOption(li) {
+            var value = li.getAttribute('data-value');
+            var label = li.getAttribute('data-label');
+
+            // Update native select
+            nativeSelect.value = value;
+            nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+            // Update trigger text
+            valueDisplay.textContent = label;
+            valueDisplay.classList.add('has-value');
+
+            // Update selected state
+            optionsList.querySelectorAll('.country-select-option').forEach(function (o) {
+                o.classList.remove('selected');
+            });
+            li.classList.add('selected');
+
+            close();
+        }
+
+        function filterOptions(query) {
+            var q = query.toLowerCase().trim();
+            var hasResults = false;
+
+            optionsList.querySelectorAll('.country-select-option').forEach(function (li) {
+                var label = li.getAttribute('data-label').toLowerCase();
+                if (!q || label.indexOf(q) !== -1) {
+                    li.classList.remove('hidden');
+                    hasResults = true;
+                } else {
+                    li.classList.add('hidden');
+                }
+            });
+
+            rebuildVisible();
+
+            // Show/hide empty state
+            var existingEmpty = optionsList.querySelector('.country-select-empty');
+            if (!hasResults) {
+                if (!existingEmpty) {
+                    var empty = document.createElement('li');
+                    empty.className = 'country-select-empty';
+                    empty.textContent = 'No countries found';
+                    optionsList.appendChild(empty);
+                }
+            } else if (existingEmpty) {
+                existingEmpty.remove();
+            }
+
+            highlightedIndex = -1;
+            clearHighlight();
+        }
+
+        function highlightOption(index) {
+            clearHighlight();
+            if (index < 0 || index >= visibleOptions.length) return;
+            highlightedIndex = index;
+            visibleOptions[index].classList.add('highlighted');
+            visibleOptions[index].scrollIntoView({ block: 'nearest' });
+        }
+
+        function clearHighlight() {
+            optionsList.querySelectorAll('.country-select-option.highlighted').forEach(function (li) {
+                li.classList.remove('highlighted');
+            });
+        }
+
+        // Event: trigger click
+        trigger.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggle();
+        });
+
+        // Event: option click
+        optionsList.addEventListener('click', function (e) {
+            var li = e.target.closest('.country-select-option');
+            if (li && !li.classList.contains('hidden')) {
+                e.stopPropagation();
+                selectOption(li);
+            }
+        });
+
+        // Event: search input
+        searchInput.addEventListener('input', function () {
+            filterOptions(this.value);
+        });
+
+        // Event: keyboard navigation
+        searchInput.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                highlightOption(highlightedIndex + 1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                highlightOption(highlightedIndex - 1);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (highlightedIndex >= 0 && visibleOptions[highlightedIndex]) {
+                    selectOption(visibleOptions[highlightedIndex]);
+                }
+            } else if (e.key === 'Escape') {
+                close();
+            }
+        });
+
+        // Event: trigger keyboard
+        trigger.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggle();
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                open();
+            }
+        });
+
+        // Event: close on outside click
+        document.addEventListener('click', function (e) {
+            if (!container.contains(e.target)) {
+                close();
+            }
+        });
+
+        // Event: close on Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && container.classList.contains('is-open')) {
+                close();
+            }
+        });
+
+        // Highlighted option hover style (injected once)
+        var highlightStyle = document.createElement('style');
+        highlightStyle.textContent = '.country-select-option.highlighted { background: var(--primary-light); color: var(--primary); }';
+        document.head.appendChild(highlightStyle);
+
+        init();
+    })();
+
 });
