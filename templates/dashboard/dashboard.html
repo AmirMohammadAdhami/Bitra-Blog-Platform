@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile | Bitra{% endblock %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="container">
+        <div class="dashboard-layout">
+            {% include "dashboard/includes/_sidebar.html" %}
+
+            <main class="dashboard-content">
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">Profile Overview</h1>
+                    <p class="dashboard-subtitle">Manage your personal information and public profile</p>
+                </div>
+
+                <div class="profile-card">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar-large">
+                            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--dark); margin-bottom: var(--space-xs);">John Doe</h3>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0;">@johndoe</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-form">
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-input" value="John Doe" placeholder="Your full name" style="padding-left: var(--space-md);">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-input" value="johndoe" placeholder="Your username" style="padding-left: var(--space-md);">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" value="john@example.com" placeholder="Your email" style="padding-left: var(--space-md);">
+                        </div>
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-input" value="San Francisco" placeholder="Your city" style="padding-left: var(--space-md);">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Country</label>
+                                <input type="text" class="form-input" value="United States" placeholder="Your country" style="padding-left: var(--space-md);">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-textarea" rows="4" placeholder="Tell us about yourself..." style="padding-left: var(--space-md);">Passionate about technology, AI, and software development. Writing about the tools and ideas shaping the future.</textarea>
+                        </div>
+
+                        <div class="form-actions" style="display: flex; align-items: center; justify-content: space-between; margin-top: var(--space-xl);">
+                            <span style="display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: var(--primary-light); color: var(--primary); border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 600;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                    <path d="M16 2v4M8 2v4M3 10h18"/>
+                                </svg>
+                                Joined January 12, 2026
+                            </span>
+                            <button class="btn btn-primary">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                    <path d="M17 21v-8H7v8M7 3v5h8"/>
+                                </svg>
+                                Edit Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</section>
+{% endblock %}
