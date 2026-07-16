@@ -13,5 +13,5 @@ class UserProfile(DetailView):
             return redirect('accounts:login')
 
 
-    template_name = 'author/author_dashboard.html'
+    template_name = 'dashboard/dashboard.html'
     model = Profile

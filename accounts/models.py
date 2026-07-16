@@ -96,7 +96,7 @@ class ProfileSocialLink(models.Model):
         return f"{self.profile.user.username} - {self.platform.name}"
 
 
-# author request model
+# dashboard request model
 class AuthorRequest(models.Model):
 
     class Status(models.TextChoices):
