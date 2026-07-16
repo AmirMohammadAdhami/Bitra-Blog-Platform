@@ -339,4 +339,68 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // ==========================================
+    // Social Links - Sliding Input Accordion
+    // ==========================================
+    (function () {
+        var buttons = document.querySelectorAll('.social-platform-btn');
+        var activeBtn = null;
+
+        function closeAll() {
+            document.querySelectorAll('.social-input-wrapper.active').forEach(function (w) {
+                w.classList.remove('active');
+            });
+            if (activeBtn) {
+                activeBtn.classList.remove('active');
+                activeBtn = null;
+            }
+        }
+
+        function openPlatform(btn) {
+            var platform = btn.getAttribute('data-platform');
+            var item = btn.closest('.social-platform-item');
+            if (!item) return;
+
+            var wrapper = item.querySelector('.social-input-wrapper');
+            if (!wrapper) return;
+
+            wrapper.classList.add('active');
+            btn.classList.add('active');
+            activeBtn = btn;
+
+            setTimeout(function () {
+                var input = wrapper.querySelector('.social-input-text');
+                if (input) input.focus();
+            }, 350);
+        }
+
+        buttons.forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var platform = this.getAttribute('data-platform');
+
+                if (activeBtn === this) {
+                    closeAll();
+                } else if (activeBtn) {
+                    closeAll();
+                    setTimeout(function () {
+                        openPlatform(btn);
+                    }, 50);
+                } else {
+                    openPlatform(this);
+                }
+            });
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeAll();
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.social-platform-item') && activeBtn) {
+                closeAll();
+            }
+        });
+    })();
+
 });

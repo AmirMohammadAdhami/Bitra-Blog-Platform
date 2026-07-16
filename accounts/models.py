@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
+from django_countries.fields import CountryField
+
 
 # Base User Model and Base User Manager --------------- 1 ---------------
 class UserManager(BaseUserManager):
@@ -49,7 +51,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     profile_image = models.ImageField(upload_to='profile_images', null=True, blank=True)
     city = models.CharField(max_length=50, null=True, blank=True)
-    country = models.CharField(max_length=50, null=True, blank=True)
+    country = CountryField(blank_label='Select your country', null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True, allow_unicode=True)
     created_at = models.DateTimeField(auto_now_add=True)

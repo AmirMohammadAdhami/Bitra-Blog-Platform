@@ -2844,3 +2844,163 @@ p {
     clip: rect(0, 0, 0, 0);
     border: 0;
 }
+
+/* ==========================================
+   SOCIAL MEDIA LINKS - Sliding Input
+   ========================================== */
+
+.social-links-group {
+    margin-top: var(--space-lg);
+}
+
+.social-links-label {
+    display: block;
+    margin-bottom: var(--space-md);
+}
+
+.social-links-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0;
+    overflow: hidden;
+}
+
+/* Each platform block: icon + sliding input */
+.social-platform-item {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* Icon button */
+.social-platform-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--light);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    color: var(--text-secondary);
+    transition:
+        border-color 0.3s ease,
+        background 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.3s ease;
+}
+
+.social-platform-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+/* Active icon state */
+.social-platform-btn.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(63, 114, 175, 0.12);
+    transform: scale(1.05);
+}
+
+/* Sliding input wrapper */
+.social-input-wrapper {
+    display: flex;
+    align-items: center;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-left: 0;
+    transition:
+        max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.3s ease,
+        margin-left 0.3s ease;
+}
+
+.social-input-wrapper.active {
+    max-width: 280px;
+    opacity: 1;
+    margin-left: 10px;
+}
+
+/* Inner field container */
+.social-input-field {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1.5px solid var(--light);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    height: 44px;
+    flex-shrink: 0;
+    transition:
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.social-input-wrapper.active .social-input-field {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(63, 114, 175, 0.12);
+}
+
+/* URL prefix badge */
+.social-input-prefix {
+    padding: 0 12px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    border-right: 1px solid var(--light);
+    background: var(--bg);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Text input */
+.social-input-text {
+    border: none;
+    outline: none;
+    padding: 0 14px;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    background: transparent;
+    width: 160px;
+    height: 100%;
+    font-family: inherit;
+}
+
+.social-input-text::placeholder {
+    color: var(--text-muted);
+}
+
+/* Form actions row */
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--space-xl);
+}
+
+/* Joined badge */
+.form-joined-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
