@@ -11,20 +11,22 @@ User = get_user_model()
 def create_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+    else:
+        if hasattr(instance, "profile"):
+            instance.profile.save()
 
-@receiver(post_save, sender=User)
-def save_profile(sender, instance, **kwargs):
-    instance.profile.save()
 
 
 @receiver(pre_save, sender=User)
 def create_user_slug(sender, instance, **kwargs):
     if not instance.slug:
-        original_slug = slugify(instance.username, allow_unicode=True)
-        slug = original_slug
+        base_slug = slugify(instance.username, allow_unicode=True)
+        if not base_slug:
+            base_slug = 'user'
+        slug = base_slug
 
-        if sender.ubjects.filter(slug=slug).exclude(id = instance.id).exists():
+        while sender.objects.filter(slug=slug).exclude(id = instance.id).exists():
             unique_suffix = uuid.uuid4().hex[:4]
-            slug = f'{original_slug}-{unique_suffix}'
+            slug = f'{base_slug}-{unique_suffix}'
 
         instance.slug = slug

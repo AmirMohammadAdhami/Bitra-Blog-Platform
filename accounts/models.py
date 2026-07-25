@@ -165,6 +165,8 @@ class Bookmark(models.Model):
 
 
 class PasswordResetCode(models.Model):
+    MAX_ATTEMPTS = 5
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -186,6 +188,10 @@ class PasswordResetCode(models.Model):
     )
 
     expires_at = models.DateTimeField()
+
+    @property
+    def is_locked(self):
+        return self.attempts >= self.MAX_ATTEMPTS
 
     def __str__(self):
         return f"{self.user.email} - {self.code}"
