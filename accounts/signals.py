@@ -17,15 +17,15 @@ def create_profile(sender, instance, created, **kwargs):
 
 
 
-@receiver(pre_save, sender=User)
-def create_user_slug(sender, instance, **kwargs):
+@receiver(pre_save, sender=Profile)
+def create_profile_slug(sender, instance, **kwargs):
     if not instance.slug:
-        base_slug = slugify(instance.username, allow_unicode=True)
+        base_slug = slugify(instance.user.username, allow_unicode=True)
         if not base_slug:
             base_slug = 'user'
         slug = base_slug
 
-        while sender.objects.filter(slug=slug).exclude(id = instance.id).exists():
+        while sender.objects.filter(slug=slug).exclude(id = instance.user.id).exists():
             unique_suffix = uuid.uuid4().hex[:4]
             slug = f'{base_slug}-{unique_suffix}'
 
