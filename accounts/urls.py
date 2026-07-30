@@ -3,6 +3,7 @@ from .views.LogoutView import *
 from .views.RegisterView import *
 from .views.PasswordResetView import *
 from .views.LoginView import *
+from .views.ProfileView import *
 
 app_name = 'accounts'
 urlpatterns = [
@@ -12,4 +13,5 @@ urlpatterns = [
     path('forgot-password/', PasswordResetRequestView.as_view(), name='forgot_password'),
     path('verify-code/', VerifyCodeView.as_view(), name='verify_code' ),
     path('reset-password/', ResetPasswordView.as_view(), name='reset_password'),
+    path('profile/<str:slug>/', UserProfileEdit.as_view(), name='profile-edit'),
 ]

@@ -2844,3 +2844,376 @@ p {
     clip: rect(0, 0, 0, 0);
     border: 0;
 }
+
+/* ==========================================
+   SOCIAL MEDIA LINKS - Sliding Input
+   ========================================== */
+
+.social-links-group {
+    margin-top: var(--space-lg);
+}
+
+.social-links-label {
+    display: block;
+    margin-bottom: var(--space-md);
+}
+
+.social-links-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0;
+    overflow: hidden;
+}
+
+/* Each platform block: icon + sliding input */
+.social-platform-item {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* Icon button */
+.social-platform-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--light);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    color: var(--text-secondary);
+    transition:
+        border-color 0.3s ease,
+        background 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.3s ease;
+}
+
+.social-platform-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+/* Active icon state */
+.social-platform-btn.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(63, 114, 175, 0.12);
+    transform: scale(1.05);
+}
+
+/* Sliding input wrapper */
+.social-input-wrapper {
+    display: flex;
+    align-items: center;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-left: 0;
+    transition:
+        max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.3s ease,
+        margin-left 0.3s ease;
+}
+
+.social-input-wrapper.active {
+    max-width: 280px;
+    opacity: 1;
+    margin-left: 10px;
+}
+
+/* Inner field container */
+.social-input-field {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1.5px solid var(--light);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    height: 44px;
+    flex-shrink: 0;
+    transition:
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.social-input-wrapper.active .social-input-field {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(63, 114, 175, 0.12);
+}
+
+/* URL prefix badge */
+.social-input-prefix {
+    padding: 0 12px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    border-right: 1px solid var(--light);
+    background: var(--bg);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Text input */
+.social-input-text {
+    border: none;
+    outline: none;
+    padding: 0 14px;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    background: transparent;
+    width: 160px;
+    height: 100%;
+    font-family: inherit;
+}
+
+.social-input-text::placeholder {
+    color: var(--text-muted);
+}
+
+/* Form actions row */
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--space-xl);
+}
+
+/* Joined badge */
+.form-joined-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* ==========================================
+   COUNTRY SELECT - Custom Animated Dropdown
+   ========================================== */
+
+.country-select {
+    position: relative;
+    width: 100%;
+}
+
+/* Hide native <select> but keep it for form submission */
+.country-select > select {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Trigger button - matches .form-input styling */
+.country-select-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem var(--space-md);
+    border: 1px solid var(--light);
+    border-radius: var(--radius-md);
+    background: white;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+    text-align: left;
+}
+
+.country-select-trigger:hover {
+    border-color: #c0c8d4;
+}
+
+.country-select.is-open .country-select-trigger,
+.country-select-trigger:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+    outline: none;
+}
+
+/* Trigger value text */
+.country-select-value {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-weight: 400;
+    transition: color var(--transition-fast);
+}
+
+.country-select-value.has-value {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Chevron rotation */
+.country-select-chevron {
+    flex-shrink: 0;
+    color: var(--text-muted);
+    margin-left: var(--space-sm);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.country-select.is-open .country-select-chevron {
+    transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.country-select-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-4px) scale(0.98);
+    transform-origin: top center;
+    transition:
+        max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.25s ease,
+        transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.country-select.is-open .country-select-dropdown {
+    max-height: 300px;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* Search input inside dropdown */
+.country-select-search-wrap {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--light);
+    background: white;
+    z-index: 1;
+}
+
+.country-select-search-wrap svg {
+    flex-shrink: 0;
+    color: var(--text-muted);
+}
+
+.country-select-search {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: transparent;
+}
+
+.country-select-search::placeholder {
+    color: var(--text-muted);
+}
+
+/* Options list */
+.country-select-options {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-xs) 0;
+    max-height: 220px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--light) transparent;
+}
+
+.country-select-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.country-select-options::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.country-select-options::-webkit-scrollbar-thumb {
+    background: var(--light);
+    border-radius: 3px;
+}
+
+/* Individual option */
+.country-select-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 0.625rem var(--space-md);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.country-select-option:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.country-select-option.selected {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.country-select-option.selected::before {
+    content: '';
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary);
+    mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.country-select-option.hidden {
+    display: none;
+}
+
+/* Empty state */
+.country-select-empty {
+    padding: var(--space-lg) var(--space-md);
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}

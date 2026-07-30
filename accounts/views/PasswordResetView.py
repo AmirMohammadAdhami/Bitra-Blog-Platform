@@ -63,16 +63,37 @@ class VerifyCodeView(FormView):
             messages.error(self.request, "Invalid verification code.")
             return self.form_invalid(form)
 
+        if reset_code.is_locked:
+            reset_code.is_used = True
+            reset_code.save()
+            self.request.session.pop("reset_email", None)
+            messages.error(
+                self.request,
+                "Too many failed attempts. Please request a new code."
+            )
+            return redirect("accounts:forgot-password")
 
         if reset_code.expires_at < timezone.now():
             messages.error(self.request, "Verification code has expired.")
             return self.form_invalid(form)
 
-
         if not check_password(code, reset_code.code):
             reset_code.attempts += 1
+            remaining = PasswordResetCode.MAX_ATTEMPTS - reset_code.attempts
+            if remaining <= 0:
+                reset_code.is_used = True
+                reset_code.save()
+                self.request.session.pop("reset_email", None)
+                messages.error(
+                    self.request,
+                    "Too many failed attempts. Please request a new code."
+                )
+                return redirect("accounts:forgot-password")
             reset_code.save()
-            messages.error(self.request, "Invalid verification code.")
+            messages.error(
+                self.request,
+                f"Invalid verification code. {remaining} attempt(s) remaining."
+            )
             return self.form_invalid(form)
 
 

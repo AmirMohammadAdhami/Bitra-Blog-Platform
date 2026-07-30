@@ -49,8 +49,7 @@
                 </svg>
             </button>
              {% if user.is_authenticated %}
-                         <a href="#" class="btn btn-primary">Profile</a>
-
+                         <a href="{% url 'accounts:profile-edit' slug=user.profile.slug %}" class="btn btn-primary">Profile</a>
             {% else %}
             <div class="nav-auth">
                 <a href="{% url 'accounts:login' %}" class="btn btn-ghost">Log In</a>

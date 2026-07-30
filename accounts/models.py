@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
+from django_countries.fields import CountryField
+
 
 # Base User Model and Base User Manager --------------- 1 ---------------
 class UserManager(BaseUserManager):
@@ -49,11 +51,11 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     profile_image = models.ImageField(upload_to='profile_images', null=True, blank=True)
     city = models.CharField(max_length=50, null=True, blank=True)
-    country = models.CharField(max_length=50, null=True, blank=True)
+    country = CountryField(blank_label='Select your country', null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
+    slug = models.SlugField(max_length=100, unique=True, null=True, blank=True, allow_unicode=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
     def __str__(self):
         return self.user.username
 
@@ -96,7 +98,7 @@ class ProfileSocialLink(models.Model):
         return f"{self.profile.user.username} - {self.platform.name}"
 
 
-# author request model
+# dashboard request model
 class AuthorRequest(models.Model):
 
     class Status(models.TextChoices):
@@ -163,6 +165,8 @@ class Bookmark(models.Model):
 
 
 class PasswordResetCode(models.Model):
+    MAX_ATTEMPTS = 5
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -184,6 +188,10 @@ class PasswordResetCode(models.Model):
     )
 
     expires_at = models.DateTimeField()
+
+    @property
+    def is_locked(self):
+        return self.attempts >= self.MAX_ATTEMPTS
 
     def __str__(self):
         return f"{self.user.email} - {self.code}"
