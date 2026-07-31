@@ -2,3 +2,7 @@ python-dotenv
 Django~=6.0.7
 Pillow
 django-countries
+djangorestframework
+drf-spectacular
+django-ipware
+djangorestframework-simplejwt

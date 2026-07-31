@@ -9,73 +9,38 @@
         <div class="dashboard-header dashboard-header-author">
             <div>
                 <h1 class="dashboard-title">Author Dashboard</h1>
-                <p class="dashboard-subtitle">Welcome back, Sarah. Here's your writing overview.</p>
+                <p class="dashboard-subtitle" id="authorWelcomeText">Here's your writing overview.</p>
             </div>
-            <a href="/author/create-article/" class="btn btn-primary btn-lg">
+            <button type="button" class="btn btn-primary btn-lg" id="createArticleBtn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 5v14M5 12h14"/>
                 </svg>
                 Create Article
-            </a>
+            </button>
         </div>
 
-        <div class="author-stats-grid">
-            <div class="author-stat-card">
-                <div class="stat-icon stat-icon-blue">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
-                    </svg>
-                </div>
-                <div class="stat-info">
-                    <span class="stat-number">47</span>
-                    <span class="stat-label">Published Articles</span>
-                </div>
-            </div>
-            <div class="author-stat-card">
-                <div class="stat-icon stat-icon-purple">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                </div>
-                <div class="stat-info">
-                    <span class="stat-number">125.8k</span>
-                    <span class="stat-label">Total Views</span>
-                </div>
-            </div>
-            <div class="author-stat-card">
-                <div class="stat-icon stat-icon-green">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                    </svg>
-                </div>
-                <div class="stat-info">
-                    <span class="stat-number">8.2k</span>
-                    <span class="stat-label">Total Likes</span>
-                </div>
-            </div>
-            <div class="author-stat-card">
-                <div class="stat-icon stat-icon-orange">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                    </svg>
-                </div>
-                <div class="stat-info">
-                    <span class="stat-number">12.5k</span>
-                    <span class="stat-label">Followers</span>
-                </div>
-            </div>
+        <!--
+            NOTE ON DATA AVAILABILITY: there is no per-day view/like time
+            series API and no "followers" concept anywhere in the models,
+            so:
+              - Stats below are computed client-side from this author's
+                own articles (GET /api/blog/articles/, filtered by
+                author_name === current username).
+              - "Followers" has been replaced with "Awaiting Review"
+                (count of this author's SUBMITTED articles), since that's
+                real, available data.
+              - The Views Analytics chart has been removed rather than
+                faked with placeholder numbers; see the report for a
+                suggested backend addition if per-day analytics are wanted.
+        -->
+        <div class="author-stats-grid" id="authorStatsGrid" data-loading="true">
+            <p class="loading-text">Loading your stats&hellip;</p>
         </div>
 
         <div class="author-content-grid">
             <div class="author-section">
                 <div class="section-header-sm">
                     <h2 class="section-title-sm">Published Articles</h2>
-                    <a href="/author/articles/" class="btn btn-ghost btn-sm">View All</a>
                 </div>
                 <div class="articles-table">
                     <div class="table-row table-header">
@@ -84,29 +49,8 @@
                         <span class="table-col table-col-likes">Likes</span>
                         <span class="table-col table-col-date">Date</span>
                     </div>
-                    <div class="table-row">
-                        <span class="table-col table-col-title">The Future of AI in Software Development</span>
-                        <span class="table-col table-col-views">12.4k</span>
-                        <span class="table-col table-col-likes">486</span>
-                        <span class="table-col table-col-date">Jan 15, 2026</span>
-                    </div>
-                    <div class="table-row">
-                        <span class="table-col table-col-title">Quantum Computing: A Practical Guide</span>
-                        <span class="table-col table-col-views">8.9k</span>
-                        <span class="table-col table-col-likes">324</span>
-                        <span class="table-col table-col-date">Jan 10, 2026</span>
-                    </div>
-                    <div class="table-row">
-                        <span class="table-col table-col-title">Building Secure Cloud Applications</span>
-                        <span class="table-col table-col-views">6.2k</span>
-                        <span class="table-col table-col-likes">218</span>
-                        <span class="table-col table-col-date">Jan 5, 2026</span>
-                    </div>
-                    <div class="table-row">
-                        <span class="table-col table-col-title">Mobile Development Trends 2026</span>
-                        <span class="table-col table-col-views">5.7k</span>
-                        <span class="table-col table-col-likes">195</span>
-                        <span class="table-col table-col-date">Dec 28, 2025</span>
+                    <div id="publishedArticlesTableBody" data-loading="true">
+                        <p class="loading-text">Loading&hellip;</p>
                     </div>
                 </div>
             </div>
@@ -115,74 +59,15 @@
                 <div class="section-header-sm">
                     <h2 class="section-title-sm">Draft Articles</h2>
                 </div>
-                <div class="drafts-list">
-                    <div class="draft-item">
-                        <div class="draft-info">
-                            <h4 class="draft-title">Understanding Neural Networks</h4>
-                            <span class="draft-date">Last edited 2 hours ago</span>
-                        </div>
-                        <div class="draft-actions">
-                            <a href="/author/edit/draft-1/" class="btn btn-outline btn-sm">Edit</a>
-                            <button class="btn btn-primary btn-sm">Publish</button>
-                        </div>
-                    </div>
-                    <div class="draft-item">
-                        <div class="draft-info">
-                            <h4 class="draft-title">Cybersecurity Best Practices for Startups</h4>
-                            <span class="draft-date">Last edited yesterday</span>
-                        </div>
-                        <div class="draft-actions">
-                            <a href="/author/edit/draft-2/" class="btn btn-outline btn-sm">Edit</a>
-                            <button class="btn btn-primary btn-sm">Publish</button>
-                        </div>
-                    </div>
-                    <div class="draft-item">
-                        <div class="draft-info">
-                            <h4 class="draft-title">The Rise of Edge Computing</h4>
-                            <span class="draft-date">Last edited 3 days ago</span>
-                        </div>
-                        <div class="draft-actions">
-                            <a href="/author/edit/draft-3/" class="btn btn-outline btn-sm">Edit</a>
-                            <button class="btn btn-primary btn-sm">Publish</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="author-section author-analytics">
-            <div class="section-header-sm">
-                <h2 class="section-title-sm">Views Analytics</h2>
-                <div class="analytics-period">
-                    <button class="period-btn active">7 Days</button>
-                    <button class="period-btn">30 Days</button>
-                    <button class="period-btn">90 Days</button>
-                </div>
-            </div>
-            <div class="analytics-chart">
-                <div class="chart-placeholder">
-                    <svg width="100%" height="200" viewBox="0 0 800 200" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="chart-gradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#3F72AF" stop-opacity="0.3"/>
-                                <stop offset="100%" stop-color="#3F72AF" stop-opacity="0"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M0,150 L100,120 L200,140 L300,80 L400,100 L500,60 L600,90 L700,40 L800,70 L800,200 L0,200 Z" fill="url(#chart-gradient)"/>
-                        <path d="M0,150 L100,120 L200,140 L300,80 L400,100 L500,60 L600,90 L700,40 L800,70" fill="none" stroke="#3F72AF" stroke-width="2"/>
-                    </svg>
-                    <div class="chart-labels">
-                        <span>Mon</span>
-                        <span>Tue</span>
-                        <span>Wed</span>
-                        <span>Thu</span>
-                        <span>Fri</span>
-                        <span>Sat</span>
-                        <span>Sun</span>
-                    </div>
+                <div class="drafts-list" id="draftArticlesList" data-loading="true">
+                    <p class="loading-text">Loading&hellip;</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/author_dashboard.js' %}"></script>
 {% endblock %}

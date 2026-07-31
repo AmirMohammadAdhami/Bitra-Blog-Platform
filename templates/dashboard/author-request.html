@@ -15,8 +15,19 @@
                     <p class="dashboard-subtitle">Apply to publish articles on Bitra and share your expertise with our community</p>
                 </div>
 
-                <!-- State A: Application Form -->
-                <div class="profile-card">
+                <!--
+                    NOTE ON DATA AVAILABILITY: AuthorRequest only stores
+                    {user, status, reviewed_by, reviewed_at, created_at} —
+                    there is no field for "why", portfolio link, area of
+                    expertise, experience, or sample writing link. Those
+                    inputs are kept below for UX continuity but are NOT
+                    sent to the API (there's nowhere on the backend for
+                    them to go); only a bare POST /api/accounts/author-requests/
+                    is issued with no body.
+                -->
+
+                <!-- State A: Application Form (shown when the user has no pending/approved request) -->
+                <div class="profile-card" id="authorRequestFormCard" style="display:none;">
                     <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-xl); padding-bottom: var(--space-lg); border-bottom: 1px solid var(--light);">
                         <div style="width: 56px; height: 56px; border-radius: var(--radius-md); background: var(--primary-light); display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -30,7 +41,7 @@
                         </div>
                     </div>
 
-                    <form>
+                    <form id="authorRequestForm">
                         <div class="form-group">
                             <label class="form-label">Why do you want to become an author?</label>
                             <textarea class="form-textarea" rows="5" placeholder="Share your passion for writing and technology. Tell us what topics you'd like to cover..." style="padding-left: var(--space-md);"></textarea>
@@ -53,8 +64,9 @@
                             <label class="form-label">Sample Writing Link (Optional)</label>
                             <input type="url" class="form-input" placeholder="https://your-article.com" style="padding-left: var(--space-md);">
                         </div>
+                        <p style="font-size:0.8rem;color:var(--text-muted);">Note: only your application itself is recorded today &mdash; the fields above help you organize your thoughts but aren't stored by the server yet.</p>
                         <div class="form-actions" style="margin-top: var(--space-xl);">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                            <button type="submit" class="btn btn-primary btn-lg" id="authorRequestSubmitBtn">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
                                 </svg>
@@ -65,7 +77,7 @@
                 </div>
 
                 <!-- State B: Pending Review Banner -->
-                <div style="margin-top: var(--space-xl); padding: var(--space-lg) var(--space-xl); background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: var(--radius-lg); display: flex; align-items: center; gap: var(--space-md);">
+                <div id="authorRequestPendingBanner" style="display:none; margin-top: var(--space-xl); padding: var(--space-lg) var(--space-xl); background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: var(--radius-lg); align-items: center; gap: var(--space-md);">
                     <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; color: var(--warning); flex-shrink: 0;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/>
@@ -78,8 +90,8 @@
                     </div>
                 </div>
 
-                <!-- State B: Already an Author Banner -->
-                <div style="margin-top: var(--space-lg); padding: var(--space-lg) var(--space-xl); background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-lg); display: flex; align-items: center; gap: var(--space-md);">
+                <!-- State C: Already an Author Banner -->
+                <div id="authorRequestApprovedBanner" style="display:none; margin-top: var(--space-lg); padding: var(--space-lg) var(--space-xl); background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-lg); align-items: center; gap: var(--space-md);">
                     <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; color: var(--success); flex-shrink: 0;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -91,8 +103,26 @@
                         <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0;">You are registered as an active Author! Head over to the <a href="/dashboard/author/" class="form-link">Author Dashboard</a> to start creating content.</p>
                     </div>
                 </div>
+
+                <!-- State D: Rejected Banner -->
+                <div id="authorRequestRejectedBanner" style="display:none; margin-top: var(--space-lg); padding: var(--space-lg) var(--space-xl); background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: var(--radius-lg); align-items: center; gap: var(--space-md);">
+                    <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center; color: var(--error); flex-shrink: 0;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M15 9l-6 6"/><path d="M9 9l6 6"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--dark); margin-bottom: var(--space-xs);">Application Not Approved</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0;">Your previous application wasn't approved. You're welcome to submit a new one below.</p>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/author_request.js' %}"></script>
 {% endblock %}

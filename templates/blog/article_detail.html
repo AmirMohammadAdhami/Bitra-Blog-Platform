@@ -1,25 +1,19 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}The Future of AI in Software Development | Bitra{% endblock %}
+{% block title %}Article | Bitra{% endblock %}
 
 {% block content %}
-<article class="article-detail">
+<article class="article-detail" id="articleDetailRoot" data-article-id="{{ request.resolver_match.kwargs.pk }}">
     <div class="article-hero">
         <div class="article-hero-image">
-            <div class="image-placeholder image-placeholder-hero">
-                <svg width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <path d="M21 15l-5-5L5 21"/>
-                </svg>
-            </div>
+            <img id="articleHeroImage" src="" alt="" style="width:100%;height:100%;object-fit:cover;">
             <div class="article-hero-overlay"></div>
         </div>
         <div class="container">
             <div class="article-hero-content">
-                <span class="article-category-badge article-category-badge-lg">Artificial Intelligence</span>
-                <h1 class="article-detail-title">The Future of Artificial Intelligence in Modern Software Development</h1>
+                <span class="article-category-badge article-category-badge-lg" id="articleCategoryBadge">&nbsp;</span>
+                <h1 class="article-detail-title" id="articleTitle">Loading article&hellip;</h1>
                 <div class="article-detail-meta">
                     <div class="article-author-info">
                         <div class="author-avatar">
@@ -29,8 +23,7 @@
                             </svg>
                         </div>
                         <div class="author-details">
-                            <a href="/author/sarah-chen/" class="author-name">Sarah Chen</a>
-                            <span class="author-role">AI Researcher & Tech Writer</span>
+                            <span class="author-name" id="articleAuthorName">&nbsp;</span>
                         </div>
                     </div>
                     <div class="article-meta-list">
@@ -39,27 +32,32 @@
                                 <rect x="3" y="4" width="18" height="18" rx="2"/>
                                 <path d="M16 2v4M8 2v4M3 10h18"/>
                             </svg>
-                            January 15, 2026
+                            <span id="articleDate">&nbsp;</span>
                         </span>
                         <span class="meta-item">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"/>
                                 <path d="M12 6v6l4 2"/>
                             </svg>
-                            8 min read
+                            <span id="articleReadingTime">&nbsp;</span>
                         </span>
                         <span class="meta-item">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                                 <circle cx="12" cy="12" r="3"/>
                             </svg>
-                            2,847 views
+                            <span id="articleViews">0</span> views
                         </span>
                         <span class="meta-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                            </svg>
-                            186 likes
+                            <button type="button" id="articleLikeBtn" class="like-toggle-btn" aria-pressed="false" style="background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;color:inherit;font:inherit;padding:0;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                <span id="articleLikes">0</span> likes
+                            </button>
+                            <button type="button" id="articleBookmarkBtn" class="bookmark-toggle-btn" aria-pressed="false" style="background:none;border:none;cursor:pointer;margin-left:12px;color:inherit;font:inherit;padding:0;">
+                                Save
+                            </button>
                         </span>
                     </div>
                 </div>
@@ -69,47 +67,13 @@
 
     <div class="container">
         <div class="article-content-wrapper">
-            <div class="article-content">
-                <p class="article-lead">Artificial intelligence is fundamentally transforming how we approach software development. From intelligent code assistants to automated testing frameworks, AI tools are becoming indispensable in the modern developer's toolkit.</p>
-
-                <h2>The Rise of AI-Powered Development Tools</h2>
-                <p>The landscape of software development has undergone a dramatic transformation in recent years. AI-powered tools like GitHub Copilot, Tabnine, and Amazon CodeWhisperer have moved from experimental novelties to essential productivity multipliers that developers rely on daily.</p>
-                <p>These tools leverage large language models trained on vast repositories of code to provide intelligent suggestions, complete code snippets, and even generate entire functions based on natural language descriptions. The impact on developer productivity has been measurable and significant.</p>
-
-                <blockquote>
-                    <p>"AI won't replace developers, but developers who use AI will replace those who don't."</p>
-                    <cite>— Industry Expert</cite>
-                </blockquote>
-
-                <h2>Key Areas of AI Integration</h2>
-                <p>AI is being integrated across the entire software development lifecycle, from initial design to deployment and monitoring:</p>
-                <ul>
-                    <li><strong>Code Generation:</strong> AI assistants can write boilerplate code, suggest implementations, and even architect entire modules based on high-level specifications.</li>
-                    <li><strong>Automated Testing:</strong> Machine learning algorithms can identify critical test cases, generate test data, and predict which areas of code are most likely to contain bugs.</li>
-                    <li><strong>Code Review:</strong> AI tools can analyze code for security vulnerabilities, performance issues, and adherence to best practices faster than any human reviewer.</li>
-                    <li><strong>DevOps Optimization:</strong> AI-powered monitoring can predict system failures, optimize resource allocation, and automate incident response.</li>
-                </ul>
-
-                <h2>The Impact on Developer Roles</h2>
-                <p>As AI tools become more capable, the role of the software developer is evolving. Rather than being replaced, developers are being elevated to higher-level problem-solving roles. The time saved on repetitive coding tasks can be invested in architecture design, system thinking, and creative problem-solving.</p>
-
-                <p>The developers who thrive in this new landscape will be those who learn to effectively collaborate with AI tools, understanding their strengths and limitations. Prompt engineering, AI tool orchestration, and the ability to validate AI-generated code are becoming essential skills.</p>
-
-                <h2>Looking Ahead</h2>
-                <p>The future of AI in software development is incredibly promising. We're moving toward a world where AI can handle increasingly complex development tasks, from full-stack application generation to infrastructure management. However, the human elements of creativity, empathy, and strategic thinking will remain irreplaceable.</p>
-
-                <p>Organizations that embrace AI-augmented development practices while investing in their teams' ability to work alongside these tools will gain a significant competitive advantage in the years ahead.</p>
+            <div class="article-content" id="articleBody">
+                <p class="article-lead">Loading content&hellip;</p>
             </div>
 
             <div class="article-tags">
                 <span class="tags-label">Tags:</span>
-                <div class="tags-list">
-                    <a href="/tag/artificial-intelligence/" class="tag">Artificial Intelligence</a>
-                    <a href="/tag/software-development/" class="tag">Software Development</a>
-                    <a href="/tag/machine-learning/" class="tag">Machine Learning</a>
-                    <a href="/tag/devtools/" class="tag">DevTools</a>
-                    <a href="/tag/productivity/" class="tag">Productivity</a>
-                </div>
+                <div class="tags-list" id="articleTagsList"></div>
             </div>
         </div>
     </div>
@@ -123,11 +87,8 @@
                 <h2 class="section-title">Related Articles</h2>
             </div>
         </div>
-        <div class="articles-grid articles-grid-4">
-            {% include "includes/article_card.html" %}
-            {% include "includes/article_card.html" %}
-            {% include "includes/article_card.html" %}
-            {% include "includes/article_card.html" %}
+        <div class="articles-grid articles-grid-4" id="relatedArticlesGrid" data-loading="true">
+            <p class="loading-text">Loading related articles&hellip;</p>
         </div>
     </div>
 </section>
@@ -137,10 +98,10 @@
         <div class="comments-wrapper">
             <h2 class="comments-title">
                 Comments
-                <span class="comment-count">(12)</span>
+                <span class="comment-count" id="commentCount">(0)</span>
             </h2>
 
-            <form class="comment-form">
+            <form class="comment-form" id="commentForm">
                 <div class="comment-form-header">
                     <div class="author-avatar">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -150,93 +111,20 @@
                     </div>
                     <span class="comment-form-label">Leave a comment</span>
                 </div>
-                <textarea class="comment-textarea" placeholder="Share your thoughts on this article..." rows="4"></textarea>
+                <textarea class="comment-textarea" placeholder="Share your thoughts on this article..." rows="4" id="commentTextarea" name="content" required></textarea>
                 <div class="comment-form-actions">
-                    <button type="submit" class="btn btn-primary">Post Comment</button>
+                    <button type="submit" class="btn btn-primary" id="commentSubmitBtn">Post Comment</button>
                 </div>
             </form>
 
-            <div class="comments-list">
-                <div class="comment">
-                    <div class="comment-header">
-                        <div class="comment-author">
-                            <div class="author-avatar">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="12" cy="7" r="4"/>
-                                </svg>
-                            </div>
-                            <div class="comment-author-info">
-                                <span class="comment-author-name">Alex Rivera</span>
-                                <span class="comment-date">2 days ago</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-ghost btn-sm reply-btn">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                            </svg>
-                            Reply
-                        </button>
-                    </div>
-                    <div class="comment-content">
-                        <p>Great article! I've been using AI coding assistants for about a year now, and the productivity gains are real. The key insight about developers evolving into higher-level problem solvers really resonates with my experience.</p>
-                    </div>
-                </div>
-
-                <div class="comment comment-reply">
-                    <div class="comment-header">
-                        <div class="comment-author">
-                            <div class="author-avatar">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="12" cy="7" r="4"/>
-                                </svg>
-                            </div>
-                            <div class="comment-author-info">
-                                <span class="comment-author-name">Sarah Chen</span>
-                                <span class="comment-badge">Author</span>
-                                <span class="comment-date">1 day ago</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-ghost btn-sm reply-btn">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                            </svg>
-                            Reply
-                        </button>
-                    </div>
-                    <div class="comment-content">
-                        <p>Thank you, Alex! It's exciting to see how quickly the industry is adapting. I'd love to hear which specific tools you've found most useful in your workflow.</p>
-                    </div>
-                </div>
-
-                <div class="comment">
-                    <div class="comment-header">
-                        <div class="comment-author">
-                            <div class="author-avatar">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="12" cy="7" r="4"/>
-                                </svg>
-                            </div>
-                            <div class="comment-author-info">
-                                <span class="comment-author-name">Jordan Park</span>
-                                <span class="comment-date">3 days ago</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-ghost btn-sm reply-btn">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                            </svg>
-                            Reply
-                        </button>
-                    </div>
-                    <div class="comment-content">
-                        <p>I'm curious about the security implications of AI-generated code. Has anyone done thorough audits of the code these tools produce? Would love to see a follow-up article on that topic.</p>
-                    </div>
-                </div>
+            <div class="comments-list" id="commentsList" data-loading="true">
+                <p class="loading-text">Loading comments&hellip;</p>
             </div>
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/article_detail.js' %}"></script>
 {% endblock %}

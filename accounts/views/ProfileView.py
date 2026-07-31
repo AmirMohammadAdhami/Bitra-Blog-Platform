@@ -1,26 +1,16 @@
-from django.contrib import messages
-from django.shortcuts import redirect
-from django.views.generic import DetailView
+from django.views.generic import DetailView, TemplateView
 from accounts.models import Profile
-from django.views.generic.edit import UpdateView
-from django.urls import reverse_lazy, reverse
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class UserProfileEdit(LoginRequiredMixin, UpdateView):
-    model = Profile
+class UserProfileEdit(TemplateView):
+    """
+    Renders the dashboard shell. Auth is JWT-based (stored client-side in
+    localStorage), so the Django session is not authoritative here — the
+    page itself is public, but dashboard.js checks BitraAPI.isAuthenticated()
+    on load and redirects to /accounts/login/ if the visitor has no valid
+    access token, then populates the page via the profile API.
+    """
     template_name = 'dashboard/dashboard.html'
-    fields = ['profile_image', 'city', 'country', 'bio']
-
-    login_url = reverse_lazy('accounts:login')
-
-    def handle_no_permission(self):
-        messages.error(self.request, 'You are not logged in')
-        return redirect(self.login_url)
-
-    def get_success_url(self):
-        slug_value = self.object.slug
-        return reverse('accounts:profile-edit', kwargs={'slug': slug_value})
 
 
 class SideBar(DetailView):

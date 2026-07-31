@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic import TemplateView
 from .views.LogoutView import *
 from .views.RegisterView import *
 from .views.PasswordResetView import *

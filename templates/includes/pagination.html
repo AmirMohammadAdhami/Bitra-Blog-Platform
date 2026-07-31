@@ -1,22 +1,13 @@
-{% load static %}
-<nav class="pagination" aria-label="Page navigation">
-    <button class="pagination-btn pagination-prev" disabled>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 18l-6-6 6-6"/>
-        </svg>
-        Previous
-    </button>
-    <div class="pagination-numbers">
-        <button class="pagination-number active">1</button>
-        <button class="pagination-number">2</button>
-        <button class="pagination-number">3</button>
-        <span class="pagination-ellipsis">...</span>
-        <button class="pagination-number">10</button>
-    </div>
-    <button class="pagination-btn pagination-next">
-        Next
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 18l6-6-6-6"/>
-        </svg>
-    </button>
-</nav>
+{% comment %}
+Rendered dynamically on the client to match DRF's PageNumberPagination
+response shape: { count, next, previous, results }.
+See: static/js/render.js -> BitraRender.pagination(container, options)
+Usage:
+    <div id="paginationControls" data-pagination></div>
+    <script>
+      BitraRender.pagination(document.getElementById('paginationControls'), {
+        count: data.count, pageSize: 10, currentPage: 1,
+        onPageClick: function (page) { loadArticles(page); }
+      });
+    </script>
+{% endcomment %}
