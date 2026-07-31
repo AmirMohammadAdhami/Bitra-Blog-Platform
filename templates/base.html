@@ -7,6 +7,7 @@
     <meta name="description" content="{% block meta_description %}Bitra - Explore the Future of Technology. Premium articles on AI, Cybersecurity, Cloud Computing, and more.{% endblock %}">
     <meta name="keywords" content="technology, blog, AI, cybersecurity, cloud computing, software development">
     <meta name="author" content="Bitra">
+    <meta name="csrf-token" content="{{ csrf_token }}">
 
     <title>{% block title %}Bitra | Explore the Future of Technology{% endblock %}</title>
 
@@ -29,6 +30,11 @@
     {% include "includes/footer.html" %}
     {% include "includes/error_popup.html" %}
 
+    <script src="{% static 'js/api.js' %}"></script>
+    <script src="{% static 'js/notify.js' %}"></script>
+    <script src="{% static 'js/render.js' %}"></script>
+    <script src="{% static 'js/nav.js' %}"></script>
+    <script src="{% static 'js/sidebar.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/animations.js' %}"></script>
 

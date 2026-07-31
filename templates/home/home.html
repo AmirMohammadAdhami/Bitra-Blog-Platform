@@ -30,22 +30,22 @@
                         <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
                 </a>
-                <a href="/register/" class="btn btn-glass btn-lg">
+                <a href="{% url 'accounts:register' %}" class="btn btn-glass btn-lg">
                     Start Writing
                 </a>
             </div>
-            <div class="hero-stats">
+            <div class="hero-stats" id="heroStats" data-loading="true">
                 <div class="hero-stat">
-                    <span class="stat-number">2.5k+</span>
+                    <span class="stat-number" id="statArticles">&mdash;</span>
                     <span class="stat-label">Articles</span>
                 </div>
                 <div class="hero-stat">
-                    <span class="stat-number">150+</span>
+                    <span class="stat-number" id="statAuthors">&mdash;</span>
                     <span class="stat-label">Authors</span>
                 </div>
                 <div class="hero-stat">
-                    <span class="stat-number">50k+</span>
-                    <span class="stat-label">Readers</span>
+                    <span class="stat-number" id="statViews">&mdash;</span>
+                    <span class="stat-label">Total Views</span>
                 </div>
             </div>
         </div>
@@ -92,10 +92,8 @@
                 </svg>
             </a>
         </div>
-        <div class="articles-grid articles-grid-3">
-            {% include "includes/article_card.html" %}
-            {% include "includes/article_card.html" %}
-            {% include "includes/article_card.html" %}
+        <div class="articles-grid articles-grid-3" id="popularArticlesGrid" data-loading="true">
+            <p class="loading-text">Loading popular articles&hellip;</p>
         </div>
     </div>
 </section>
@@ -114,72 +112,11 @@
                 </svg>
             </a>
         </div>
-        <div class="articles-grid articles-grid-2">
-            <div class="article-card article-card-featured">
-                <a href="/article/featured-article/" class="article-card-image article-card-image-lg">
-                    <div class="image-placeholder image-placeholder-lg">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                            <rect x="3" y="3" width="18" height="18" rx="2"/>
-                            <circle cx="8.5" cy="8.5" r="1.5"/>
-                            <path d="M21 15l-5-5L5 21"/>
-                        </svg>
-                    </div>
-                    <span class="article-category-badge">Featured</span>
-                </a>
-                <div class="article-card-content">
-                    <div class="article-meta">
-                        <span class="article-date">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2"/>
-                                <path d="M16 2v4M8 2v4M3 10h18"/>
-                            </svg>
-                            Jan 12, 2026
-                        </span>
-                        <span class="article-reading-time">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <path d="M12 6v6l4 2"/>
-                            </svg>
-                            8 min read
-                        </span>
-                    </div>
-                    <h3 class="article-card-title">
-                        <a href="/article/featured-article/">How Quantum Computing Will Transform Cybersecurity in the Next Decade</a>
-                    </h3>
-                    <p class="article-card-excerpt">An in-depth exploration of quantum computing's potential impact on encryption, data protection, and the future of digital security infrastructure.</p>
-                    <div class="article-card-footer">
-                        <div class="article-author">
-                            <div class="author-avatar-small">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="12" cy="7" r="4"/>
-                                </svg>
-                            </div>
-                            <span class="author-name">Marcus Johnson</span>
-                        </div>
-                        <div class="article-stats">
-                            <span class="stat-item">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                    <circle cx="12" cy="12" r="3"/>
-                                </svg>
-                                5.2k
-                            </span>
-                            <span class="stat-item">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                                </svg>
-                                412
-                            </span>
-                        </div>
-                    </div>
-                </div>
+        <div class="articles-grid articles-grid-2" id="latestArticlesWrapper" data-loading="true">
+            <div id="featuredArticleSlot">
+                <p class="loading-text">Loading latest article&hellip;</p>
             </div>
-            <div class="latest-articles-list">
-                {% include "includes/article_card.html" %}
-                {% include "includes/article_card.html" %}
-                {% include "includes/article_card.html" %}
-            </div>
+            <div class="latest-articles-list" id="latestArticlesList"></div>
         </div>
     </div>
 </section>
@@ -192,15 +129,8 @@
                 <h2 class="section-title">Categories</h2>
             </div>
         </div>
-        <div class="categories-grid">
-            {% include "includes/category_card.html" %}
-            {% include "includes/category_card.html" %}
-            {% include "includes/category_card.html" %}
-            {% include "includes/category_card.html" %}
-            {% include "includes/category_card.html" %}
-            {% include "includes/category_card.html" %}
-            {% include "includes/category_card.html" %}
-            {% include "includes/category_card.html" %}
+        <div class="categories-grid" id="categoriesGrid" data-loading="true">
+            <p class="loading-text">Loading categories&hellip;</p>
         </div>
     </div>
 </section>
@@ -212,18 +142,15 @@
                 <span class="section-tag">Top Contributors</span>
                 <h2 class="section-title">Popular Authors of the Month</h2>
             </div>
-            <a href="/authors/" class="btn btn-outline">
+            <a href="/articles/" class="btn btn-outline">
                 View All Authors
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
             </a>
         </div>
-        <div class="authors-scroll">
-            {% include "includes/author_card.html" %}
-            {% include "includes/author_card.html" %}
-            {% include "includes/author_card.html" %}
-            {% include "includes/author_card.html" %}
+        <div class="authors-scroll" id="popularAuthorsScroll" data-loading="true">
+            <p class="loading-text">Loading contributors&hellip;</p>
         </div>
     </div>
 </section>
@@ -236,13 +163,13 @@
                 <h2 class="cta-title">Ready to Share Your Tech Insights?</h2>
                 <p class="cta-text">Join thousands of tech writers and enthusiasts. Publish your articles, build your audience, and shape the conversation around technology.</p>
                 <div class="cta-actions">
-                    <a href="/register/" class="btn btn-primary btn-lg">
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">
                         Get Started Free
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </a>
-                    <a href="/write/" class="btn btn-glass btn-lg">Learn More</a>
+                    <a href="/dashboard/author-request/" class="btn btn-glass btn-lg">Learn More</a>
                 </div>
             </div>
             <div class="cta-visual">
@@ -261,4 +188,8 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/home.js' %}"></script>
 {% endblock %}

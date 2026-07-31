@@ -1,5 +1,5 @@
 from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from ipware import get_client_ip
 from api.blog.serializers.articleSZR import ArticleListSerializer, ArticleDetailSerializer
@@ -10,6 +10,11 @@ from rest_framework.decorators import action
 
 class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.select_related('category', 'author').prefetch_related('tags')
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return ArticleDetailSerializer

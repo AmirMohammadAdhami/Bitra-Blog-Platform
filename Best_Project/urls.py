@@ -16,11 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import TemplateView
 import accounts.urls as accounts_urls
+from accounts.views.ProfileView import UserProfileEdit
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),
     path('accounts/', include(accounts_urls)),
     path('api/', include('api.urls')),
+
+    path('dashboard/profile/', UserProfileEdit.as_view(), name='dashboard_profile'),
+    path('dashboard/likes/', TemplateView.as_view(template_name='dashboard/likes.html'), name='dashboard_likes'),
+    path('dashboard/bookmarks/', TemplateView.as_view(template_name='dashboard/bookmarks.html'), name='dashboard_bookmarks'),
+    path('dashboard/comments/', TemplateView.as_view(template_name='dashboard/my-comments.html'), name='dashboard_comments'),
+    path('dashboard/author-request/', TemplateView.as_view(template_name='dashboard/author-request.html'), name='dashboard_author_request'),
+    path('dashboard/author/', TemplateView.as_view(template_name='dashboard/author_dashboard.html'), name='dashboard_author'),
 ]

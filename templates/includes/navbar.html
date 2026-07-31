@@ -27,15 +27,9 @@
                         <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
                     </svg>
                 </button>
-                <div class="dropdown-menu">
-                    <a href="/category/artificial-intelligence/" class="dropdown-item">Artificial Intelligence</a>
-                    <a href="/category/software-development/" class="dropdown-item">Software Development</a>
-                    <a href="/category/cybersecurity/" class="dropdown-item">Cybersecurity</a>
-                    <a href="/category/cloud-computing/" class="dropdown-item">Cloud Computing</a>
-                    <a href="/category/mobile-technology/" class="dropdown-item">Mobile Technology</a>
-                    <a href="/category/hardware/" class="dropdown-item">Hardware</a>
-                    <a href="/category/startups/" class="dropdown-item">Startups</a>
-                    <a href="/category/emerging-tech/" class="dropdown-item">Emerging Technologies</a>
+                <div class="dropdown-menu" id="navCategoriesMenu" data-categories-menu>
+                    <!-- Populated dynamically by main.js from GET /api/blog/categories/ -->
+                    <a href="/articles/" class="dropdown-item">All Categories</a>
                 </div>
             </div>
             <a href="/about/" class="nav-link">About</a>
@@ -48,14 +42,17 @@
                     <path d="M21 21l-4.35-4.35"/>
                 </svg>
             </button>
-             {% if user.is_authenticated %}
-                         <a href="{% url 'accounts:profile-edit' slug=user.profile.slug %}" class="btn btn-primary">Profile</a>
-            {% else %}
-            <div class="nav-auth">
+            <!-- Auth state is unknown at render time (JWT lives in localStorage, not the
+                 Django session), so both states are rendered and main.js toggles
+                 visibility via data-auth-state after checking BitraAPI.isAuthenticated(). -->
+            <div class="nav-auth" data-auth-state="guest">
                 <a href="{% url 'accounts:login' %}" class="btn btn-ghost">Log In</a>
                 <a href='{% url 'accounts:register' %}' class="btn btn-primary">Sign Up</a>
             </div>
-            {% endif %}
+            <div class="nav-auth" data-auth-state="user" style="display:none;">
+                <a href="/dashboard/profile/" class="btn btn-primary" id="navProfileLink">Profile</a>
+                <button class="btn btn-ghost" id="navLogoutBtn" type="button">Log Out</button>
+            </div>
 
             <button class="nav-toggle" id="navToggle" aria-label="Menu">
                 <span></span>
@@ -67,7 +64,7 @@
 
     <div class="search-overlay" id="searchOverlay">
         <div class="search-container">
-            <input type="text" class="search-input" placeholder="Search articles, categories, authors...">
+            <input type="text" class="search-input" id="navSearchInput" placeholder="Search articles, categories, authors...">
             <button class="search-close" id="searchClose">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 6L6 18M6 6l12 12"/>

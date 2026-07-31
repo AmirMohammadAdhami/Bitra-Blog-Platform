@@ -39,8 +39,7 @@
                 <p class="auth-subtitle">Enter the 6-digit code sent to your email address.</p>
             </div>
 
-            <form class="auth-form" method="POST" action="{% url 'accounts:verify_code' %}">
-                {% csrf_token %}
+            <form class="auth-form" id="verifyCodeForm" novalidate>
                 <div class="form-group">
                     <label for="verification_code" class="form-label">Verification Code</label>
                     <div class="input-wrapper">
@@ -52,7 +51,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block btn-lg">Verify Code</button>
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="verifySubmitBtn">Verify Code</button>
             </form>
 
             <p class="auth-footer">
@@ -66,4 +65,8 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/verify_code.js' %}"></script>
 {% endblock %}

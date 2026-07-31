@@ -15,84 +15,30 @@
                     <p class="dashboard-subtitle">View and manage your comments across articles</p>
                 </div>
 
-                <div class="dashboard-tabs">
-                    <button class="tab-btn active">All Comments</button>
-                    <button class="tab-btn">Approved</button>
-                    <button class="tab-btn">Pending</button>
+                <!--
+                    NOTE ON DATA AVAILABILITY: GET /api/blog/comments/ only ever
+                    returns APPROVED comments for ALL users (CommentViewSet.get_queryset
+                    hardcodes status=APPROVED with no per-user "my comments" filter
+                    and no way to fetch your own PENDING/REJECTED comments). So the
+                    Approved/Pending tabs below are necessarily limited: this page
+                    can only ever show your APPROVED comments client-side-filtered
+                    by author name. See the conversion report for details.
+                -->
+                <div class="dashboard-tabs" id="commentsTabs">
+                    <button class="tab-btn active" data-tab="all">All Comments</button>
+                    <button class="tab-btn" data-tab="approved">Approved</button>
+                    <button class="tab-btn" data-tab="pending" title="Not available: the API only returns approved comments">Pending</button>
                 </div>
 
-                <div class="comments-management">
-                    <div class="comment-item">
-                        <div class="comment-item-content">
-                            <p class="comment-text">"Great article! I've been using AI coding assistants for about a year now, and the productivity gains are real."</p>
-                            <div class="comment-meta">
-                                <span class="comment-article">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                        <path d="M14 2v6h6"/>
-                                    </svg>
-                                    The Future of AI in Software Development
-                                </span>
-                                <span class="comment-date">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="3" y="4" width="18" height="18" rx="2"/>
-                                        <path d="M16 2v4M8 2v4M3 10h18"/>
-                                    </svg>
-                                    Jan 15, 2026
-                                </span>
-                            </div>
-                        </div>
-                        <span class="comment-status status-approved">Approved</span>
-                    </div>
-
-                    <div class="comment-item">
-                        <div class="comment-item-content">
-                            <p class="comment-text">"The security implications of AI-generated code are something we need to address as an industry."</p>
-                            <div class="comment-meta">
-                                <span class="comment-article">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                        <path d="M14 2v6h6"/>
-                                    </svg>
-                                    Quantum Computing and Cybersecurity
-                                </span>
-                                <span class="comment-date">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="3" y="4" width="18" height="18" rx="2"/>
-                                        <path d="M16 2v4M8 2v4M3 10h18"/>
-                                    </svg>
-                                    Jan 12, 2026
-                                </span>
-                            </div>
-                        </div>
-                        <span class="comment-status status-pending">Pending</span>
-                    </div>
-
-                    <div class="comment-item">
-                        <div class="comment-item-content">
-                            <p class="comment-text">"Cloud-native development has completely changed how we think about scalability."</p>
-                            <div class="comment-meta">
-                                <span class="comment-article">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                        <path d="M14 2v6h6"/>
-                                    </svg>
-                                    Cloud Computing Best Practices
-                                </span>
-                                <span class="comment-date">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="3" y="4" width="18" height="18" rx="2"/>
-                                        <path d="M16 2v4M8 2v4M3 10h18"/>
-                                    </svg>
-                                    Jan 10, 2026
-                                </span>
-                            </div>
-                        </div>
-                        <span class="comment-status status-approved">Approved</span>
-                    </div>
+                <div class="comments-management" id="myCommentsList" data-loading="true">
+                    <p class="loading-text">Loading your comments&hellip;</p>
                 </div>
             </main>
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/my_comments.js' %}"></script>
 {% endblock %}
