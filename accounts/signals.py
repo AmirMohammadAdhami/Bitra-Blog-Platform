@@ -3,7 +3,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils.text import slugify
 import uuid
-from accounts.models import Profile
+from accounts.models import Profile, AuthorRequest
 
 User = get_user_model()
 
@@ -30,3 +30,10 @@ def create_profile_slug(sender, instance, **kwargs):
             slug = f'{base_slug}-{unique_suffix}'
 
         instance.slug = slug
+
+@receiver(post_save, sender=AuthorRequest)
+def update_user_author_status(sender, instance, created, **kwargs):
+    if instance.status == AuthorRequest.Status.APPROVED:
+        if not instance.user.is_author:
+            instance.user.is_author = True
+            instance.user.save(update_fields=['is_author'])

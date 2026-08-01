@@ -21,6 +21,7 @@ class UserAdmin(BaseUserAdmin):
         'full_name',
         'is_staff',
         'is_active',
+        'is_author',
     )
 
     list_filter = (
