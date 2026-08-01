@@ -1,5 +1,6 @@
 /* ==========================================
    BITRA - Responsive Styles
+   Premium Glassmorphism Green Theme
    ========================================== */
 
 /* Large Screens (1280px and below) */
@@ -38,13 +39,16 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: white;
+        background: var(--glass-bg-strong);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
         flex-direction: column;
         padding: var(--space-xl);
         gap: 0;
         transform: translateX(-100%);
         transition: transform var(--transition-base);
         z-index: 999;
+        border-right: 1px solid var(--glass-border);
     }
 
     .nav-menu.active {
@@ -81,9 +85,12 @@
         opacity: 1;
         visibility: visible;
         box-shadow: none;
-        background: var(--bg);
+        background: var(--glass-bg);
         margin-top: var(--space-sm);
         display: none;
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
     }
 
     .nav-dropdown.active .dropdown-menu {
@@ -330,6 +337,7 @@
     /* Auth Pages */
     .auth-card {
         padding: var(--space-lg);
+        border-radius: var(--radius-xl);
     }
 
     .form-row-2 {
