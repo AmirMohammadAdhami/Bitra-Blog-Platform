@@ -8,12 +8,13 @@ class LoginUserView(LoginView):
     template_name = 'accounts/login.html'
     form_class = LoginForm
     next_page = 'blog:home'
-
+    redirect_authenticated_user = False
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            messages.error(request, 'You are already logged in.')
-            return redirect('blog:home')
-        return super(LoginUserView, self).dispatch(request, *args, **kwargs)
+            if not request.user.is_superuser:
+                messages.error(request, 'You are already logged in.')
+                return redirect('blog:home')
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         messages.success(self.request, f'You are now logged in.')

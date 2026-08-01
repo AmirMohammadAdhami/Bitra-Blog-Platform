@@ -9,14 +9,16 @@ from django.contrib.auth import login, logout
 class RegisterCreateView(CreateView):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            messages.error(request, 'You are already registered.')
-            return redirect('blog:home')
+            if not request.user.is_superuser:
+                messages.error(request, 'You are already registered.')
+                return redirect('blog:home')
         return super(RegisterCreateView, self).dispatch(request, *args, **kwargs)
 
     form_class = RegisterForm
     model = User
     template_name = 'accounts/register.html'
     success_url = '/'
+    redirect_authenticated_user = False
 
     def form_valid(self, form):
         response = super().form_valid(form)
