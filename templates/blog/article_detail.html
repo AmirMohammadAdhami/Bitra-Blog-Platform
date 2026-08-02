@@ -4,6 +4,11 @@
 {% block title %}Article | Bitra{% endblock %}
 
 {% block content %}
+<!-- Reading Progress Bar -->
+<div class="reading-progress" role="progressbar" aria-label="Reading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+    <div class="reading-progress-bar" id="readingProgressBar"></div>
+</div>
+
 <article class="article-detail" id="articleDetailRoot" data-article-id="{{ request.resolver_match.kwargs.pk }}">
     <div class="article-hero">
         <div class="article-hero-image">
@@ -16,47 +21,54 @@
                 <h1 class="article-detail-title" id="articleTitle">Loading article&hellip;</h1>
                 <div class="article-detail-meta">
                     <div class="article-author-info">
-                        <div class="author-avatar">
+                        <div class="author-avatar" id="articleAuthorAvatar">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                                 <circle cx="12" cy="7" r="4"/>
                             </svg>
                         </div>
                         <div class="author-details">
-                            <span class="author-name" id="articleAuthorName">&nbsp;</span>
+                            <a href="/profile/{{ article.author_username|default:'' }}" class="author-name-link" id="articleAuthorNameLink">
+                                <span class="author-name" id="articleAuthorName">&nbsp;</span>
+                            </a>
                         </div>
                     </div>
-                    <div class="article-meta-list">
+                    <div class="article-meta-list" id="articleMetaList">
                         <span class="meta-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <rect x="3" y="4" width="18" height="18" rx="2"/>
                                 <path d="M16 2v4M8 2v4M3 10h18"/>
                             </svg>
                             <span id="articleDate">&nbsp;</span>
                         </span>
                         <span class="meta-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <circle cx="12" cy="12" r="10"/>
                                 <path d="M12 6v6l4 2"/>
                             </svg>
                             <span id="articleReadingTime">&nbsp;</span>
                         </span>
                         <span class="meta-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                                 <circle cx="12" cy="12" r="3"/>
                             </svg>
                             <span id="articleViews">0</span> views
                         </span>
-                        <span class="meta-item">
-                            <button type="button" id="articleLikeBtn" class="like-toggle-btn" aria-pressed="false" style="background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;color:inherit;font:inherit;padding:0;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <span class="meta-item meta-item--like">
+                            <button type="button" id="articleLikeBtn" class="like-toggle-btn" aria-pressed="false" aria-label="Like this article">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                                 </svg>
-                                <span id="articleLikes">0</span> likes
+                                <span id="articleLikes">0</span>
                             </button>
-                            <button type="button" id="articleBookmarkBtn" class="bookmark-toggle-btn" aria-pressed="false" style="background:none;border:none;cursor:pointer;margin-left:12px;color:inherit;font:inherit;padding:0;">
-                                Save
+                        </span>
+                        <span class="meta-item meta-item--bookmark">
+                            <button type="button" id="articleBookmarkBtn" class="bookmark-toggle-btn" aria-pressed="false" aria-label="Bookmark this article">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                                </svg>
+                                <span id="articleBookmarkText">Save</span>
                             </button>
                         </span>
                     </div>
@@ -103,7 +115,7 @@
 
             <form class="comment-form" id="commentForm">
                 <div class="comment-form-header">
-                    <div class="author-avatar">
+                    <div class="author-avatar" id="commentAuthorAvatar">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                             <circle cx="12" cy="7" r="4"/>

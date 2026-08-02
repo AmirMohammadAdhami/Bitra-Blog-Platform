@@ -26,6 +26,12 @@ const BitraRender = (function () {
         return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
     }
 
+    function formatCompact(num) {
+        if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+        return String(num);
+    }
+
     function readingTime(text) {
         if (!text) return '3 min read';
         const words = String(text).trim().split(/\s+/).length;
@@ -199,6 +205,7 @@ const BitraRender = (function () {
     return {
         escapeHtml,
         formatDate,
+        formatCompact,
         readingTime,
         articleImageUrl,
         avatarImageUrl,

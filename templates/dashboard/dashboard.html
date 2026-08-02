@@ -165,13 +165,16 @@
                                 </svg>
                                 <span>Joined</span><span id="profileJoinedDate">&nbsp;</span>
                             </span>
-                            <button class="btn btn-primary" type="submit" id="profileSaveBtn">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                                    <path d="M17 21v-8H7v8M7 3v5h8"/>
-                                </svg>
-                                Save Changes
-                            </button>
+                            <div style="display: flex; gap: var(--space-sm); width: 100%; justify-content: flex-end;">
+                                <button class="btn btn-ghost" type="button" id="profileLogoutBtn">Log Out</button>
+                                <button class="btn btn-primary" type="submit" id="profileSaveBtn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                        <path d="M17 21v-8H7v8M7 3v5h8"/>
+                                    </svg>
+                                    Save Changes
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

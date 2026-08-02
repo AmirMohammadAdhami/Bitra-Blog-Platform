@@ -6,61 +6,67 @@
 {% block content %}
 <section class="author-dashboard">
     <div class="container">
-        <div class="dashboard-header dashboard-header-author">
-            <div>
-                <h1 class="dashboard-title">Author Dashboard</h1>
-                <p class="dashboard-subtitle" id="authorWelcomeText">Here's your writing overview.</p>
-            </div>
-            <button type="button" class="btn btn-primary btn-lg" id="createArticleBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 5v14M5 12h14"/>
-                </svg>
-                Create Article
-            </button>
-        </div>
+        <div class="dashboard-layout">
+            {% include "dashboard/includes/_sidebar.html" %}
 
-        <!--
-            NOTE ON DATA AVAILABILITY: there is no per-day view/like time
-            series API and no "followers" concept anywhere in the models,
-            so:
-              - Stats below are computed client-side from this author's
-                own articles (GET /api/blog/articles/, filtered by
-                author_name === current username).
-              - "Followers" has been replaced with "Awaiting Review"
-                (count of this author's SUBMITTED articles), since that's
-                real, available data.
-              - The Views Analytics chart has been removed rather than
-                faked with placeholder numbers; see the report for a
-                suggested backend addition if per-day analytics are wanted.
-        -->
-        <div class="author-stats-grid" id="authorStatsGrid" data-loading="true">
-            <p class="loading-text">Loading your stats&hellip;</p>
-        </div>
-
-        <div class="author-content-grid">
-            <div class="author-section">
-                <div class="section-header-sm">
-                    <h2 class="section-title-sm">Published Articles</h2>
-                </div>
-                <div class="articles-table">
-                    <div class="table-row table-header">
-                        <span class="table-col table-col-title">Title</span>
-                        <span class="table-col table-col-views">Views</span>
-                        <span class="table-col table-col-likes">Likes</span>
-                        <span class="table-col table-col-date">Date</span>
+            <div class="author-dashboard-content">
+                <div class="dashboard-header dashboard-header-author">
+                    <div>
+                        <h1 class="dashboard-title">Author Dashboard</h1>
+                        <p class="dashboard-subtitle" id="authorWelcomeText">Here's your writing overview.</p>
                     </div>
-                    <div id="publishedArticlesTableBody" data-loading="true">
-                        <p class="loading-text">Loading&hellip;</p>
-                    </div>
+                    <button type="button" class="btn btn-primary btn-lg" id="createArticleBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Create Article
+                    </button>
                 </div>
-            </div>
 
-            <div class="author-section">
-                <div class="section-header-sm">
-                    <h2 class="section-title-sm">Draft Articles</h2>
+                <!--
+                    NOTE ON DATA AVAILABILITY: there is no per-day view/like time
+                    series API and no "followers" concept anywhere in the models,
+                    so:
+                      - Stats below are computed client-side from this author's
+                        own articles (GET /api/blog/articles/, filtered by
+                        author_name === current username).
+                      - "Followers" has been replaced with "Awaiting Review"
+                        (count of this author's SUBMITTED articles), since that's
+                        real, available data.
+                      - The Views Analytics chart has been removed rather than
+                        faked with placeholder numbers; see the report for a
+                        suggested backend addition if per-day analytics are wanted.
+                -->
+                <div class="author-stats-grid" id="authorStatsGrid" data-loading="true">
+                    <p class="loading-text">Loading your stats&hellip;</p>
                 </div>
-                <div class="drafts-list" id="draftArticlesList" data-loading="true">
-                    <p class="loading-text">Loading&hellip;</p>
+
+                <div class="author-content-grid">
+                    <div class="author-section">
+                        <div class="section-header-sm">
+                            <h2 class="section-title-sm">Published Articles</h2>
+                        </div>
+                        <div class="articles-table">
+                            <div class="table-row table-header">
+                                <span class="table-col table-col-title">Title</span>
+                                <span class="table-col table-col-views">Views</span>
+                                <span class="table-col table-col-likes">Likes</span>
+                                <span class="table-col table-col-date">Date</span>
+                            </div>
+                            <div id="publishedArticlesTableBody" data-loading="true">
+                                <p class="loading-text">Loading&hellip;</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="author-section">
+                        <div class="section-header-sm">
+                            <h2 class="section-title-sm">Draft Articles</h2>
+                        </div>
+                        <div class="drafts-list" id="draftArticlesList" data-loading="true">
+                            <p class="loading-text">Loading&hellip;</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

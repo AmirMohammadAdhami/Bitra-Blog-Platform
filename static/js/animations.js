@@ -1,6 +1,6 @@
 /* ==========================================
    BITRA - Animations
-   Premium Glassmorphism Green Theme
+   Premium Technology Publication Feel
    ========================================== */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
     requestAnimationFrame(() => document.body.classList.add('loaded'));
 
     if (prefersReducedMotion.matches) {
-        // Make everything visible immediately
         document.querySelectorAll(
             '.article-card, .category-card, .author-card, ' +
             '.section-header, .section-tag, .section-title, ' +
@@ -49,8 +48,8 @@ document.addEventListener('DOMContentLoaded', function () {
         .reveal-up {
             opacity: 0;
             transform: translateY(24px);
-            transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
-                        transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .reveal-up.revealed {
             opacity: 1;
@@ -76,6 +75,16 @@ document.addEventListener('DOMContentLoaded', function () {
             opacity: 1;
             transform: translateX(0);
         }
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(24px);
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal-right.revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
     `;
     document.head.appendChild(revealStyle);
 
@@ -96,8 +105,14 @@ document.addEventListener('DOMContentLoaded', function () {
             revealObserver.observe(el);
         });
 
+        // Alternating reveal for side-by-side layouts
+        document.querySelectorAll('.article-card-featured').forEach(function (el, i) {
+            el.classList.add(i % 2 === 0 ? 'reveal-left' : 'reveal-right');
+            revealObserver.observe(el);
+        });
+
         // Static containers — subtle left reveal
-        document.querySelectorAll('.cta-card, .profile-card, .author-section').forEach(function (el) {
+        document.querySelectorAll('.cta-card, .profile-card, .author-section, .article-author-section').forEach(function (el) {
             el.classList.add('reveal-up');
             revealObserver.observe(el);
         });
@@ -115,8 +130,8 @@ document.addEventListener('DOMContentLoaded', function () {
         var children = heroContent.children;
         Array.from(children).forEach(function (child, index) {
             child.style.opacity = '0';
-            child.style.transform = 'translateY(18px)';
-            child.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1) ' + (index * 0.12 + 0.15) + 's, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) ' + (index * 0.12 + 0.15) + 's';
+            child.style.transform = 'translateY(20px)';
+            child.style.transition = 'opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1) ' + (index * 0.1 + 0.15) + 's, transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) ' + (index * 0.1 + 0.15) + 's';
 
             requestAnimationFrame(function () {
                 requestAnimationFrame(function () {
@@ -133,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Counter Animation for Stats
     // ==========================================
     function animateCounter(element, target, duration) {
-        duration = duration || 1800;
+        duration = duration || 2000;
         var start = 0;
         var startTime = null;
 
@@ -202,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==========================================
     // Card Hover Tilt Effect (subtle)
     // ==========================================
-    var cards = document.querySelectorAll('.article-card, .category-card');
+    var cards = document.querySelectorAll('.article-card, .category-card, .author-card');
 
     cards.forEach(function (card) {
         card.addEventListener('mousemove', function (e) {
@@ -220,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         card.addEventListener('mouseleave', function () {
             this.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0)';
-            this.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+            this.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
         });
     });
 
@@ -261,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ==========================================
-    // Scroll Progress Indicator
+    // Scroll Progress Indicator (Reading Progress)
     // ==========================================
     function updateScrollProgress() {
         var scrollTop = window.pageYOffset;
@@ -293,27 +308,55 @@ document.addEventListener('DOMContentLoaded', function () {
     document.head.appendChild(gradientStyle);
 
     // ==========================================
-    // Magnetic Button Effect (subtle)
+    // Magnetic Button Effect
     // ==========================================
-    var magneticBtns = document.querySelectorAll('.btn-primary.btn-lg, .btn-glass.btn-lg');
+    var magneticBtns = document.querySelectorAll('.btn-primary, .btn-glass');
 
     magneticBtns.forEach(function (btn) {
         btn.addEventListener('mousemove', function (e) {
             var rect = this.getBoundingClientRect();
             var x = e.clientX - rect.left - rect.width / 2;
             var y = e.clientY - rect.top - rect.height / 2;
-            this.style.transform = 'translate(' + (x * 0.1) + 'px, ' + (y * 0.1) + 'px)';
+            this.style.transform = 'translate(' + (x * 0.15) + 'px, ' + (y * 0.15) + 'px)';
         });
 
         btn.addEventListener('mouseleave', function () {
             this.style.transform = 'translate(0, 0)';
-            this.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+            this.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
         });
 
         btn.addEventListener('mouseenter', function () {
             this.style.transition = 'transform 0.15s ease-out';
         });
     });
+
+    // ==========================================
+    // Ripple Effect on Buttons
+    // ==========================================
+    document.querySelectorAll('.btn').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+            var rect = this.getBoundingClientRect();
+            var x = e.clientX - rect.left;
+            var y = e.clientY - rect.top;
+
+            var ripple = document.createElement('span');
+            ripple.className = 'btn-ripple';
+            ripple.style.cssText = 'position:absolute;border-radius:50%;background:rgba(255,255,255,0.3);transform:scale(0);animation:ripple 0.5s ease-out;pointer-events:none;left:' + x + 'px;top:' + y + 'px;width:100px;height:100px;margin-left:-50px;margin-top:-50px;';
+            this.appendChild(ripple);
+
+            setTimeout(function () { ripple.remove(); }, 500);
+        });
+    });
+
+    // Add ripple keyframes
+    var rippleStyle = document.createElement('style');
+    rippleStyle.textContent = `
+        @keyframes ripple {
+            to { transform: scale(2.5); opacity: 0; }
+        }
+        .btn { position: relative; overflow: hidden; }
+    `;
+    document.head.appendChild(rippleStyle);
 
     // ==========================================
     // Image Placeholder Hover
@@ -333,4 +376,55 @@ document.addEventListener('DOMContentLoaded', function () {
             svg.style.transform = 'scale(1) rotate(0)';
         });
     });
+
+    // ==========================================
+    // Floating Shapes - Subtle Mouse Following
+    // ==========================================
+    var heroShapes2 = document.querySelectorAll('.hero-bg .shape');
+
+    if (heroShapes2.length > 0) {
+        document.addEventListener('mousemove', function (e) {
+            var x = e.clientX / window.innerWidth - 0.5;
+            var y = e.clientY / window.innerHeight - 0.5;
+
+            heroShapes2.forEach(function (shape, index) {
+                var factor = (index + 1) * 0.5;
+                shape.style.transform = 'translate(' + (x * 30 * factor) + 'px, ' + (y * 20 * factor) + 'px)';
+            });
+        });
+    }
+
+    // ==========================================
+    // Smooth Focus Visible Polyfill
+    // ==========================================
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Tab') {
+            document.body.classList.add('keyboard-nav');
+        }
+    });
+
+    document.addEventListener('mousedown', function () {
+        document.body.classList.remove('keyboard-nav');
+    });
+
+    // ==========================================
+    // Reading Progress Bar (Article Detail)
+    // ==========================================
+    function updateReadingProgress() {
+        var article = document.querySelector('.article-content-wrapper');
+        if (!article) return;
+
+        var articleTop = article.getBoundingClientRect().top;
+        var articleHeight = article.offsetHeight;
+        var windowHeight = window.innerHeight;
+
+        // Progress when article is in view
+        if (articleTop < windowHeight && articleTop + articleHeight > 0) {
+            var scrolled = windowHeight - articleTop;
+            var progress = Math.max(0, Math.min(100, (scrolled / (articleHeight + windowHeight)) * 100));
+            document.documentElement.style.setProperty('--reading-progress', progress + '%');
+        }
+    }
+
+    window.addEventListener('scroll', updateReadingProgress, { passive: true });
 });

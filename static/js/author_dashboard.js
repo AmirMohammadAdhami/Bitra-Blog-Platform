@@ -90,7 +90,7 @@
                     </svg>
                 </div>
                 <div class="stat-info">
-                    <span class="stat-number">${BitraRender ? formatCompact(totalViews) : totalViews}</span>
+                    <span class="stat-number">${formatCompact(totalViews)}</span>
                     <span class="stat-label">Total Views</span>
                 </div>
             </div>

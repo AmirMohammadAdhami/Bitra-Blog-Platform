@@ -49,6 +49,7 @@
         loadProfile();
         loadSocialData();
         wireFormSubmit();
+        wireProfileLogout();
     });
 
     function loadProfile() {
@@ -237,5 +238,21 @@
             return BitraAPI.post('/accounts/social-links/', { platform: platform.id, username });
         });
         return Promise.all(ops);
+    }
+
+    function wireProfileLogout() {
+        const logoutBtn = document.getElementById('profileLogoutBtn');
+        if (!logoutBtn) return;
+
+        logoutBtn.addEventListener('click', function () {
+            const refresh = BitraAPI.getRefreshToken();
+            BitraAPI.post('/accounts/logout/', { refresh })
+                .catch(function () { /* even if blacklist fails, clear local session */ })
+                .finally(function () {
+                    BitraAPI.clearSession();
+                    if (typeof BitraNotify !== 'undefined') BitraNotify.success('You have been logged out.');
+                    setTimeout(function () { window.location.href = '/'; }, 600);
+                });
+        });
     }
 })();

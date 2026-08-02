@@ -26,6 +26,11 @@ urlpatterns = [
     path('accounts/', include(accounts_urls)),
     path('api/', include('api.urls')),
 
+    path('about/', TemplateView.as_view(template_name='home/about.html'), name='about'),
+    path('contact/', TemplateView.as_view(template_name='home/contact.html'), name='contact'),
+    path('popular-authors/', TemplateView.as_view(template_name='home/popular_authors.html'), name='popular_authors'),
+    path('profile/<str:username>/', TemplateView.as_view(template_name='accounts/profile_public.html'), name='profile_public'),
+
     path('dashboard/profile/', UserProfileEdit.as_view(), name='dashboard_profile'),
     path('dashboard/likes/', TemplateView.as_view(template_name='dashboard/likes.html'), name='dashboard_likes'),
     path('dashboard/bookmarks/', TemplateView.as_view(template_name='dashboard/bookmarks.html'), name='dashboard_bookmarks'),

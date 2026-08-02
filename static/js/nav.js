@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function () {
     initNavAuthState();
     loadNavCategories();
     initNavSearch();
-    initNavLogout();
 });
 
 function initNavAuthState() {
@@ -59,22 +58,6 @@ function initNavSearch() {
                 window.location.href = `/articles/?search=${encodeURIComponent(q)}`;
             }
         }
-    });
-}
-
-function initNavLogout() {
-    const btn = document.getElementById('navLogoutBtn');
-    if (!btn) return;
-
-    btn.addEventListener('click', function () {
-        const refresh = BitraAPI.getRefreshToken();
-        BitraAPI.post('/accounts/logout/', { refresh })
-            .catch(function () { /* even if blacklist fails, clear local session */ })
-            .finally(function () {
-                BitraAPI.clearSession();
-                if (typeof BitraNotify !== 'undefined') BitraNotify.success('You have been logged out.');
-                setTimeout(function () { window.location.href = '/'; }, 600);
-            });
     });
 }
 

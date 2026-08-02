@@ -404,8 +404,52 @@ document.addEventListener('DOMContentLoaded', function () {
     })();
 
     // ==========================================
-    // Country Select - Custom Animated Dropdown
+    // Footer Categories (Dynamic)
     // ==========================================
+    function loadFooterCategories() {
+        const container = document.querySelector('#footerCategories .footer-categories-list');
+        if (!container || typeof BitraAPI === 'undefined') return;
+
+        BitraAPI.get('/blog/categories/')
+            .then(function (data) {
+                const results = Array.isArray(data) ? data : (data.results || []);
+                if (!results.length) {
+                    container.innerHTML = '<li class="loading-text">No categories available</li>';
+                    return;
+                }
+
+                container.innerHTML = results.map(function (cat) {
+                    return `<li><a href="/articles/?category=${encodeURIComponent(cat.slug)}">${escapeHtml(cat.name)}</a></li>`;
+                }).join('');
+            })
+            .catch(function () {
+                container.innerHTML = '<li class="loading-text">Failed to load categories</li>';
+            });
+    }
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str == null ? '' : String(str);
+        return div.innerHTML;
+    }
+
+    // Initialize footer categories
+    loadFooterCategories();
+
+    // ==========================================
+    // Footer Cleanup - Remove Terms and Write for Us
+    // ==========================================
+    function cleanupFooterLinks() {
+        const quickLinks = document.querySelectorAll('.footer-links ul li a');
+        quickLinks.forEach(function (link) {
+            const text = link.textContent.trim();
+            if (text === 'Terms of Service' || text === 'Write for Us') {
+                link.closest('li').remove();
+            }
+        });
+    }
+
+    cleanupFooterLinks();
     (function () {
         var container = document.querySelector('[data-country-select]');
         if (!container) return;
