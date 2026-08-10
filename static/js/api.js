@@ -206,18 +206,6 @@
         email: email, code: code, new_password: newPassword,
       }, { auth: false });
     },
-    /* ---- password reset (3-step, unauthenticated) ---- */
-    requestPasswordReset: function (email) {
-      return post("/accounts/password-reset/request/", { email: email }, { auth: false });
-    },
-    verifyPasswordReset: function (email, code) {
-      return post("/accounts/password-reset/verify/", { email: email, code: code }, { auth: false });
-    },
-    confirmPasswordReset: function (email, code, newPassword) {
-      return post("/accounts/password-reset/confirm/", {
-        email: email, code: code, new_password: newPassword,
-      }, { auth: false });
-    },
     register: function (payload) {
       // { username, email, full_name, password }
       return post("/accounts/register/", payload, { auth: false });
@@ -262,6 +250,10 @@
     isAuthenticated: function () { return Session.isAuthed; },
     profileMe: function () { return get("/accounts/profiles/me/"); },
     updateProfile: function (payload) { return patch("/accounts/profiles/me/", payload); },
+    publicProfile: function (slug) { return get("/accounts/profiles/public/?slug=" + encodeURIComponent(slug)); },
+    publicProfileByUsername: function (username) { return get("/accounts/profiles/public/?username=" + encodeURIComponent(username)); },
+    authorArticles: function (username) { return get("/blog/articles/?author_name=" + encodeURIComponent(username)); },
+    popularAuthors: function (limit) { return get("/accounts/profiles/popular_authors/?limit=" + (limit || 4)); },
 
     /* ---- social links ---- */
     socialPlatforms: function () { return get("/accounts/social-platforms/").then(asList); },

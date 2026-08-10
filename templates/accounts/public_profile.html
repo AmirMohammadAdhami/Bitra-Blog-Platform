@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile — Bitra{% endblock %}
+
+{% block content %}
+<div class="pubprof" data-pubprof>
+  <!-- skeleton while loading -->
+  <div class="pubprof__loading skeleton">
+    <div class="pubprof__avatar sk-line" style="width:120px;height:120px;border-radius:50%"></div>
+    <div class="sk-line w-40" style="height:1.6rem;margin-top:1rem"></div>
+    <div class="sk-line w-60" style="height:.9rem;margin-top:.5rem"></div>
+    <div class="sk-line w-80" style="height:.9rem;margin-top:.3rem"></div>
+  </div>
+
+  <!-- profile card (hidden until loaded) -->
+  <div class="pubprof__card" hidden>
+    <div class="pubprof__top">
+      <div class="pubprof__avatar-wrap">
+        <img class="pubprof__avatar" data-pubprof-img src="" alt="" />
+      </div>
+      <div class="pubprof__info">
+        <h1 class="pubprof__name" data-pubprof-name></h1>
+        <p class="pubprof__location wire" data-pubprof-location></p>
+        <p class="pubprof__bio" data-pubprof-bio></p>
+        <div class="pubprof__meta wire" data-pubprof-meta></div>
+      </div>
+    </div>
+
+    <!-- social links -->
+    <div class="pubprof__socials" data-pubprof-socials hidden></div>
+
+    <!-- author stats (only for authors) -->
+    <div class="pubprof__stats" data-pubprof-stats hidden>
+      <div class="pubprof__stat">
+        <span class="pubprof__stat-num" data-pubprof-articles>—</span>
+        <span class="pubprof__stat-label">Articles</span>
+      </div>
+      <div class="pubprof__stat">
+        <span class="pubprof__stat-num" data-pubprof-likes>—</span>
+        <span class="pubprof__stat-label">Likes</span>
+      </div>
+      <div class="pubprof__stat">
+        <span class="pubprof__stat-num" data-pubprof-views>—</span>
+        <span class="pubprof__stat-label">Views</span>
+      </div>
+    </div>
+
+    <!-- author articles (only for authors) -->
+    <div class="pubprof__articles" data-pubprof-articles-section hidden>
+      <div class="pubprof__articles-head">
+        <h2>Published Stories</h2>
+        <div class="chips" data-pubprof-filters>
+          <button class="chip" data-sort="date" aria-pressed="true">Newest</button>
+          <button class="chip" data-sort="oldest" aria-pressed="false">Oldest</button>
+          <button class="chip" data-sort="likes" aria-pressed="false">Popular</button>
+          <button class="chip" data-sort="views" aria-pressed="false">Most Read</button>
+        </div>
+      </div>
+      <div data-pubprof-article-list>
+        <div class="index">
+          <div class="index__row skeleton"><span class="index__num">00</span><div><div class="sk-line w-80"></div><div class="sk-line w-60"></div></div></div>
+          <div class="index__row skeleton"><span class="index__num">00</span><div><div class="sk-line w-60"></div><div class="sk-line w-40"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- error state (hidden) -->
+  <div class="pubprof__error note-block" hidden>
+    <h2>Profile not found.</h2>
+    <p>This author page doesn't exist, or the link may be broken.</p>
+    <a class="btn btn--sm" href="/">Return to the Front Page</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/public_profile.js' %}"></script>
+{% endblock %}

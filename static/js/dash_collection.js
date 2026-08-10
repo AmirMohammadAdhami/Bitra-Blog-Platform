@@ -61,7 +61,8 @@
         ]),
         article.summary ? el("p", { class: "index__sum", text: UI.excerpt(article.summary, 180) }) : null,
         el("div", { class: "index__meta" }, [
-          el("span", { class: "wire", text: (article.author_name || "Staff") + " · " + UI.dateline(article.created_at) }),
+          UI.authorLink(article.author_name, article.author_slug, null, article.author_name),
+          el("span", { class: "wire", text: " · " + UI.dateline(article.created_at) }),
         ]),
       ]),
       aside,

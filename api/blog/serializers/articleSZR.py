@@ -8,10 +8,15 @@ class ArticleListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     author_name = serializers.ReadOnlyField(source='author.username')
+    author_slug = serializers.SerializerMethodField()
+
+    def get_author_slug(self, obj):
+        profile = getattr(obj.author, 'profile', None)
+        return profile.slug if profile else None
 
     class Meta:
         model = Article
-        fields = ['id', 'title', 'summary', 'cover_image', 'category', 'tags', 'author_name','status', 'likes', 'views', 'created_at']
+        fields = ['id', 'title', 'summary', 'cover_image', 'category', 'tags', 'author_name', 'author_slug', 'status', 'likes', 'views', 'created_at']
 
 
 
@@ -19,11 +24,16 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     author_name = serializers.ReadOnlyField(source='author.username')
+    author_slug = serializers.SerializerMethodField()
     approved_comments = serializers.SerializerMethodField(read_only=True)
+
+    def get_author_slug(self, obj):
+        profile = getattr(obj.author, 'profile', None)
+        return profile.slug if profile else None
 
     class Meta:
         model = Article
-        fields = ['id', 'title', 'summary','content', 'cover_image', 'category', 'tags', 'author_name','status', 'likes', 'views','approved_comments', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'summary','content', 'cover_image', 'category', 'tags', 'author_name', 'author_slug', 'status', 'likes', 'views','approved_comments', 'created_at', 'updated_at']
 
     def get_approved_comments(self, obj):
         comments = obj.comment_set.filter(status=Comment.Status.APPROVED, parent__isnull=True)

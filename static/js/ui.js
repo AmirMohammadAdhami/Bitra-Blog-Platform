@@ -188,10 +188,25 @@
     initReveals();
   }
 
+  // Create a clickable author link (→ /profile/<slug-or-username>/) or plain text fallback.
+  function authorLink(name, slug, cls, username) {
+    name = name || "Staff";
+    var target = slug || username;
+    if (target) {
+      return el("a", {
+        href: "/profile/" + encodeURIComponent(target) + "/",
+        class: cls || "wire author-link",
+        text: name,
+      });
+    }
+    return el("span", { class: cls || "wire", text: name });
+  }
+
   global.UI = {
     el: el, qs: qs, qsa: qsa, clear: clear, esc: esc,
     dateline: dateline, longDate: longDate, timeAgo: timeAgo, num: num,
     readTime: readTime, excerpt: excerpt, toast: toast,
+    authorLink: authorLink,
     Routes: Routes, renderAuth: renderAuth, requireAuthCTA: requireAuthCTA,
     initReveals: initReveals, boot: boot,
   };

@@ -15,7 +15,7 @@
 
   function metaRow(a, extra) {
     var bits = [
-      el("span", { class: "wire", text: (a.author_name || "Staff") }),
+      UI.authorLink(a.author_name, a.author_slug, null, a.author_name),
       el("span", { class: "dot", text: "·" }),
       el("span", { class: "wire", text: UI.dateline(a.created_at) }),
     ];
@@ -178,6 +178,55 @@
     }
 
     UI.initReveals();
+
+    // Load popular authors after articles render
+    loadPopularAuthors();
+  }
+
+  /* ------------------------------------------------------- popular authors */
+  function loadPopularAuthors() {
+    var section = document.querySelector("[data-popular-authors]");
+    var grid = document.querySelector("[data-popauth-grid]");
+    if (!grid || !section) return;
+
+    API.popularAuthors(4).then(function (authors) {
+      UI.clear(grid);
+      if (!authors || !authors.length) {
+        // No popular authors — hide the entire section silently
+        section.hidden = true;
+        return;
+      }
+      authors.forEach(function (p) {
+        var user = p.user || {};
+        var name = user.full_name || user.username || "Author";
+        var slug = p.slug || "";
+        var href = slug ? "/profile/" + slug + "/" : "#";
+        var likes = p.total_likes || 0;
+
+        var avatarInner;
+        if (p.profile_image) {
+          avatarInner = el("img", { src: p.profile_image, alt: name + " avatar" });
+        } else {
+          avatarInner = el("span", { text: (name.charAt(0) || "·").toUpperCase() });
+        }
+
+        grid.appendChild(
+          el("a", { class: "popauth-card reveal", href: href }, [
+            el("div", { class: "popauth-card__avatar" }, [ avatarInner ]),
+            el("div", { class: "popauth-card__name", text: name }),
+            user.username ? el("div", { class: "popauth-card__user wire", text: "@" + user.username }) : null,
+            el("div", { class: "popauth-card__likes" }, [
+              el("span", { class: "popauth-card__likes-num", text: UI.num(likes) }),
+              el("span", { class: "popauth-card__likes-label", text: " likes" }),
+            ]),
+          ])
+        );
+      });
+      UI.initReveals();
+    }).catch(function () {
+      // API error — hide the section gracefully (non-critical)
+      section.hidden = true;
+    });
   }
 
   function fail(err) {

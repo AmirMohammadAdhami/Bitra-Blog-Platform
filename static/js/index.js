@@ -49,7 +49,8 @@
         el("h2", { class: "index__hl" }, [ el("a", { href: UI.Routes.article(a.id), text: a.title }) ]),
         a.summary ? el("p", { class: "index__sum", text: UI.excerpt(a.summary, 180) }) : null,
         el("div", { class: "index__meta" }, [
-          el("span", { class: "wire", text: (a.author_name || "Staff") + " · " + UI.dateline(a.created_at) + " · " + UI.readTime(a) }),
+          UI.authorLink(a.author_name, a.author_slug, null, a.author_name),
+          el("span", { class: "wire", text: " · " + UI.dateline(a.created_at) + " · " + UI.readTime(a) }),
         ]),
       ]),
       el("div", { class: "index__aside" }, [

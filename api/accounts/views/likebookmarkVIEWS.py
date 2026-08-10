@@ -5,7 +5,7 @@ from ..serializers.likebookmarkSZR import LikeSerializer, BookmarkSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import F
-from blog.models import Article
+
 
 class LikeViewSet(viewsets.ModelViewSet):
     serializer_class = LikeSerializer
@@ -22,6 +22,7 @@ class LikeViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'we need an article id'},
                             status=status.HTTP_400_BAD_REQUEST)
 
+        from blog.models import Article
         try:
             article = Article.objects.get(pk=article_id)
         except Article.DoesNotExist:

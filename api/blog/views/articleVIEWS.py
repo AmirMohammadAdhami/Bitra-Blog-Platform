@@ -22,7 +22,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
     WRITE_OWN_ACTIONS = {'update', 'partial_update', 'destroy', 'submit', 'withdraw'}
 
     def get_queryset(self):
-        base = Article.objects.select_related('category', 'author').prefetch_related('tags')
+        base = Article.objects.select_related('category', 'author', 'author__profile').prefetch_related('tags')
         user = self.request.user
 
         # The author's own desk — every status they own.
@@ -45,7 +45,11 @@ class ArticleViewSet(viewsets.ModelViewSet):
         # Public surface: only published (REVIEWED) stories. This closes the
         # prior leak where drafts/submissions were returned by the API and
         # only hidden client-side.
-        return base.filter(status=Article.Status.REVIEWED)
+        qs = base.filter(status=Article.Status.REVIEWED)
+        author_name = self.request.query_params.get('author_name')
+        if author_name:
+            qs = qs.filter(author__username=author_name)
+        return qs
 
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update'):

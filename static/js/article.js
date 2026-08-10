@@ -45,8 +45,10 @@
 
   /* ------------------------------------------------------------- byline */
   function byline(a) {
+    var authorEl = UI.authorLink(a.author_name, a.author_slug, null, a.author_name);
+    // Prepend "By " prefix
     var bits = [
-      el("span", { class: "wire", text: "By " + (a.author_name || "Staff") }),
+      el("span", { class: "wire" }, [ el("span", { text: "By " }), authorEl ]),
       el("span", { class: "dot", text: "·" }),
       el("span", { class: "wire", text: UI.dateline(a.created_at) }),
       el("span", { class: "dot", text: "·" }),

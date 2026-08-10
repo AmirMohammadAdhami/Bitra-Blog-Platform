@@ -31,7 +31,8 @@
     var user = API.Session.user || {};
     UI.clear(host);
 
-    host.appendChild(UI.el("div", { class: "dash__avatar", text: initials(user) }));
+    var avatar = UI.el("div", { class: "dash__avatar", text: initials(user) });
+    host.appendChild(avatar);
 
     var right = UI.el("div", {}, [
       UI.el("div", { class: "dash__name", text: user.full_name || user.username || "Reader" }),
@@ -43,6 +44,15 @@
       ]));
     }
     host.appendChild(right);
+
+    // Load profile image and replace initials
+    API.profileMe().then(function (p) {
+      if (p && p.profile_image) {
+        UI.clear(avatar);
+        avatar.textContent = "";
+        avatar.appendChild(UI.el("img", { src: p.profile_image, alt: (user.username || "Profile") + " avatar" }));
+      }
+    }).catch(function () { /* no profile image — keep initials */ });
   }
 
   // ---- active nav ----------------------------------------------------------
@@ -60,6 +70,17 @@
 
   fillIdentity();
   markNav();
+
+  // Wire up public profile link in sidebar
+  var pubLink = UI.qs("[data-dash-publink]");
+  if (pubLink) {
+    API.profileMe().then(function (p) {
+      if (p && p.slug) {
+        pubLink.href = "/profile/" + p.slug + "/";
+        pubLink.hidden = false;
+      }
+    }).catch(function () { /* no profile yet */ });
+  }
 
   // Expose a tiny shared helper for page controllers.
   window.Dash = {

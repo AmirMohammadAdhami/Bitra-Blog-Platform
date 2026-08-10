@@ -26,13 +26,3 @@ class IsAuthorOwnerOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         return obj.author_id == request.user.id
-
-
-
-class IsCommentAuthorOrReadOnly(permissions.BasePermission):
-    """Only the comment's own author may edit or delete it."""
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in ('GET', 'HEAD', 'OPTIONS'):
-            return True
-        return obj.author_id == request.user.id

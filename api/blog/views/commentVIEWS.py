@@ -1,12 +1,19 @@
 from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from ..permissions import IsCommentAuthorOrReadOnly
+
 from api.blog.serializers.commentSZR import CommentSerializer
 from blog.models import Comment, CommentLike
 
 
+class IsCommentAuthorOrReadOnly(BasePermission):
+    """Only the comment's own author may edit or delete it."""
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in ('GET', 'HEAD', 'OPTIONS'):
+            return True
+        return obj.author_id == request.user.id
 
 
 class CommentViewSet(viewsets.ModelViewSet):
