@@ -15,6 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path, include
 from django.views.generic import TemplateView
 import accounts.urls as accounts_urls
@@ -32,4 +34,14 @@ urlpatterns = [
     path('dashboard/comments/', TemplateView.as_view(template_name='dashboard/my-comments.html'), name='dashboard_comments'),
     path('dashboard/author-request/', TemplateView.as_view(template_name='dashboard/author-request.html'), name='dashboard_author_request'),
     path('dashboard/author/', TemplateView.as_view(template_name='dashboard/author_dashboard.html'), name='dashboard_author'),
+
+    # Writers' desk editor — compose (no id) and edit (with id). The template
+    # reads the id from the URL; auth + is_author are enforced client-side by
+    # dash_editor.js and server-side by the Article API.
+    path('dashboard/write/', TemplateView.as_view(template_name='dashboard/article-editor.html'), name='dashboard_write'),
+    path('dashboard/write/<int:pk>/', TemplateView.as_view(template_name='dashboard/article-editor.html'), name='dashboard_edit'),
 ]
+
+# Serve uploaded media (article covers, avatars) during development.
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

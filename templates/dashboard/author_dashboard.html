@@ -1,73 +1,41 @@
-{% extends "base.html" %}
+{% extends "dashboard/_shell.html" %}
 {% load static %}
 
-{% block title %}Author Dashboard | Bitra{% endblock %}
+{% block title %}Writers’ desk — Bitra{% endblock %}
 
-{% block content %}
-<section class="author-dashboard">
-    <div class="container">
-        <div class="dashboard-header dashboard-header-author">
-            <div>
-                <h1 class="dashboard-title">Author Dashboard</h1>
-                <p class="dashboard-subtitle" id="authorWelcomeText">Here's your writing overview.</p>
-            </div>
-            <button type="button" class="btn btn-primary btn-lg" id="createArticleBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 5v14M5 12h14"/>
-                </svg>
-                Create Article
-            </button>
-        </div>
-
-        <!--
-            NOTE ON DATA AVAILABILITY: there is no per-day view/like time
-            series API and no "followers" concept anywhere in the models,
-            so:
-              - Stats below are computed client-side from this author's
-                own articles (GET /api/blog/articles/, filtered by
-                author_name === current username).
-              - "Followers" has been replaced with "Awaiting Review"
-                (count of this author's SUBMITTED articles), since that's
-                real, available data.
-              - The Views Analytics chart has been removed rather than
-                faked with placeholder numbers; see the report for a
-                suggested backend addition if per-day analytics are wanted.
-        -->
-        <div class="author-stats-grid" id="authorStatsGrid" data-loading="true">
-            <p class="loading-text">Loading your stats&hellip;</p>
-        </div>
-
-        <div class="author-content-grid">
-            <div class="author-section">
-                <div class="section-header-sm">
-                    <h2 class="section-title-sm">Published Articles</h2>
-                </div>
-                <div class="articles-table">
-                    <div class="table-row table-header">
-                        <span class="table-col table-col-title">Title</span>
-                        <span class="table-col table-col-views">Views</span>
-                        <span class="table-col table-col-likes">Likes</span>
-                        <span class="table-col table-col-date">Date</span>
-                    </div>
-                    <div id="publishedArticlesTableBody" data-loading="true">
-                        <p class="loading-text">Loading&hellip;</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="author-section">
-                <div class="section-header-sm">
-                    <h2 class="section-title-sm">Draft Articles</h2>
-                </div>
-                <div class="drafts-list" id="draftArticlesList" data-loading="true">
-                    <p class="loading-text">Loading&hellip;</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+{% block dash %}
+<div class="dash__head">
+  <h1>Writers’ desk</h1>
+  <span class="wire" data-count></span>
+  <a class="btn btn--sm btn--ink dash__headcta" href="/dashboard/write/" data-new hidden>Start a story</a>
+</div>
+<div class="desk-stats" data-desk-stats>
+  <div class="desk-stat">
+    <span class="desk-stat__num" data-stat-articles>—</span>
+    <span class="desk-stat__label">Articles</span>
+  </div>
+  <div class="desk-stat">
+    <span class="desk-stat__num" data-stat-published>—</span>
+    <span class="desk-stat__label">Published</span>
+  </div>
+  <div class="desk-stat">
+    <span class="desk-stat__num" data-stat-views>—</span>
+    <span class="desk-stat__label">Views</span>
+  </div>
+  <div class="desk-stat">
+    <span class="desk-stat__num" data-stat-likes>—</span>
+    <span class="desk-stat__label">Likes</span>
+  </div>
+  <div class="desk-stat">
+    <span class="desk-stat__num" data-stat-bookmarks>—</span>
+    <span class="desk-stat__label">Bookmarks</span>
+  </div>
+</div>
+<div data-desk>
+  <div class="note-block"><p>Opening your desk…</p></div>
+</div>
 {% endblock %}
 
-{% block extra_js %}
-<script src="{% static 'js/author_dashboard.js' %}"></script>
+{% block dash_scripts %}
+<script src="{% static 'js/dash_desk.js' %}"></script>
 {% endblock %}

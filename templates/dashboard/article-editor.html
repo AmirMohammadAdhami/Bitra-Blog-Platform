@@ -1,0 +1,18 @@
+{% extends "dashboard/_shell.html" %}
+{% load static %}
+
+{% block title %}Compose — Bitra{% endblock %}
+
+{% block dash %}
+<div class="dash__head">
+  <h1 data-editor-title>Compose</h1>
+  <a class="btn btn--sm dash__headcta" href="/dashboard/author/">Back to desk</a>
+</div>
+<div data-editor>
+  <div class="note-block"><p>Setting the type…</p></div>
+</div>
+{% endblock %}
+
+{% block dash_scripts %}
+<script src="{% static 'js/dash_editor.js' %}"></script>
+{% endblock %}

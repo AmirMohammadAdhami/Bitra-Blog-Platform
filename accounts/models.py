@@ -91,6 +91,14 @@ class ProfileSocialLink(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['profile', 'platform'],
+                name='unique_profile_platform'
+            )
+        ]
+
     @property
     def url(self):
         return f"{self.platform.base_url}{self.username}"

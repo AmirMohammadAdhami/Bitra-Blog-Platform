@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{# Shared dashboard frame: subscriber card + account nav in the left rail,
+   page content in . Auth is enforced client-side by
+   dashboard.js (JWT lives in localStorage, not the Django session). #}
+
+{% block content %}
+<div class="dash">
+  <aside class="dash__side">
+    <div class="dash__id" data-dash-id>
+      <div class="dash__avatar">·</div>
+      <div><div class="dash__name">Reader</div></div>
+    </div>
+    <nav class="dash__nav" aria-label="Your account">
+      <a class="dash__link" href="/dashboard/profile/">Profile</a>
+      <a class="dash__link" href="/dashboard/bookmarks/">Saved</a>
+      <a class="dash__link" href="/dashboard/likes/">Liked</a>
+      <a class="dash__link" href="/dashboard/comments/">Comments</a>
+      <a class="dash__link" href="/dashboard/author/" data-author-only hidden>Writers’ desk</a>
+      <a class="dash__link" href="/dashboard/author-request/" data-reader-only>Contribute</a>
+    </nav>
+  </aside>
+
+  <section class="dash__main">
+    {% block dash %}{% endblock %}
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/custom-select.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% block dash_scripts %}{% endblock %}
+{% endblock %}

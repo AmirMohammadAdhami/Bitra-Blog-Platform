@@ -1,29 +1,18 @@
-{% extends "base.html" %}
+{% extends "dashboard/_shell.html" %}
 {% load static %}
 
-{% block title %}My Liked Articles | Bitra{% endblock %}
+{% block title %}Liked stories — Bitra{% endblock %}
 
-{% block content %}
-<section class="dashboard-page">
-    <div class="container">
-        <div class="dashboard-layout">
-            {% include "dashboard/includes/_sidebar.html" %}
-
-            <main class="dashboard-content">
-                <div class="dashboard-header">
-                    <h1 class="dashboard-title">My Liked Articles</h1>
-                    <p class="dashboard-subtitle">Articles you've enjoyed and saved to your liked collection</p>
-                </div>
-
-                <div id="likedArticlesList" style="display: flex; flex-direction: column; gap: var(--space-lg);" data-loading="true">
-                    <p class="loading-text">Loading your liked articles&hellip;</p>
-                </div>
-            </main>
-        </div>
-    </div>
-</section>
+{% block dash %}
+<div class="dash__head">
+  <h1>Liked</h1>
+  <span class="wire" data-count></span>
+</div>
+<div data-collection="likes">
+  <div class="note-block"><p>Gathering the stories you’ve liked…</p></div>
+</div>
 {% endblock %}
 
-{% block extra_js %}
-<script src="{% static 'js/likes.js' %}"></script>
+{% block dash_scripts %}
+<script src="{% static 'js/dash_collection.js' %}"></script>
 {% endblock %}

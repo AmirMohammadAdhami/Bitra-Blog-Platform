@@ -1,8 +1,7 @@
-from blog.models import Article
+from blog.models import Article, Comment, Tag
 from rest_framework import serializers
 from .categorySZR import CategorySerializer
 from .tagSZR import TagSerializer
-from blog.models import Comment
 from .commentSZR import CommentSerializer
 
 class ArticleListSerializer(serializers.ModelSerializer):
@@ -12,7 +11,7 @@ class ArticleListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'title', 'summary', 'category', 'tags', 'author_name','status', 'likes', 'views', 'created_at']
+        fields = ['id', 'title', 'summary', 'cover_image', 'category', 'tags', 'author_name','status', 'likes', 'views', 'created_at']
 
 
 
@@ -24,8 +23,26 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'title', 'summary','content', 'category', 'tags', 'author_name','status', 'likes', 'views','approved_comments', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'summary','content', 'cover_image', 'category', 'tags', 'author_name','status', 'likes', 'views','approved_comments', 'created_at', 'updated_at']
 
     def get_approved_comments(self, obj):
         comments = obj.comment_set.filter(status=Comment.Status.APPROVED, parent__isnull=True)
         return CommentSerializer(comments, many=True).data
+
+
+class ArticleWriteSerializer(serializers.ModelSerializer):
+    """For create/update — author can write title, body, category, tags, and
+    cover. Status is managed separately via submit/withdraw actions and the
+    admin; the author can't publish directly."""
+
+    tags = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Tag.objects.all(), required=False
+    )
+
+    class Meta:
+        model = Article
+        fields = ['id', 'title', 'summary', 'content', 'category', 'tags',
+                  'cover_image', 'status', 'author', 'likes', 'views',
+                  'created_at', 'updated_at']
+        read_only_fields = ['id', 'status', 'author', 'likes', 'views',
+                            'created_at', 'updated_at']

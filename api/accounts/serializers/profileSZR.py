@@ -7,7 +7,9 @@ from .socialplatformSZR import SocialPlatformLinkSerializer
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserMinimalSerializer(read_only=True)
-    social_link = SocialPlatformLinkSerializer(many=True, read_only=True)
+    # Model related_name is `social_links`; expose it under the `social_link`
+    # key the API already advertises (without `source` this raised AttributeError).
+    social_link = SocialPlatformLinkSerializer(source='social_links', many=True, read_only=True)
     country_name = serializers.CharField(source='country.name', read_only=True)
 
     class Meta:

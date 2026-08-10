@@ -1,44 +1,18 @@
-{% extends "base.html" %}
+{% extends "dashboard/_shell.html" %}
 {% load static %}
 
-{% block title %}My Comments | Bitra{% endblock %}
+{% block title %}Your comments — Bitra{% endblock %}
 
-{% block content %}
-<section class="dashboard-page">
-    <div class="container">
-        <div class="dashboard-layout">
-            {% include "dashboard/includes/_sidebar.html" %}
-
-            <main class="dashboard-content">
-                <div class="dashboard-header">
-                    <h1 class="dashboard-title">My Comments</h1>
-                    <p class="dashboard-subtitle">View and manage your comments across articles</p>
-                </div>
-
-                <!--
-                    NOTE ON DATA AVAILABILITY: GET /api/blog/comments/ only ever
-                    returns APPROVED comments for ALL users (CommentViewSet.get_queryset
-                    hardcodes status=APPROVED with no per-user "my comments" filter
-                    and no way to fetch your own PENDING/REJECTED comments). So the
-                    Approved/Pending tabs below are necessarily limited: this page
-                    can only ever show your APPROVED comments client-side-filtered
-                    by author name. See the conversion report for details.
-                -->
-                <div class="dashboard-tabs" id="commentsTabs">
-                    <button class="tab-btn active" data-tab="all">All Comments</button>
-                    <button class="tab-btn" data-tab="approved">Approved</button>
-                    <button class="tab-btn" data-tab="pending" title="Not available: the API only returns approved comments">Pending</button>
-                </div>
-
-                <div class="comments-management" id="myCommentsList" data-loading="true">
-                    <p class="loading-text">Loading your comments&hellip;</p>
-                </div>
-            </main>
-        </div>
-    </div>
-</section>
+{% block dash %}
+<div class="dash__head">
+  <h1>Your comments</h1>
+  <span class="wire" data-count></span>
+</div>
+<div data-comments>
+  <div class="note-block"><p>Gathering your letters…</p></div>
+</div>
 {% endblock %}
 
-{% block extra_js %}
-<script src="{% static 'js/my_comments.js' %}"></script>
+{% block dash_scripts %}
+<script src="{% static 'js/dash_comments.js' %}"></script>
 {% endblock %}

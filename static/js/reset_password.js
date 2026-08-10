@@ -1,64 +1,60 @@
-/**
- * static/js/reset_password.js
- * API: POST /api/accounts/password-reset/confirm/  { email, code, new_password }
- * Reads email + code from sessionStorage (set by the previous two steps).
- */
+/* ============================================================================
+   Reset password — Step 3: set a new password.
+   POST /api/accounts/password-reset/confirm/
+   Reads email + code from sessionStorage (set by previous steps).
+   On success clears session storage and redirects to sign-in.
+   ========================================================================= */
+(function () {
+  "use strict";
+  var API = window.BitraAPI, UI = window.UI;
 
-document.addEventListener('DOMContentLoaded', function () {
-    const email = sessionStorage.getItem('bitra_reset_email');
-    const code = sessionStorage.getItem('bitra_reset_code');
+  var form = document.querySelector("[data-reset]");
+  if (!form) return;
 
-    if (!email || !code) {
-        BitraNotify.error('Please start the password reset process again.');
-        setTimeout(function () { window.location.href = '/accounts/forgot-password/'; }, 1200);
-        return;
+  var email = sessionStorage.getItem("bitra.reset_email");
+  var code  = sessionStorage.getItem("bitra.reset_code");
+
+  if (!email || !code) {
+    location.href = "/accounts/forgot-password/";
+    return;
+  }
+
+  var note = form.querySelector("[data-note]");
+  var btn  = form.querySelector("[data-submit]");
+
+  function showNote(kind, msg) {
+    note.className = "form-note " + (kind === "ok" ? "is-ok" : "is-error");
+    note.textContent = msg;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    note.className = "form-note";
+
+    var pw  = form.new_password.value;
+    var pw2 = form.confirm_password.value;
+
+    if (!pw || pw.length < 8) {
+      showNote("err", "Use at least 8 characters for your password.");
+      return;
+    }
+    if (pw !== pw2) {
+      showNote("err", "The two passwords don't match.");
+      return;
     }
 
-    const form = document.getElementById('resetPasswordForm');
-    const submitBtn = document.getElementById('resetSubmitBtn');
+    btn.disabled = true; btn.textContent = "Resetting…";
 
-    document.querySelectorAll('.password-toggle').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            const input = btn.parentElement.querySelector('input');
-            if (input) input.type = input.type === 'password' ? 'text' : 'password';
-        });
+    API.confirmPasswordReset(email, code, pw).then(function () {
+      // Clean up the reset flow state.
+      sessionStorage.removeItem("bitra.reset_email");
+      sessionStorage.removeItem("bitra.reset_code");
+      showNote("ok", "Password reset. Redirecting to sign-in…");
+      UI.toast("Password reset successfully.");
+      setTimeout(function () { location.href = "/accounts/login/"; }, 1200);
+    }).catch(function (err) {
+      showNote("err", (err && err.message) || "Could not reset your password. The code may have expired.");
+      btn.disabled = false; btn.textContent = "Reset password";
     });
-
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const password1 = document.getElementById('new_password').value;
-        const password2 = document.getElementById('confirm_password').value;
-
-        if (password1.length < 8) {
-            BitraNotify.error('Password must be at least 8 characters.');
-            return;
-        }
-        if (password1 !== password2) {
-            BitraNotify.error('Passwords do not match.');
-            return;
-        }
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Resetting...';
-
-        BitraAPI.post('/accounts/password-reset/confirm/', {
-            email: email,
-            code: code,
-            new_password: password1,
-        }, { auth: false })
-            .then(function (data) {
-                sessionStorage.removeItem('bitra_reset_email');
-                sessionStorage.removeItem('bitra_reset_code');
-                BitraNotify.success(data.detail || 'Your password has been reset. Please log in.');
-                setTimeout(function () { window.location.href = '/accounts/login/'; }, 900);
-            })
-            .catch(function (err) {
-                BitraNotify.error(BitraAPI.extractErrorMessage(err));
-            })
-            .finally(function () {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Reset Password';
-            });
-    });
-});
+  });
+})();

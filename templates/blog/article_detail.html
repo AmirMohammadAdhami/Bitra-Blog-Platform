@@ -1,130 +1,25 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Article | Bitra{% endblock %}
+{% block title %}Story — Bitra{% endblock %}
 
 {% block content %}
-<article class="article-detail" id="articleDetailRoot" data-article-id="{{ request.resolver_match.kwargs.pk }}">
-    <div class="article-hero">
-        <div class="article-hero-image">
-            <img id="articleHeroImage" src="" alt="" style="width:100%;height:100%;object-fit:cover;">
-            <div class="article-hero-overlay"></div>
-        </div>
-        <div class="container">
-            <div class="article-hero-content">
-                <span class="article-category-badge article-category-badge-lg" id="articleCategoryBadge">&nbsp;</span>
-                <h1 class="article-detail-title" id="articleTitle">Loading article&hellip;</h1>
-                <div class="article-detail-meta">
-                    <div class="article-author-info">
-                        <div class="author-avatar">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                <circle cx="12" cy="7" r="4"/>
-                            </svg>
-                        </div>
-                        <div class="author-details">
-                            <span class="author-name" id="articleAuthorName">&nbsp;</span>
-                        </div>
-                    </div>
-                    <div class="article-meta-list">
-                        <span class="meta-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2"/>
-                                <path d="M16 2v4M8 2v4M3 10h18"/>
-                            </svg>
-                            <span id="articleDate">&nbsp;</span>
-                        </span>
-                        <span class="meta-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <path d="M12 6v6l4 2"/>
-                            </svg>
-                            <span id="articleReadingTime">&nbsp;</span>
-                        </span>
-                        <span class="meta-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                            <span id="articleViews">0</span> views
-                        </span>
-                        <span class="meta-item">
-                            <button type="button" id="articleLikeBtn" class="like-toggle-btn" aria-pressed="false" style="background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;color:inherit;font:inherit;padding:0;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                                </svg>
-                                <span id="articleLikes">0</span> likes
-                            </button>
-                            <button type="button" id="articleBookmarkBtn" class="bookmark-toggle-btn" aria-pressed="false" style="background:none;border:none;cursor:pointer;margin-left:12px;color:inherit;font:inherit;padding:0;">
-                                Save
-                            </button>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="article-content-wrapper">
-            <div class="article-content" id="articleBody">
-                <p class="article-lead">Loading content&hellip;</p>
-            </div>
-
-            <div class="article-tags">
-                <span class="tags-label">Tags:</span>
-                <div class="tags-list" id="articleTagsList"></div>
-            </div>
-        </div>
-    </div>
+<article class="article" data-article>
+  <div class="skeleton" style="min-height:20rem">
+    <div class="sk-line w-40"></div>
+    <div class="sk-line w-80"></div>
+    <div class="sk-line w-60"></div>
+    <div class="sk-line w-80"></div>
+  </div>
 </article>
 
-<section class="section related-articles">
-    <div class="container">
-        <div class="section-header">
-            <div>
-                <span class="section-tag">Keep Reading</span>
-                <h2 class="section-title">Related Articles</h2>
-            </div>
-        </div>
-        <div class="articles-grid articles-grid-4" id="relatedArticlesGrid" data-loading="true">
-            <p class="loading-text">Loading related articles&hellip;</p>
-        </div>
-    </div>
-</section>
-
-<section class="section comments-section">
-    <div class="container">
-        <div class="comments-wrapper">
-            <h2 class="comments-title">
-                Comments
-                <span class="comment-count" id="commentCount">(0)</span>
-            </h2>
-
-            <form class="comment-form" id="commentForm">
-                <div class="comment-form-header">
-                    <div class="author-avatar">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg>
-                    </div>
-                    <span class="comment-form-label">Leave a comment</span>
-                </div>
-                <textarea class="comment-textarea" placeholder="Share your thoughts on this article..." rows="4" id="commentTextarea" name="content" required></textarea>
-                <div class="comment-form-actions">
-                    <button type="submit" class="btn btn-primary" id="commentSubmitBtn">Post Comment</button>
-                </div>
-            </form>
-
-            <div class="comments-list" id="commentsList" data-loading="true">
-                <p class="loading-text">Loading comments&hellip;</p>
-            </div>
-        </div>
-    </div>
+<section class="comments" data-comments hidden>
+  <div class="section-head"><span class="flag">Letters</span></div>
+  <div data-comment-gate></div>
+  <div data-comment-list></div>
 </section>
 {% endblock %}
 
-{% block extra_js %}
-<script src="{% static 'js/article_detail.js' %}"></script>
+{% block scripts %}
+<script src="{% static 'js/article.js' %}"></script>
 {% endblock %}

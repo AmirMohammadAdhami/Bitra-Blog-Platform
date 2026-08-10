@@ -46,6 +46,7 @@ class Article(models.Model):
     summary = models.TextField()
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     content = models.TextField()
+    cover_image = models.ImageField(upload_to='article_covers', null=True, blank=True)
     tags = models.ManyToManyField(Tag)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     status = models.CharField(

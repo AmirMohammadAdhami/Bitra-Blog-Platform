@@ -1,243 +1,44 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Sign Up | Bitra{% endblock %}
+{% block title %}Subscribe — Bitra{% endblock %}
 
 {% block content %}
-    <section class="auth-page">
-        <div class="auth-bg">
-            <div class="gradient-mesh gradient-mesh-sm"></div>
-            <div class="floating-shapes">
-                <div class="shape shape-1"></div>
-                <div class="shape shape-2"></div>
-                <div class="shape shape-3"></div>
-            </div>
-        </div>
-        <div class="auth-container">
-            <div class="auth-card glass-card">
-                <div class="auth-header">
-                    <a href="/" class="auth-logo">
-                        <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
-                            <rect width="32" height="32" rx="8" fill="url(#register-gradient)"/>
-                            <path d="M8 12h16M8 16h12M8 20h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                            <defs>
-                                <linearGradient id="register-gradient" x1="0" y1="0" x2="32" y2="32">
-                                    <stop stop-color="#3F72AF"/>
-                                    <stop offset="1" stop-color="#6C63FF"/>
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                    </a>
-                    <h1 class="auth-title">Create Account</h1>
-                    <p class="auth-subtitle">Join Bitra and start exploring</p>
-                </div>
+<div class="coupon-wrap">
+  <div class="coupon">
+    <div class="coupon__flagrow"><span class="flag">Free Subscription</span></div>
+    <h1 class="coupon__title">Open an Account</h1>
+    <p class="coupon__sub wire" style="text-transform:none;letter-spacing:.03em;">Save stories, write letters, join the desk.</p>
 
-                <form class="auth-form" id="registerForm" novalidate>
-                    <div class="form-row-2">
-                        <div class="form-group" id="fullNameGroup">
-                            <label for="full_name" class="form-label">Full Name</label>
-                            <div class="input-wrapper">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                     stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="12" cy="7" r="4"/>
-                                </svg>
-
-                                <input
-                                        type="text"
-                                        id="full_name"
-                                        name="full_name"
-                                        class="form-input"
-                                        placeholder="John Doe"
-                                        required>
-                            </div>
-                            <div class="form-error" id="fullNameError" style="display:none;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <line x1="12" y1="8" x2="12" y2="12"/>
-                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
-                                </svg>
-                                <span></span>
-                            </div>
-                        </div>
-
-                        <div class="form-group" id="usernameGroup">
-                            <label for="username" class="form-label">Username</label>
-                            <div class="input-wrapper">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                     stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="12" cy="7" r="4"/>
-                                </svg>
-
-                                <input
-                                        type="text"
-                                        id="username"
-                                        name="username"
-                                        class="form-input"
-                                        placeholder="johndoe"
-                                        required>
-                            </div>
-                            <div class="form-error" id="usernameError" style="display:none;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <line x1="12" y1="8" x2="12" y2="12"/>
-                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
-                                </svg>
-                                <span></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group" id="emailGroup">
-                        <label for="email" class="form-label">Email Address</label>
-                        <div class="input-wrapper">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                 stroke-width="2">
-                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                                <path d="M22 6l-10 7L2 6"/>
-                            </svg>
-
-                            <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    class="form-input"
-                                    placeholder="you@example.com"
-                                    required>
-                        </div>
-                        <div class="form-error" id="emailError" style="display:none;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"/>
-                                <line x1="12" y1="8" x2="12" y2="12"/>
-                                <line x1="12" y1="16" x2="12.01" y2="16"/>
-                            </svg>
-                            <span></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group" id="password1Group">
-                        <label for="password" class="form-label">Password</label>
-                        <div class="input-wrapper">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                 stroke-width="2">
-                                <rect x="3" y="11" width="18" height="11" rx="2"/>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                            </svg>
-
-                            <input
-                                    type="password"
-                                    id="password"
-                                    name="password1"
-                                    class="form-input"
-                                    placeholder="Create a strong password"
-                                    required>
-
-                            <button type="button" class="password-toggle" aria-label="Toggle password visibility">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                     stroke-width="2">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                    <circle cx="12" cy="12" r="3"/>
-                                </svg>
-                            </button>
-                        </div>
-
-                        <div class="password-strength">
-                            <div class="strength-bar"></div>
-                            <div class="strength-bar"></div>
-                            <div class="strength-bar"></div>
-                            <div class="strength-bar"></div>
-                        </div>
-
-                        <div class="form-error" id="password1Error" style="display:none;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"/>
-                                <line x1="12" y1="8" x2="12" y2="12"/>
-                                <line x1="12" y1="16" x2="12.01" y2="16"/>
-                            </svg>
-                            <span></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group" id="password2Group">
-                        <label for="confirm_password" class="form-label">Confirm Password</label>
-                        <div class="input-wrapper">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                 stroke-width="2">
-                                <rect x="3" y="11" width="18" height="11" rx="2"/>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                            </svg>
-
-                            <input
-                                    type="password"
-                                    id="confirm_password"
-                                    name="password2"
-                                    class="form-input"
-                                    placeholder="Confirm your password"
-                                    required>
-                        </div>
-                        <div class="form-error" id="password2Error" style="display:none;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"/>
-                                <line x1="12" y1="8" x2="12" y2="12"/>
-                                <line x1="12" y1="16" x2="12.01" y2="16"/>
-                            </svg>
-                            <span></span>
-                        </div>
-                    </div>
-
-
-
-                    <label class="checkbox-wrapper">
-                        <input type="checkbox" class="checkbox-input" id="agreeTerms" required>
-                        <span class="checkbox-custom"></span>
-                        <span class="checkbox-label">
-            I agree to the
-            <a href="/terms/" class="form-link">Terms of Service</a>
-            and
-            <a href="/privacy/" class="form-link">Privacy Policy</a>
-        </span>
-                    </label>
-
-                    <button type="submit" class="btn btn-primary btn-block btn-lg" id="registerSubmitBtn">
-                        Create Account
-                    </button>
-                </form>
-
-                <div class="auth-divider">
-                    <span>or continue with</span>
-                </div>
-
-                <div class="social-auth">
-                    <button class="btn btn-social" type="button" disabled title="Social sign-up is not available yet">
-                        <svg width="20" height="20" viewBox="0 0 24 24">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                                  fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                                  fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                                  fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                                  fill="#EA4335"/>
-                        </svg>
-                        Google
-                    </button>
-                    <button class="btn btn-social" type="button" disabled title="Social sign-up is not available yet">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-                        </svg>
-                        GitHub
-                    </button>
-                </div>
-
-                <p class="auth-footer">
-                    Already have an account? <a href="{% url 'accounts:login' %}" class="form-link">Sign in</a>
-                </p>
-            </div>
-        </div>
-    </section>
+    <form data-register novalidate>
+      <div class="form-note" data-note role="alert"></div>
+      <div class="field">
+        <label for="full_name">Full name</label>
+        <input id="full_name" name="full_name" type="text" autocomplete="name" required placeholder="Ada Lovelace">
+      </div>
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" required placeholder="ada" maxlength="30">
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" required placeholder="At least 8 characters">
+      </div>
+      <div class="form__foot">
+        <button class="btn btn--ink btn--block" type="submit" data-submit>Create account</button>
+      </div>
+      <p class="form__alt">
+        Already a subscriber? <a href="/auth/login/">Sign in →</a>
+      </p>
+    </form>
+  </div>
+</div>
 {% endblock %}
 
-{% block extra_js %}
-<script src="{% static 'js/register.js' %}"></script>
+{% block scripts %}
+<script src="{% static 'js/auth.js' %}"></script>
 {% endblock %}

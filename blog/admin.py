@@ -50,6 +50,10 @@ class ArticleAdmin(admin.ModelAdmin):
         'category',
     )
 
+    # Approve/reject straight from the list — SUBMITTED → REVIEWED (live) or
+    # REJECTED. Same one-click pattern as CommentAdmin.
+    list_editable = ['status']
+
     search_fields = (
         'title',
         'author__username',

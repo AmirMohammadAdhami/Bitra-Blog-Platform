@@ -1,29 +1,18 @@
-{% extends "base.html" %}
+{% extends "dashboard/_shell.html" %}
 {% load static %}
 
-{% block title %}Bookmarks | Bitra{% endblock %}
+{% block title %}Saved stories — Bitra{% endblock %}
 
-{% block content %}
-<section class="dashboard-page">
-    <div class="container">
-        <div class="dashboard-layout">
-            {% include "dashboard/includes/_sidebar.html" %}
-
-            <main class="dashboard-content">
-                <div class="dashboard-header">
-                    <h1 class="dashboard-title">Bookmarked Articles</h1>
-                    <p class="dashboard-subtitle">Articles you've saved for later reading and reference</p>
-                </div>
-
-                <div id="bookmarkedArticlesList" style="display: flex; flex-direction: column; gap: var(--space-lg);" data-loading="true">
-                    <p class="loading-text">Loading your bookmarks&hellip;</p>
-                </div>
-            </main>
-        </div>
-    </div>
-</section>
+{% block dash %}
+<div class="dash__head">
+  <h1>Saved</h1>
+  <span class="wire" data-count></span>
+</div>
+<div data-collection="bookmarks">
+  <div class="note-block"><p>Gathering your saved stories…</p></div>
+</div>
 {% endblock %}
 
-{% block extra_js %}
-<script src="{% static 'js/bookmarks.js' %}"></script>
+{% block dash_scripts %}
+<script src="{% static 'js/dash_collection.js' %}"></script>
 {% endblock %}
