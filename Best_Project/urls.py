@@ -23,6 +23,8 @@ import accounts.urls as accounts_urls
 from accounts.views.ProfileView import UserProfileEdit
 
 urlpatterns = [
+    path('jet/', include('jet.urls', 'jet')),
+    path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),
     path('accounts/', include(accounts_urls)),
@@ -40,6 +42,8 @@ urlpatterns = [
     # dash_editor.js and server-side by the Article API.
     path('dashboard/write/', TemplateView.as_view(template_name='dashboard/article-editor.html'), name='dashboard_write'),
     path('dashboard/write/<int:pk>/', TemplateView.as_view(template_name='dashboard/article-editor.html'), name='dashboard_edit'),
+
+    path("ckeditor/", include("ckeditor_uploader.urls")),
 ]
 
 # Serve uploaded media (article covers, avatars) during development.

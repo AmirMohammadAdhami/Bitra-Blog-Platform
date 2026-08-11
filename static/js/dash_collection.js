@@ -77,7 +77,7 @@
     if (total <= 0) window.Dash.empty(host, COPY.emptyTitle, COPY.emptyLine, UI.Routes.articles, "Browse stories");
   }
 
-  Promise.all([COPY.fetch(), API.articles()]).then(function (res) {
+  Promise.all([COPY.fetch(), API.articlesList()]).then(function (res) {
     var entries = res[0] || [];
     var articles = res[1] || [];
     var byId = {};

@@ -125,9 +125,13 @@
     var prev = el("div", { class: "coverprev" });
     function showPreview(src) {
       UI.clear(prev);
-      if (src) prev.appendChild(el("img", { src: src, alt: "Cover preview" }));
-      else prev.appendChild(el("span", { class: "wire", text: "No cover yet" }));
-      prev.classList.toggle("is-empty", !src);
+      if (src) {
+        prev.appendChild(el("img", { src: src, alt: "Cover preview" }));
+        prev.classList.remove("is-empty");
+      } else {
+        prev.appendChild(UI.coverImg(article, "coverprev__placeholder"));
+        prev.classList.add("is-empty");
+      }
     }
     showPreview(article && article.cover_image ? article.cover_image : null);
 
@@ -162,8 +166,9 @@
     var selectedTagIds = article && Array.isArray(article.tags) ? article.tags.map(function (t) { return t.id; }) : [];
     var tags = tagPicker(tagList, selectedTagIds);
 
-    var content = el("textarea", { name: "content", class: "editor__content", placeholder: "Write your story. Leave a blank line between paragraphs." });
-    content.value = article ? (article.content || "") : "";
+    var content = el("div", { id: "editor-content", class: "editor__content" });
+    content.innerHTML = article ? (article.content || "") : "";
+    var contentData = { value: article ? (article.content || "") : "" };
 
     // Actions ---------------------------------------------------------------
     var saveBtn = el("button", { class: "btn", type: "button", text: "Save draft" });
@@ -184,12 +189,36 @@
     ]);
     host.appendChild(form);
 
+    // ---- initialise CKEditor 4 ------------------------------------------
+    if (typeof CKEDITOR !== "undefined") {
+      CKEDITOR.replace("editor-content", {
+        toolbar: [
+          ["Format"],
+          ["Bold", "Italic", "Underline", "Strike"],
+          ["Link", "Unlink"],
+          ["NumberedList", "BulletedList"],
+          ["Blockquote"],
+          ["Image", "Table"],
+          ["Undo", "Redo"],
+          ["Source"],
+        ],
+        height: 500,
+        width: "100%",
+        removePlugins: "elementspath,styles,codeSnippet",
+        resize_enabled: true,
+        on: {
+          change: function () { contentData.value = this.getData(); },
+          instanceReady: function () { this.setData(contentData.value); },
+        },
+      });
+    }
+
     // ---- collect + validate ----------------------------------------------
     function collect() {
       var fields = {
         title: title.value.trim(),
         summary: summary.value.trim(),
-        content: content.value.trim(),
+        content: contentData.value.trim(),
         category: category.value ? Number(category.value) : null,
         tags: tags._selected(),
       };

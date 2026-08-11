@@ -30,11 +30,8 @@
   /* ------------------------------------------------------------- lead */
   function leadBlock(a) {
     var cat = a.category && a.category.name ? a.category.name : "Dispatch";
-    var coverImg = a.cover_image
-      ? el("div", { class: "lead__cover" }, [ el("img", { src: a.cover_image, alt: a.title, loading: "lazy" }) ])
-      : null;
     return el("article", { class: "lead reveal" }, [
-      coverImg,
+      el("div", { class: "lead__cover" }, [ UI.coverImg(a) ]),
       el("div", { class: "lead__kicker" }, [
         el("span", { class: "flag", text: cat }),
         el("span", { class: "wire", text: UI.readTime(a) }),
@@ -95,11 +92,8 @@
   /* ------------------------------------------------------- story grid */
   function storyCard(a, wide) {
     var cat = a.category && a.category.name ? a.category.name : "Dispatch";
-    var coverImg = a.cover_image
-      ? el("div", { class: "story__cover" }, [ el("img", { src: a.cover_image, alt: a.title, loading: "lazy" }) ])
-      : null;
     return el("article", { class: "story reveal" + (wide ? " story--wide" : "") }, [
-      coverImg,
+      el("div", { class: "story__cover" }, [ UI.coverImg(a) ]),
       el("div", { class: "story__kicker" }, [ el("span", { class: "kicker", text: cat }) ]),
       el("h3", { class: "story__headline" }, [ articleLink(a, "", a.title) ]),
       a.summary ? el("p", { class: "story__summary", text: UI.excerpt(a.summary, wide ? 200 : 130) }) : null,
@@ -240,5 +234,5 @@
     ]));
   }
 
-  API.articles().then(render).catch(fail);
+  API.articlesList().then(render).catch(fail);
 })();

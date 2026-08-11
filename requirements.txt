@@ -6,3 +6,7 @@ djangorestframework
 drf-spectacular
 django-ipware
 djangorestframework-simplejwt
+django-ckeditor
+django-jet-reboot
+python-magic
+python-magic-bin

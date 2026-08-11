@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.fields import PositiveIntegerField
 from accounts.models import User
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 # Create your models here.
@@ -45,7 +46,7 @@ class Article(models.Model):
     title = models.CharField(max_length=200)
     summary = models.TextField()
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    content = models.TextField()
+    content = RichTextUploadingField()
     cover_image = models.ImageField(upload_to='article_covers', null=True, blank=True)
     tags = models.ManyToManyField(Tag)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)

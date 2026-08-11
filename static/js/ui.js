@@ -188,6 +188,22 @@
     initReveals();
   }
 
+  /* ---------------------------------------------------------- cover image */
+  var PLACEHOLDER = "/static/images/placeholder-article.svg";
+
+  /** Return the article cover image URL or the newspaper placeholder. */
+  function coverSrc(article) {
+    return (article && article.cover_image) || PLACEHOLDER;
+  }
+
+  /** Build an <img> element for the article cover, with CSS class support. */
+  function coverImg(article, cls) {
+    var src = coverSrc(article);
+    var attrs = { src: src, alt: (article && article.title) || "", loading: "lazy" };
+    if (cls) attrs.class = cls;
+    return el("img", attrs);
+  }
+
   // Create a clickable author link (→ /profile/<slug-or-username>/) or plain text fallback.
   function authorLink(name, slug, cls, username) {
     name = name || "Staff";
@@ -206,6 +222,7 @@
     el: el, qs: qs, qsa: qsa, clear: clear, esc: esc,
     dateline: dateline, longDate: longDate, timeAgo: timeAgo, num: num,
     readTime: readTime, excerpt: excerpt, toast: toast,
+    coverSrc: coverSrc, coverImg: coverImg,
     authorLink: authorLink,
     Routes: Routes, renderAuth: renderAuth, requireAuthCTA: requireAuthCTA,
     initReveals: initReveals, boot: boot,

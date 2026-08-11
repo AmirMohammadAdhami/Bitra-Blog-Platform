@@ -187,7 +187,10 @@
 
     /* ---- auth ---- */
     login: function (email, password) {
-      return post("/accounts/login/", { email: email, password: password }, { auth: false })
+      var body = { email: email, password: password };
+      var ct = global.BitraCAPTCHA && global.BitraCAPTCHA.token;
+      if (ct) body.captcha_token = ct;
+      return post("/accounts/login/", body, { auth: false })
         .then(function (data) {
           Tokens.set(data.access, data.refresh);
           Session.user = data.user;
@@ -196,7 +199,10 @@
     },
     /* ---- password reset (3-step, unauthenticated) ---- */
     requestPasswordReset: function (email) {
-      return post("/accounts/password-reset/request/", { email: email }, { auth: false });
+      var body = { email: email };
+      var ct = global.BitraCAPTCHA && global.BitraCAPTCHA.token;
+      if (ct) body.captcha_token = ct;
+      return post("/accounts/password-reset/request/", body, { auth: false });
     },
     verifyPasswordReset: function (email, code) {
       return post("/accounts/password-reset/verify/", { email: email, code: code }, { auth: false });
@@ -208,7 +214,10 @@
     },
     register: function (payload) {
       // { username, email, full_name, password }
-      return post("/accounts/register/", payload, { auth: false });
+      var body = Object.assign({}, payload);
+      var ct = global.BitraCAPTCHA && global.BitraCAPTCHA.token;
+      if (ct) body.captcha_token = ct;
+      return post("/accounts/register/", body, { auth: false });
     },
     logout: function () {
       var token = Tokens.refresh;
@@ -220,7 +229,14 @@
     },
 
     /* ---- articles ---- */
-    articles: function () { return get("/blog/articles/").then(asList); },
+    articles: function (page, pageSize) {
+      var qs = [];
+      if (page) qs.push("page=" + page);
+      if (pageSize) qs.push("page_size=" + pageSize);
+      var q = qs.length ? "?" + qs.join("&") : "";
+      return get("/blog/articles/" + q);
+    },
+    articlesList: function () { return get("/blog/articles/").then(asList); },
     article: function (id) { return get("/blog/articles/" + id + "/"); },
 
     /* ---- taxonomy ---- */
@@ -252,7 +268,12 @@
     updateProfile: function (payload) { return patch("/accounts/profiles/me/", payload); },
     publicProfile: function (slug) { return get("/accounts/profiles/public/?slug=" + encodeURIComponent(slug)); },
     publicProfileByUsername: function (username) { return get("/accounts/profiles/public/?username=" + encodeURIComponent(username)); },
-    authorArticles: function (username) { return get("/blog/articles/?author_name=" + encodeURIComponent(username)); },
+    authorArticles: function (username, page, pageSize) {
+      var qs = ["author_name=" + encodeURIComponent(username)];
+      if (page) qs.push("page=" + page);
+      if (pageSize) qs.push("page_size=" + pageSize);
+      return get("/blog/articles/" + "?" + qs.join("&"));
+    },
     popularAuthors: function (limit) { return get("/accounts/profiles/popular_authors/?limit=" + (limit || 4)); },
 
     /* ---- social links ---- */
@@ -262,6 +283,21 @@
       return post("/accounts/social-links/", { platform: platformId, username: username });
     },
     removeSocialLink: function (id) { return del("/accounts/social-links/" + id + "/"); },
+
+    /* ---- profile image ---- */
+    uploadProfileImage: function (profileId, file) {
+      var fd = new FormData();
+      fd.append("profile_image", file);
+      if (profileId) {
+        // Profile already has an image — update via PATCH
+        return patch("/accounts/profile-image/" + profileId + "/", fd);
+      }
+      // First upload — create via POST to list endpoint
+      return post("/accounts/profile-image/", fd);
+    },
+    deleteProfileImage: function (profileId) {
+      return del("/accounts/profile-image/" + profileId + "/");
+    },
 
     /* ---- contributor (author) request ---- */
     authorRequests: function () { return get("/accounts/author-requests/").then(asList); },

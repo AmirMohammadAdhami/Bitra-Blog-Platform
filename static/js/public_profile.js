@@ -37,7 +37,9 @@
   /* — State — */
   var profile = null;
   var articles = [];
+  var PAGE_SIZE = 10;
   var sortMode = "date";
+  var currentPage = 1;
 
   /* — Helpers — */
   function show(el) { el.hidden = false; }
@@ -124,44 +126,83 @@
     }
   }
 
-  /* — Render article list — */
+  /* — Pager DOM refs — */
+  var pagerHost   = host.querySelector("[data-pubprof-pager]");
+  var pagerPrev   = host.querySelector("[data-pubprof-prev]");
+  var pagerNext   = host.querySelector("[data-pubprof-next]");
+  var pagerInfo   = host.querySelector("[data-pubprof-pager-info]");
+
+  /* — Render article list (paginated) — */
   function renderArticles() {
     UI.clear(listHost);
     var sorted = articles.slice().sort(sorter(sortMode));
-    if (!sorted.length) {
+    var total = sorted.length;
+    var pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (currentPage > pages) currentPage = pages;
+
+    var start = (currentPage - 1) * PAGE_SIZE;
+    var slice = sorted.slice(start, start + PAGE_SIZE);
+
+    if (!total) {
       listHost.appendChild(el("div", { class: "note-block" }, [
         el("p", { text: "No published stories yet." }),
       ]));
-      return;
+    } else {
+      var wrap = el("div", { class: "index" }, slice.map(function (a, i) {
+        var cat = a.category && a.category.name ? a.category.name : "Dispatch";
+        return el("div", { class: "index__row reveal" }, [
+          el("span", { class: "index__num", text: String(start + i + 1).padStart(2, "0") }),
+          el("div", {}, [
+            el("div", { class: "kicker", text: cat }),
+            el("h2", { class: "index__hl" }, [
+              el("a", { href: UI.Routes.article(a.id), text: a.title }),
+            ]),
+            a.summary ? el("p", { class: "index__sum", text: UI.excerpt(a.summary, 180) }) : null,
+            el("div", { class: "index__meta" }, [
+              el("span", { class: "wire", text: UI.dateline(a.created_at) + " · " + UI.readTime(a) }),
+            ]),
+          ]),
+          el("div", { class: "index__aside" }, [
+            el("div", { class: "wire", text: UI.num(a.views) + " views" }),
+            el("div", { class: "wire", text: UI.num(a.likes) + " likes" }),
+          ]),
+        ]);
+      }));
+      listHost.appendChild(wrap);
+      UI.initReveals();
     }
-    var wrap = el("div", { class: "index" }, sorted.map(function (a, i) {
-      var cat = a.category && a.category.name ? a.category.name : "Dispatch";
-      return el("div", { class: "index__row reveal" }, [
-        el("span", { class: "index__num", text: String(i + 1).padStart(2, "0") }),
-        el("div", {}, [
-          el("div", { class: "kicker", text: cat }),
-          el("h2", { class: "index__hl" }, [
-            el("a", { href: UI.Routes.article(a.id), text: a.title }),
-          ]),
-          a.summary ? el("p", { class: "index__sum", text: UI.excerpt(a.summary, 180) }) : null,
-          el("div", { class: "index__meta" }, [
-            el("span", { class: "wire", text: UI.dateline(a.created_at) + " · " + UI.readTime(a) }),
-          ]),
-        ]),
-        el("div", { class: "index__aside" }, [
-          el("div", { class: "wire", text: UI.num(a.views) + " views" }),
-          el("div", { class: "wire", text: UI.num(a.likes) + " likes" }),
-        ]),
-      ]);
-    }));
-    listHost.appendChild(wrap);
-    UI.initReveals();
+
+    renderPager(total, pages);
   }
 
-  /* — Load articles — */
+  function renderPager(total, pages) {
+    if (!pagerHost) return;
+    if (pages <= 1) { pagerHost.style.display = "none"; return; }
+    pagerHost.style.display = "";
+    pagerInfo.textContent = "Page " + currentPage + " of " + pages + "  ·  " + total + " stories";
+    pagerPrev.disabled = currentPage <= 1;
+    pagerNext.disabled = currentPage >= pages;
+  }
+
+  function goPage(p) {
+    currentPage = p;
+    renderArticles();
+    listHost.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  /* — Fetch all pages — */
   function loadArticles(username) {
-    API.authorArticles(username).then(function (list) {
-      articles = list || [];
+    var merged = [];
+    function fetchPage(page) {
+      return API.authorArticles(username, page, PAGE_SIZE).then(function (res) {
+        var items = (res && Array.isArray(res.results)) ? res.results : [];
+        merged = merged.concat(items);
+        if (res && res.next) return fetchPage(page + 1);
+        return merged;
+      });
+    }
+    fetchPage(1).then(function (list) {
+      articles = list;
       renderArticles();
     }).catch(function () {
       articles = [];
@@ -175,12 +216,18 @@
       var btn = e.target.closest(".chip");
       if (!btn) return;
       sortMode = btn.dataset.sort || "date";
+      currentPage = 1;
       UI.qsa(".chip", filterHost).forEach(function (c) {
         c.setAttribute("aria-pressed", c === btn ? "true" : "false");
       });
       renderArticles();
     });
   }
+
+  /* — Pager buttons — */
+  var totalPages = function () { return Math.max(1, Math.ceil(articles.length / PAGE_SIZE)); };
+  if (pagerPrev) pagerPrev.addEventListener("click", function () { if (currentPage > 1) goPage(currentPage - 1); });
+  if (pagerNext) pagerNext.addEventListener("click", function () { if (currentPage < totalPages()) goPage(currentPage + 1); });
 
   /* — Boot — try slug first, then username fallback — */
   API.publicProfile(slug).then(function (p) {

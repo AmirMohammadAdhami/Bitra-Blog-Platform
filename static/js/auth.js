@@ -45,6 +45,7 @@
           ? "Those credentials didn’t match. Try again."
           : (err.message || "Could not sign in."));
         lBtn.disabled = false; lBtn.textContent = "Sign in";
+        if (window.BitraCAPTCHA) BitraCAPTCHA.reset();
       });
     });
   }
@@ -77,6 +78,7 @@
       }).catch(function (err) {
         showNote(rNote, "err", err.message || "Could not create your account.");
         rBtn.disabled = false; rBtn.textContent = "Create account";
+        if (window.BitraCAPTCHA) BitraCAPTCHA.reset();
       });
     });
   }

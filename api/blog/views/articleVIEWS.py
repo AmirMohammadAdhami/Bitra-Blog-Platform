@@ -10,10 +10,11 @@ from blog.models import Article, ArticleView
 from accounts.models import Like, Bookmark
 from django.db.models import F, Q, Sum, Count
 from rest_framework.decorators import action
-
+from ..pagination import ArticleListPagination
 
 class ArticleViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthorOwnerOrReadOnly]
+    pagination_class = ArticleListPagination
 
     # An author may keep editing only before an editor takes over.
     EDITABLE_STATUSES = {Article.Status.DRAFT, Article.Status.REJECTED}

@@ -7,6 +7,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 
 from ..serializers.authSZR import LoginSerializer
 from ..serializers.userSZR import UserMinimalSerializer
+from .captchaVIEWS import validate_captcha_token
 
 
 class LoginAPIView(generics.GenericAPIView):
@@ -19,6 +20,12 @@ class LoginAPIView(generics.GenericAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
+        if not validate_captcha_token(request):
+            return Response(
+                {'detail': 'CAPTCHA verification required.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = self.get_serializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
 

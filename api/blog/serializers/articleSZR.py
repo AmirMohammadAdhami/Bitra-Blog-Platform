@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .categorySZR import CategorySerializer
 from .tagSZR import TagSerializer
 from .commentSZR import CommentSerializer
+from ...services.image_process import validate_type_image, validate_volume_image, process_post_banner
 
 class ArticleListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
@@ -17,6 +18,7 @@ class ArticleListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = ['id', 'title', 'summary', 'cover_image', 'category', 'tags', 'author_name', 'author_slug', 'status', 'likes', 'views', 'created_at']
+
 
 
 
@@ -48,7 +50,7 @@ class ArticleWriteSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all(), required=False
     )
-
+    cover_image = serializers.ImageField(validators=[validate_volume_image, validate_type_image])
     class Meta:
         model = Article
         fields = ['id', 'title', 'summary', 'content', 'category', 'tags',
@@ -56,3 +58,6 @@ class ArticleWriteSerializer(serializers.ModelSerializer):
                   'created_at', 'updated_at']
         read_only_fields = ['id', 'status', 'author', 'likes', 'views',
                             'created_at', 'updated_at']
+
+    def validate_cover_image(self, file):
+        return process_post_banner(file)

@@ -35,6 +35,8 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
 # Application definition
 
 INSTALLED_APPS = [
+    'jet.dashboard',
+    'jet',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +49,8 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'ckeditor',
+    "ckeditor_uploader",
 ]
 
 MIDDLEWARE = [
@@ -148,6 +152,24 @@ SIMPLE_JWT = {
 }
 
 
+# ckeditor configs
+CKEDITOR_CONFIGS = {
+    "default": {
+        "toolbar": [
+            ["Format", "Styles"],
+            ["Bold", "Italic", "Underline", "Strike"],
+            ["Link", "Unlink"],
+            ["NumberedList", "BulletedList"],
+            ["Blockquote", "CodeSnippet"],
+            ["Image", "Table"],
+            ["Undo", "Redo"],
+            ["Source"],
+        ],
+        "height": 500,
+        "width": "100%",
+    },
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
@@ -173,6 +195,8 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

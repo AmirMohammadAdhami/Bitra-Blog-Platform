@@ -9,6 +9,7 @@ from ..serializers.passwordSZR import (
     PasswordResetVerifySerializer,
     PasswordResetConfirmSerializer
 )
+from .captchaVIEWS import validate_captcha_token
 
 User = get_user_model()
 
@@ -18,6 +19,12 @@ class PasswordResetRequestAPIView(generics.GenericAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
+        if not validate_captcha_token(request):
+            return Response(
+                {'detail': 'CAPTCHA verification required.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

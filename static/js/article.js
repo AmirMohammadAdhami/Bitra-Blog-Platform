@@ -24,21 +24,23 @@
   var current = null;
 
   /* ---------------------------------------------------- content rendering */
-  // Content is a plain TextField of unknown origin — render as escaped
-  // paragraphs (blank-line separated) so author copy can never inject markup.
+  // Content is rich HTML from CKEditor — render as live DOM.
+  // innerHTML parsing creates inert nodes (scripts won't execute),
+  // but we strip dangerous elements as an extra safety net.
   function renderContent(text) {
     var frag = document.createDocumentFragment();
-    var blocks = String(text || "").replace(/\r\n/g, "\n").split(/\n{2,}/);
-    blocks.forEach(function (block) {
-      block = block.trim();
-      if (!block) return;
-      var p = el("p", {});
-      block.split(/\n/).forEach(function (line, i) {
-        if (i) p.appendChild(el("br"));
-        p.appendChild(document.createTextNode(line));
+    if (!text) { frag.appendChild(el("p", { text: "" })); return frag; }
+    var tmp = document.createElement("div");
+    tmp.innerHTML = text;
+    // strip script / iframe / object / embed tags
+    tmp.querySelectorAll("script, iframe, object, embed, form").forEach(function (n) { n.remove(); });
+    // strip event-handler attributes (onerror, onclick, etc.)
+    tmp.querySelectorAll("*").forEach(function (n) {
+      Array.from(n.attributes).forEach(function (a) {
+        if (a.name.startsWith("on")) n.removeAttribute(a.name);
       });
-      frag.appendChild(p);
     });
+    while (tmp.firstChild) frag.appendChild(tmp.firstChild);
     if (!frag.childNodes.length) frag.appendChild(el("p", { text: "" }));
     return frag;
   }
@@ -162,11 +164,9 @@
 
     var cat = a.category && a.category.name ? a.category.name : "Dispatch";
 
-    if (a.cover_image) {
-      host.appendChild(el("div", { class: "article__cover" }, [
-        el("img", { src: a.cover_image, alt: a.title, loading: "lazy" }),
-      ]));
-    }
+    host.appendChild(el("div", { class: "article__cover" }, [
+      UI.coverImg(a),
+    ]));
     host.appendChild(el("div", { class: "article__kicker" }, [
       el("a", { class: "flag", href: UI.Routes.articles, text: cat }),
       el("span", { class: "wire", text: "Filed " + UI.dateline(a.created_at) }),
@@ -212,8 +212,54 @@
       }).catch(function () { UI.toast("Could not like letter."); });
     });
 
-    var foot = el("div", { class: "comment__foot" }, [ likeBtn ]);
+    /* ---- reply toggle ---- */
+    var replyFormWrap = el("div", { class: "comment__reply-form", hidden: true });
+    var replyBtn = el("button", { class: "linkbtn", type: "button", text: "Reply" });
+    replyBtn.addEventListener("click", function () {
+      if (!API.Session.isAuthed) { UI.toast("Sign in to reply."); location.href = UI.Routes.login; return; }
+      var visible = !replyFormWrap.hidden;
+      replyFormWrap.hidden = visible;
+      replyBtn.textContent = visible ? "Reply" : "Cancel";
+      if (!visible) replyFormWrap.querySelector("textarea").focus();
+    });
+
+    var replyTa = el("textarea", {
+      placeholder: "Write a reply…",
+      "aria-label": "Your reply",
+      maxlength: "2000",
+      rows: "3",
+    });
+    var replyNote = el("div", { class: "form-note" });
+    var replySubmit = el("button", { class: "btn btn--ink btn--sm", type: "submit", text: "Send" });
+    var replyFormEl = el("form", { class: "comment-form comment-form--reply" }, [
+      replyNote,
+      replyTa,
+      el("div", { class: "comment-form__foot" }, [
+        replySubmit,
+        el("span", { class: "wire", text: "Pending approval." }),
+      ]),
+    ]);
+    replyFormEl.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var content = replyTa.value.trim();
+      replyNote.className = "form-note";
+      if (content.length < 2) { replyNote.className = "form-note is-error"; replyNote.textContent = "Please write a little more."; return; }
+      replySubmit.disabled = true; replySubmit.textContent = "Sending…";
+      API.postComment(articleId, content, c.id).then(function () {
+        replyTa.value = "";
+        replyFormWrap.hidden = true;
+        replyBtn.textContent = "Reply";
+        UI.toast("Reply submitted for review.");
+      }).catch(function (err) {
+        replyNote.className = "form-note is-error";
+        replyNote.textContent = (err && err.message) || "Could not submit your reply.";
+      }).finally(function () { replySubmit.disabled = false; replySubmit.textContent = "Send"; });
+    });
+    replyFormWrap.appendChild(replyFormEl);
+
+    var foot = el("div", { class: "comment__foot" }, [ likeBtn, replyBtn ]);
     node.appendChild(foot);
+    node.appendChild(replyFormWrap);
 
     if (c.children && c.children.length) {
       node.appendChild(el("div", { class: "comment__replies" }, c.children.map(commentNode)));
@@ -288,7 +334,7 @@
   function loadRelated(a) {
     var catName = a.category && a.category.name;
     if (!catName) return;
-    API.articles().then(function (list) {
+    API.articlesList().then(function (list) {
       var rel = list.filter(function (x) {
         return x.id !== a.id && x.category && x.category.name === catName && (!x.status || x.status === "REVIEWED");
       }).slice(0, 3);

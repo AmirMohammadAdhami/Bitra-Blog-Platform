@@ -28,6 +28,7 @@
         <label for="password">Password</label>
         <input id="password" name="password" type="password" autocomplete="new-password" required placeholder="At least 8 characters">
       </div>
+      <div data-captcha></div>
       <div class="form__foot">
         <button class="btn btn--ink btn--block" type="submit" data-submit>Create account</button>
       </div>
@@ -40,5 +41,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{% static 'js/captcha.js' %}"></script>
 <script src="{% static 'js/auth.js' %}"></script>
 {% endblock %}

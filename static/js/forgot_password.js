@@ -39,6 +39,7 @@
       // Server always returns 200, so a non-200 means network / CORS / 500.
       showNote("err", (err && err.message) || "Could not send the code. Try again.");
       btn.disabled = false; btn.textContent = "Send verification code";
+      if (window.BitraCAPTCHA) BitraCAPTCHA.reset();
     });
   });
 })();
