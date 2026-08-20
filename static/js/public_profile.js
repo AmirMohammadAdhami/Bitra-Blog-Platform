@@ -9,6 +9,10 @@
   /* — DOM references — */
   var host       = document.querySelector("[data-pubprof]");
   if (!host) return;
+
+  // When the server already rendered the profile (SSR), skip the full
+  // rebuild and only enhance (sort articles, load interactive features).
+  var ssrRendered = host.hasAttribute("data-ssr");
   var loading    = host.querySelector(".pubprof__loading");
   var card       = host.querySelector(".pubprof__card");
   var errorEl    = host.querySelector(".pubprof__error");
@@ -42,8 +46,8 @@
   var currentPage = 1;
 
   /* — Helpers — */
-  function show(el) { el.hidden = false; }
-  function hide(el) { el.hidden = true; }
+  function show(el) { if (el) el.hidden = false; }
+  function hide(el) { if (el) el.hidden = true; }
 
   function showError() {
     hide(loading); hide(card);
@@ -63,37 +67,43 @@
     var user = p.user || {};
 
     // Avatar
-    if (p.profile_image) {
-      imgEl.src = p.profile_image;
-      imgEl.alt = (user.username || "Author") + " avatar";
-    } else {
-      imgEl.src = "";
-      imgEl.alt = "";
-      imgEl.style.display = "none";
+    if (imgEl) {
+      if (p.profile_image) {
+        imgEl.src = p.profile_image;
+        imgEl.alt = (user.username || "Author") + " avatar";
+      } else {
+        imgEl.src = "";
+        imgEl.alt = "";
+        imgEl.style.display = "none";
+      }
     }
 
     // Name & info
-    nameEl.textContent = user.full_name || user.username || "Reader";
+    if (nameEl) nameEl.textContent = user.full_name || user.username || "Reader";
     document.title = (user.username || "Profile") + " — Bitra";
 
     // Location
-    var loc = [p.city, p.country_name].filter(Boolean).join(", ");
-    locationEl.textContent = loc || "";
-    hide(locationEl);
+    if (locationEl) {
+      var loc = [p.city, p.country_name].filter(Boolean).join(", ");
+      locationEl.textContent = loc || "";
+      hide(locationEl);
+    }
 
     // Bio
-    if (p.bio) {
-      bioEl.textContent = p.bio;
-    } else {
-      hide(bioEl);
+    if (bioEl) {
+      if (p.bio) {
+        bioEl.textContent = p.bio;
+      } else {
+        hide(bioEl);
+      }
     }
 
     // Member since
-    metaEl.textContent = "Member since " + UI.dateline(p.created_at);
+    if (metaEl) metaEl.textContent = "Member since " + UI.dateline(p.created_at);
 
     // Social links
     var links = p.social_link || [];
-    if (links.length) {
+    if (socialsEl && links.length) {
       show(socialsEl);
       links.forEach(function (link) {
         var detail = link.platform_detail || {};
@@ -117,9 +127,9 @@
     // Author sections
     if (user.is_author && p.author_stats) {
       var stats = p.author_stats;
-      statArticles.textContent = UI.num(stats.total_articles);
-      statLikes.textContent    = UI.num(stats.likes);
-      statViews.textContent    = UI.num(stats.views);
+      if (statArticles) statArticles.textContent = UI.num(stats.total_articles);
+      if (statLikes) statLikes.textContent    = UI.num(stats.likes);
+      if (statViews) statViews.textContent    = UI.num(stats.views);
       show(statsEl);
       show(articlesSection);
       loadArticles(user.username);
@@ -134,6 +144,7 @@
 
   /* — Render article list (paginated) — */
   function renderArticles() {
+    if (!listHost) return;
     UI.clear(listHost);
     var sorted = articles.slice().sort(sorter(sortMode));
     var total = sorted.length;
@@ -231,10 +242,24 @@
 
   /* — Boot — try slug first, then username fallback — */
   API.publicProfile(slug).then(function (p) {
-    hide(loading);
-    show(card);
-    renderProfile(p);
+    if (ssrRendered) {
+      // Content is already visible — just update document title and
+      // wire up filter chips + pager (article list is already in DOM)
+      var user = p.user || {};
+      document.title = (user.username || "Profile") + " — Bitra";
+      // Store articles from API for client-side sorting/filtering
+      if (user.is_author && p.author_stats) {
+        API.authorArticles(user.username, 1, 100).then(function (res) {
+          articles = (res && Array.isArray(res.results)) ? res.results : [];
+        }).catch(function () {});
+      }
+    } else {
+      hide(loading);
+      show(card);
+      renderProfile(p);
+    }
   }).catch(function () {
+    if (ssrRendered) return; // Don't show error if SSR content is visible
     // If slug lookup failed, try as username
     API.publicProfileByUsername(slug).then(function (p) {
       hide(loading);

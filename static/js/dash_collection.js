@@ -30,7 +30,7 @@
     },
   }[kind];
 
-  function row(article, entry, idx) {
+  function row(article, idx) {
     var cat = article.category && article.category.name ? article.category.name : "Dispatch";
     var aside = el("div", { class: "index__aside" }, [
       el("div", { class: "wire", text: UI.num(article.views) + " views" }),
@@ -97,7 +97,7 @@
 
     UI.clear(host);
     var list = el("div", { class: "index" });
-    resolved.forEach(function (x, i) { list.appendChild(row(x.article, x.entry, i)); });
+    resolved.forEach(function (x, i) { list.appendChild(row(x.article, i)); });
     host.appendChild(list);
     total = resolved.length;
     if (countEl) countEl.textContent = total + (total === 1 ? " story" : " stories");

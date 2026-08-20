@@ -10,6 +10,10 @@
   var root = document.querySelector("[data-front]");
   if (!root) return;
 
+  // When the server already rendered the front page (SSR), skip the full
+  // rebuild and only enhance (load popular authors, init scroll reveals).
+  var ssrRendered = root.hasAttribute("data-ssr");
+
   // Only surface reviewed/published stories on the public front page.
   function isPublic(a) { return !a.status || a.status === "REVIEWED"; }
 
@@ -44,19 +48,6 @@
       ]),
     ]);
   }
-  // The list serializer has no `content`, so compose a teaser from the summary.
-  function buildParas(a) {
-    var text = (a.content || a.summary || "").replace(/\s+/g, " ").trim();
-    if (!text) return [el("p", { text: "" })];
-    var sentences = text.split(/(?<=[.!?])\s+/);
-    var half = Math.ceil(sentences.length / 2);
-    var p1 = sentences.slice(0, half).join(" ");
-    var p2 = sentences.slice(half).join(" ");
-    var out = [el("p", { text: UI.excerpt(p1, 320) })];
-    if (p2) out.push(el("p", { text: UI.excerpt(p2, 300) }));
-    return out;
-  }
-
   function railItem(a) {
     return el("div", { class: "rail__item" }, [
       el("a", { href: UI.Routes.article(a.id) }, [
@@ -234,5 +225,11 @@
     ]));
   }
 
-  API.articlesList().then(render).catch(fail);
+  if (ssrRendered) {
+    // Content is already visible — just load popular authors + scroll reveals
+    UI.initReveals();
+    loadPopularAuthors();
+  } else {
+    API.articlesList().then(render).catch(fail);
+  }
 })();

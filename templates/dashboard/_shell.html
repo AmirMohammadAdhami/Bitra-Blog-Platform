@@ -13,13 +13,13 @@
       <div><div class="dash__name">Reader</div></div>
     </div>
     <nav class="dash__nav" aria-label="Your account">
-      <a class="dash__link" href="/dashboard/profile/">Profile</a>
+      <a class="dash__link" href="{% url 'accounts:dashboard_profile' %}">Profile</a>
       <a class="dash__link" data-dash-publink hidden target="_blank">View public profile →</a>
-      <a class="dash__link" href="/dashboard/bookmarks/">Saved</a>
-      <a class="dash__link" href="/dashboard/likes/">Liked</a>
-      <a class="dash__link" href="/dashboard/comments/">Comments</a>
-      <a class="dash__link" href="/dashboard/author/" data-author-only hidden>Writers’ desk</a>
-      <a class="dash__link" href="/dashboard/author-request/" data-reader-only>Contribute</a>
+      <a class="dash__link" href="{% url 'accounts:dashboard_bookmarks' %}">Saved</a>
+      <a class="dash__link" href="{% url 'accounts:dashboard_likes' %}">Liked</a>
+      <a class="dash__link" href="{% url 'accounts:dashboard_comments' %}">Comments</a>
+      <a class="dash__link" href="{% url 'accounts:dashboard_author' %}" data-author-only hidden>Writers’ desk</a>
+      <a class="dash__link" href="{% url 'accounts:dashboard_author_request' %}" data-reader-only>Contribute</a>
     </nav>
   </aside>
 

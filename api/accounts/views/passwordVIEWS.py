@@ -2,6 +2,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
+from Security.throttle import PasswordResetThrottle
 from accounts.models import PasswordResetCode
 from accounts.services.password_reset import create_password_reset
 from ..serializers.passwordSZR import (
@@ -15,8 +16,10 @@ User = get_user_model()
 
 
 class PasswordResetRequestAPIView(generics.GenericAPIView):
+    """Request a password reset code for an email."""
     serializer_class = PasswordResetRequestSerializer
     permission_classes = [AllowAny]
+    throttle_classes = [PasswordResetThrottle]
 
     def post(self, request, *args, **kwargs):
         if not validate_captcha_token(request):
@@ -43,6 +46,7 @@ class PasswordResetRequestAPIView(generics.GenericAPIView):
 
 
 class PasswordResetVerifyAPIView(generics.GenericAPIView):
+    """Verify a password reset code."""
     serializer_class = PasswordResetVerifySerializer
     permission_classes = [AllowAny]
 
@@ -57,6 +61,7 @@ class PasswordResetVerifyAPIView(generics.GenericAPIView):
 
 
 class PasswordResetConfirmAPIView(generics.GenericAPIView):
+    """Confirm a reset and set a new password."""
     serializer_class = PasswordResetConfirmSerializer
     permission_classes = [AllowAny]
 

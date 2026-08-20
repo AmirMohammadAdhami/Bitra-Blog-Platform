@@ -4,18 +4,29 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
-
+from rest_framework_simplejwt.views import TokenObtainPairView
+from Security.throttle import LoginThrottle
 from ..serializers.authSZR import LoginSerializer
 from ..serializers.userSZR import UserMinimalSerializer
 from .captchaVIEWS import validate_captcha_token
 
 
+class TokenObtainCaptchaView(TokenObtainPairView):
+    """JWT token-pair endpoint, hardened with CAPTCHA and rate limiting."""
+    permission_classes = [AllowAny]
+    throttle_classes = [LoginThrottle]
+
+    def post(self, request, *args, **kwargs):
+        if not validate_captcha_token(request):
+            return Response(
+                {'detail': 'CAPTCHA verification required.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return super().post(request, *args, **kwargs)
+
+
 class LoginAPIView(generics.GenericAPIView):
-    """
-    POST /api/accounts/login/
-    body: { "email": "...", "password": "..." }
-    returns: { "access": "...", "refresh": "...", "user": {...} }
-    """
+    """Login with email + password (CAPTCHA required); returns JWT pair and user."""
     serializer_class = LoginSerializer
     permission_classes = [AllowAny]
 
@@ -40,11 +51,7 @@ class LoginAPIView(generics.GenericAPIView):
 
 
 class LogoutAPIView(APIView):
-    """
-    POST /api/accounts/logout/
-    body: { "refresh": "..." }
-    Blacklists the given refresh token so it can no longer be used.
-    """
+    """Blacklist the given refresh token."""
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):

@@ -1,7 +1,7 @@
 /* ============================================================================
    Story editor — compose a new piece or edit one of your own drafts.
-     /dashboard/write/        → create   (POST /blog/articles/)
-     /dashboard/write/<id>/   → edit     (GET then PATCH /blog/articles/<id>/)
+     /accounts/dashboard/write/        → create   (POST /blog/articles/)
+     /accounts/dashboard/write/<id>/   → edit     (GET then PATCH /blog/articles/<id>/)
    Only DRAFT and REJECTED stories are editable; anything with the editors is
    shown read-only with a way back. "Save draft" persists; "Submit for review"
    persists then hands the piece to the editors (→ SUBMITTED) and returns to the
@@ -17,22 +17,9 @@
 
   var EDITABLE = { DRAFT: 1, REJECTED: 1 };
 
-  // /dashboard/write/  → null (create) ; /dashboard/write/12/ → 12 (edit)
-  var m = location.pathname.match(/\/dashboard\/write\/(\d+)\/?$/);
+  // /accounts/dashboard/write/  → null (create) ; /accounts/dashboard/write/12/ → 12 (edit)
+  var m = location.pathname.match(/\/accounts\/dashboard\/write\/(\d+)\/?$/);
   var articleId = m ? Number(m[1]) : null;
-
-  // ---- author gate ---------------------------------------------------------
-  var user = API.Session.user || {};
-  if (!user.is_author) {
-    window.Dash.empty(
-      host,
-      "Writing is for contributors.",
-      "Once an editor approves your contributor seat, you can compose stories here.",
-      "/dashboard/author-request/",
-      "Ask to contribute"
-    );
-    return;
-  }
 
   // ---- small helpers -------------------------------------------------------
   function field(label, control, hint) {
@@ -44,38 +31,71 @@
   }
 
   function categorySelect(cats, currentId) {
-    var opts = [el("option", { value: "", text: "Choose a section", disabled: true, selected: !currentId })];
-    cats.forEach(function (c) {
-      opts.push(el("option", { value: c.id, text: c.name, selected: Number(currentId) === c.id }));
+    var wrap = el("div", { class: "custom-sel-wrap" });
+    var options = cats.map(function (c) {
+      return { value: c.id, label: c.name };
     });
-    return el("select", { name: "category", required: true }, opts);
+    var cs = CustomSelect.create(wrap, {
+      name: "category",
+      options: options,
+      value: currentId ? String(currentId) : "",
+      placeholder: "Choose a section",
+    });
+    wrap._cs = cs;
+    return wrap;
   }
 
-  // Tags as toggle chips — a Set of selected ids the collector reads back.
-  function tagPicker(tagList, selectedIds) {
-    var chosen = {};
-    (selectedIds || []).forEach(function (id) { chosen[id] = true; });
+  // Free-form tag input — authors type tag names, press Enter to add.
+  function tagInput(initialNames) {
+    var tags = Array.isArray(initialNames) ? initialNames.slice() : [];
     var wrap = el("div", { class: "tagpick" });
-    if (!tagList.length) {
-      wrap.appendChild(el("p", { class: "wire field__hint", text: "No tags yet — an editor can add them." }));
-    }
-    tagList.forEach(function (t) {
-      var chip = el("button", {
-        type: "button",
-        class: "tagchip" + (chosen[t.id] ? " tagchip--on" : ""),
-        text: t.name,
-        "aria-pressed": chosen[t.id] ? "true" : "false",
-        onclick: function () {
-          chosen[t.id] = !chosen[t.id];
-          chip.classList.toggle("tagchip--on", chosen[t.id]);
-          chip.setAttribute("aria-pressed", chosen[t.id] ? "true" : "false");
-        },
-      });
-      wrap.appendChild(chip);
+    var chipsWrap = el("div", { class: "tagpick__chips" });
+    var input = el("input", {
+      type: "text",
+      class: "tagpick__input",
+      placeholder: "Type a tag and press Enter",
     });
-    wrap._selected = function () {
-      return Object.keys(chosen).filter(function (id) { return chosen[id]; }).map(Number);
-    };
+    var hint = el("p", { class: "wire field__hint", text: "Press Enter to add a tag. Click × to remove." });
+
+    function renderChips() {
+      UI.clear(chipsWrap);
+      tags.forEach(function (name, i) {
+        var chip = el("span", { class: "tagchip" }, [
+          name,
+          el("button", {
+            type: "button",
+            class: "tagchip__rm",
+            "aria-label": "Remove " + name,
+            text: "\u00d7",
+            onclick: function () {
+              tags.splice(i, 1);
+              renderChips();
+            },
+          }),
+        ]);
+        chipsWrap.appendChild(chip);
+      });
+    }
+
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        var val = input.value.trim();
+        if (!val) return;
+        if (tags.indexOf(val) === -1) {
+          tags.push(val);
+        }
+        input.value = "";
+        renderChips();
+      }
+    });
+
+    wrap.appendChild(chipsWrap);
+    wrap.appendChild(input);
+    wrap.appendChild(hint);
+
+    wrap._selected = function () { return tags.slice(); };
+    renderChips();
     return wrap;
   }
 
@@ -113,7 +133,7 @@
   function msg(err, fallback) { return (err && err.message) ? err.message : fallback; }
 
   // ---- form ----------------------------------------------------------------
-  function render(cats, tagList, article) {
+  function render(cats, article) {
     UI.clear(host);
     article = article || null;
     if (titleEl) titleEl.textContent = article ? "Edit story" : "New story";
@@ -163,8 +183,8 @@
 
     var category = categorySelect(cats, article && article.category ? article.category.id : "");
 
-    var selectedTagIds = article && Array.isArray(article.tags) ? article.tags.map(function (t) { return t.id; }) : [];
-    var tags = tagPicker(tagList, selectedTagIds);
+    var initialTagNames = article && Array.isArray(article.tags) ? article.tags.map(function (t) { return t.name; }) : [];
+    var tags = tagInput(initialTagNames);
 
     var content = el("div", { id: "editor-content", class: "editor__content" });
     content.innerHTML = article ? (article.content || "") : "";
@@ -219,7 +239,7 @@
         title: title.value.trim(),
         summary: summary.value.trim(),
         content: contentData.value.trim(),
-        category: category.value ? Number(category.value) : null,
+        category: category._cs ? Number(category._cs.getValue()) : null,
         tags: tags._selected(),
       };
       if (coverState.file) fields.cover_image = coverState.file;
@@ -296,19 +316,40 @@
     });
   }
 
+  // ---- author gate ---------------------------------------------------------
+  // `is_author` flips server-side when an editor approves a contributor
+  // request, but the cached Session.user only refreshes at login — so confirm
+  // with the server before refusing an author the editor.
+  function gate() {
+    return API.refreshUser().catch(function () { return null; }).then(function (fresh) {
+      var user = fresh || API.Session.user || {};
+      if (user.is_author) return true;
+      window.Dash.empty(
+        host,
+        "Writing is for contributors.",
+        "Once an editor approves your contributor seat, you can compose stories here.",
+        "/accounts/dashboard/author-request/",
+        "Ask to contribute"
+      );
+      return false;
+    });
+  }
+
   // ---- boot ----------------------------------------------------------------
-  var loads = [
-    API.categories().catch(function () { return []; }),
-    API.tags().catch(function () { return []; }),
-    articleId ? API.getArticle(articleId) : Promise.resolve(null),
-  ];
-  Promise.all(loads).then(function (res) {
-    var cats = res[0] || [], tagList = res[1] || [], article = res[2];
-    if (!cats.length) {
-      window.Dash.empty(host, "No sections yet.", "An editor needs to add at least one section before stories can be filed.", UI.Routes.desk, "Back to desk");
-      return;
-    }
-    if (articleId && article && !EDITABLE[article.status]) { renderLocked(article); return; }
-    render(cats, tagList, article);
+  gate().then(function (allowed) {
+    if (!allowed) return;
+    var loads = [
+      API.categories().catch(function () { return []; }),
+      articleId ? API.getArticle(articleId) : Promise.resolve(null),
+    ];
+    return Promise.all(loads).then(function (res) {
+      var cats = res[0] || [], article = res[1];
+      if (!cats.length) {
+        window.Dash.empty(host, "No sections yet.", "An editor needs to add at least one section before stories can be filed.", UI.Routes.desk, "Back to desk");
+        return;
+      }
+      if (articleId && article && !EDITABLE[article.status]) { renderLocked(article); return; }
+      render(cats, article);
+    });
   }).catch(function (err) { window.Dash.fail(host, err); });
 })();

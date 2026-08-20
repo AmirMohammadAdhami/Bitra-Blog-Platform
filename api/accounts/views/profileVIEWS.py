@@ -1,3 +1,4 @@
+from django.core.validators import int_list_validator
 from django.utils import timezone
 from django.db.models import Sum, Count, F, Q, Subquery, OuterRef
 from rest_framework import viewsets, status
@@ -13,15 +14,15 @@ from api.accounts.serializers.profileSZR import ProfileSerializer, AuthorRequest
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
+    """Profiles: owners manage their own; public lookups are separate actions."""
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Profile.objects.filter(user=self.request.user)
 
-
     @action(detail=False, methods=['get'], permission_classes=[AllowAny],
-             authentication_classes=[])
+            authentication_classes=[])
     def public(self, request):
         """Public profile lookup by slug or username."""
         slug = request.query_params.get('slug')
@@ -65,14 +66,25 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
         return Response(data)
 
-
     @action(detail=False, methods=['get'],
-             permission_classes=[AllowAny],
-             authentication_classes=[])
+            permission_classes=[AllowAny],
+            authentication_classes=[])
     def popular_authors(self, request):
-        """Top authors ranked by total article likes. Returns up to 4 authors
-        with their profile data and aggregated like count."""
-        limit = min(int(request.query_params.get('limit', 4)), 20)
+        """Top authors ranked by total article likes."""
+        try:
+            limit = int(request.query_params.get('limit', 4))
+        except (ValueError, TypeError):
+            return Response(
+                {"detail": "limit must be a valid integer"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if limit <= 0:
+            return Response(
+                {"detail": "limit must be a positive integer"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        limit = min(limit, 20)
+
         authors = (
             Profile.objects
             .filter(user__is_author=True)
@@ -103,9 +115,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
         return Response(data)
 
-
     @action(detail=False, methods=['get', 'put', 'patch'])
     def me(self, request):
+        """Read or update the caller's own profile."""
         profile, _ = Profile.objects.get_or_create(user=request.user)
         if request.method == 'GET':
             serializer = self.get_serializer(profile)
@@ -118,6 +130,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
 class AuthorRequestViewSet(viewsets.ModelViewSet):
+    """Contributor requests: users request, staff approve or decline."""
     serializer_class = AuthorRequestSerializer
     permission_classes = [IsAuthenticated]
 
@@ -127,16 +140,17 @@ class AuthorRequestViewSet(viewsets.ModelViewSet):
         return AuthorRequest.objects.filter(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        if AuthorRequest.objects.filter(user=self.request.user,status=AuthorRequest.Status.PENDING).exists():
-            return Response({'detail':'You have a request btw please wait'},
+        """Submit a contributor request (only one pending at a time)."""
+        if AuthorRequest.objects.filter(user=self.request.user, status=AuthorRequest.Status.PENDING).exists():
+            return Response({'detail': 'You have a request btw please wait'},
                             status=status.HTTP_400_BAD_REQUEST)
         author_request = AuthorRequest.objects.create(user=self.request.user)
         serializer = self.get_serializer(author_request)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
     @action(detail=True, methods=['post'], permission_classes=[IsAdminUser])
     def approve(self, request, pk=None):
+        """Approve the request and grant is_author."""
         author_req = self.get_object()
         author_req.status = AuthorRequest.Status.APPROVED
         author_req.reviewed_by = request.user
@@ -146,15 +160,15 @@ class AuthorRequestViewSet(viewsets.ModelViewSet):
         author_req.user.is_author = True
         author_req.user.save()
 
-        return Response({'status':'you are approved'})
+        return Response({'status': 'you are approved'})
 
     @action(detail=True, methods=['post'], permission_classes=[IsAdminUser])
     def decline(self, request, pk=None):
+        """Decline the contributor request."""
         author_req = self.get_object()
         author_req.status = AuthorRequest.Status.REJECTED
         author_req.reviewed_by = request.user
         author_req.reviewed_at = timezone.now()
         author_req.save()
 
-        return Response({'status':'you are declined'})
-
+        return Response({'status': 'you are declined'})

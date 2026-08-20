@@ -5,20 +5,30 @@ Flow:
   1. Client calls POST /api/accounts/captcha/challenge/
      → server creates a token, stores creation time in session, returns { id, expires }.
   2. User drags the slider to the end.
-  3. Client calls POST /api/accounts/captcha/verify/  { id, elapsed }
-     → server checks: token matches, elapsed > MIN_DRAG_MS, not expired.
+  3. Client calls POST /api/accounts/captcha/verify/  { id }
+     → server checks: token matches, not expired, and that the challenge was
+       issued at least MIN_DRAG_MS ago. Elapsed time is measured by the server
+       (wall-clock between challenge creation and verification) — the client
+       never supplies timing data, so a bot cannot claim a slow drag it never
+       performed.
      → on success: generates a signed CAPTCHA token with a unique nonce,
-       stores the nonce in the Django cache (one-time use), returns the token.
+       stores the nonce in the Django cache (one-time use). Returns the token.
   4. Client sends the signed token with auth requests (login, register, etc.)
   5. Auth endpoints call validate_captcha_token(request) to verify.
 
 Security:
   - No secrets in JavaScript — the "challenge" is time-based, not position-based.
-  - Verification requires real elapsed time (>1.5 s), blocking instant bots.
+  - Elapsed time is measured server-side, never accepted from the client.
+  - challenge/verify are rate-limited per IP (CaptchaThrottle), so the
+    challenge→verify→auth loop cannot be scripted at volume.
   - Signed tokens are stateless HMAC-SHA256, unique per deployment.
-  - Each token contains a nonce tracked in Django's cache — single-use only.
+  - Each token contains a nonce tracked in Django's cache — single-use only,
+    so a captured token cannot be replayed.
   - Signed tokens expire after CAPTCHA_TTL (10 minutes).
-  - The challenge is bound to the Django session during the drag phase.
+  - The challenge itself is bound to the Django session during the drag phase
+    (server-measured timing); the minted token is NOT session-bound because
+    the API client deliberately sends auth requests without cookies
+    (credentials: "omit"), so no stable session exists at submit time.
 """
 
 import hashlib
@@ -30,15 +40,20 @@ import base64
 
 from django.conf import settings
 from django.core.cache import cache
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+    throttle_classes,
+)
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
-# ---------------------------------------------------------------------------
-# Tunables
-# ---------------------------------------------------------------------------
+from Security.throttle import CaptchaThrottle
+
+
 CHALLENGE_TTL = 300          # challenge valid for 5 minutes
-MIN_DRAG_MS = 1500           # minimum drag duration in ms (blocks instant bots)
+MIN_DRAG_MS = 1000           # minimum server-measured time between challenge and verify
 CAPTCHA_TTL = 600            # signed token valid for 10 minutes
 _NONCE_CACHE_PREFIX = "captcha_nonce:"  # prefix for nonce cache keys
 
@@ -78,6 +93,12 @@ def _unsign(token):
         return None
 
 
+def _clear_challenge(session):
+    session.pop(_SK_CHALLENGE, None)
+    session.pop(_SK_TS, None)
+    session.modified = True
+
+
 def validate_captcha_token(request):
     """
     Validate a signed CAPTCHA token from the request body.
@@ -88,6 +109,12 @@ def validate_captcha_token(request):
       - HMAC signature is valid
       - Token has not expired
       - Token's nonce has not been used before (replay protection via Django cache)
+
+    NOTE: The token is deliberately NOT bound to the Django session. The API
+    client sends auth requests with `credentials: "omit"` (to avoid DRF
+    session-auth CSRF), so every submit looks like a fresh session — a session
+    check would reject every legitimate user. Replay protection comes from the
+    single-use nonce instead.
     """
     token = request.data.get("captcha_token") if hasattr(request, "data") else None
     if not token:
@@ -122,85 +149,76 @@ def validate_captcha_token(request):
     return True
 
 
-@csrf_exempt
-@require_POST
+@api_view(["POST"])
+@authentication_classes([])
+@permission_classes([AllowAny])
+@throttle_classes([CaptchaThrottle])
 def challenge(request):
     """Create a fresh CAPTCHA challenge and bind it to the session."""
     now = int(time.time())
     token = _new_token()
 
     request.session[_SK_CHALLENGE] = token
-    request.session[_SK_TS] = now
+    request.session[_SK_TS] = int(time.time() * 1000)  # ms, for server-side timing
     request.session.modified = True
 
-    return JsonResponse({
+    return Response({
         "id": token,
         "expires": now + CHALLENGE_TTL,
     })
 
 
-@csrf_exempt
-@require_POST
+@api_view(["POST"])
+@authentication_classes([])
+@permission_classes([AllowAny])
+@throttle_classes([CaptchaThrottle])
 def verify(request):
-    """
-    Verify the slider CAPTCHA.
-
-    Expects JSON:  { "id": "<token>", "elapsed": <int ms> }
-    Returns:       { "captcha_token": "<signed token>" }
-    """
-    try:
-        body = json.loads(request.body)
-    except (json.JSONDecodeError, TypeError):
-        return JsonResponse({"detail": "Invalid request body."}, status=400)
-
-    token = body.get("id", "")
-    elapsed = body.get("elapsed", 0)
-
-    now = int(time.time())
+    """Verify a slider challenge; returns a signed, single-use captcha token."""
+    token = request.data.get("id", "")
+    now_ms = int(time.time() * 1000)
 
     # --- validate challenge exists -------------------------------------------
     stored_token = request.session.get(_SK_CHALLENGE)
     stored_ts = request.session.get(_SK_TS, 0)
 
     if not stored_token:
-        return JsonResponse(
+        return Response(
             {"detail": "No active challenge. Please try again."},
             status=400,
         )
 
     # --- validate not expired ------------------------------------------------
-    if now - stored_ts > CHALLENGE_TTL:
-        request.session.pop(_SK_CHALLENGE, None)
-        request.session.pop(_SK_TS, None)
-        request.session.modified = True
-        return JsonResponse(
+    if now_ms - stored_ts > CHALLENGE_TTL * 1000:
+        _clear_challenge(request.session)
+        return Response(
             {"detail": "Challenge expired. Please try again."},
             status=400,
         )
 
     # --- validate token matches ----------------------------------------------
-    if not stored_token or stored_token != token:
-        return JsonResponse(
+    if stored_token != token:
+        return Response(
             {"detail": "Invalid challenge. Please try again."},
             status=400,
         )
 
-    # --- validate drag took long enough (anti-bot) ---------------------------
-    if not isinstance(elapsed, (int, float)) or elapsed < MIN_DRAG_MS:
-        return JsonResponse(
+    # --- server-measured drag time (anti-bot) --------------------------------
+    # The wall-clock time between challenge creation and verification is a
+    # lower bound on the drag duration. A bot can wait it out, but it cannot
+    # *claim* a slow drag the way it could with a client-supplied `elapsed`.
+    if now_ms - stored_ts < MIN_DRAG_MS:
+        return Response(
             {"detail": "Too fast. Please drag the slider more slowly."},
             status=400,
         )
 
     # --- success: generate signed token with nonce ---------------------------
-    request.session.pop(_SK_CHALLENGE, None)
-    request.session.pop(_SK_TS, None)
-    request.session.modified = True
+    _clear_challenge(request.session)
 
     nonce = _new_token()
-    captcha_token = _sign({"verified": True, "ts": now, "nonce": nonce})
+    captcha_token = _sign({"verified": True, "ts": int(time.time()), "nonce": nonce})
 
     # Store nonce in cache (TTL = CAPTCHA_TTL). Single-use: consumed in validate_captcha_token.
     cache.set(_NONCE_CACHE_PREFIX + nonce, True, CAPTCHA_TTL)
 
-    return JsonResponse({"captcha_token": captcha_token})
+    return Response({"captcha_token": captcha_token})

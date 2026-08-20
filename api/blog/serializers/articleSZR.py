@@ -1,9 +1,11 @@
 from blog.models import Article, Comment, Tag
 from rest_framework import serializers
+from django.utils.text import slugify
 from .categorySZR import CategorySerializer
 from .tagSZR import TagSerializer
 from .commentSZR import CommentSerializer
-from ...services.image_process import validate_type_image, validate_volume_image, process_post_banner
+from Security.image_process import validate_type_image, validate_volume_image, process_post_banner
+from Security.sanitizer import sanitize
 
 class ArticleListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
@@ -17,9 +19,8 @@ class ArticleListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'title', 'summary', 'cover_image', 'category', 'tags', 'author_name', 'author_slug', 'status', 'likes', 'views', 'created_at']
-
-
+        fields = ['id', 'title', 'summary', 'cover_image', 'category', 'tags', 'author_name', 'author_slug', 'status',
+                  'likes', 'views', 'created_at']
 
 
 class ArticleDetailSerializer(serializers.ModelSerializer):
@@ -35,7 +36,8 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'title', 'summary','content', 'cover_image', 'category', 'tags', 'author_name', 'author_slug', 'status', 'likes', 'views','approved_comments', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'summary', 'content', 'cover_image', 'category', 'tags', 'author_name', 'author_slug',
+                  'status', 'likes', 'views', 'approved_comments', 'created_at', 'updated_at']
 
     def get_approved_comments(self, obj):
         comments = obj.comment_set.filter(status=Comment.Status.APPROVED, parent__isnull=True)
@@ -47,10 +49,13 @@ class ArticleWriteSerializer(serializers.ModelSerializer):
     cover. Status is managed separately via submit/withdraw actions and the
     admin; the author can't publish directly."""
 
-    tags = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Tag.objects.all(), required=False
+    tags = serializers.ListField(
+        child=serializers.CharField(),
+        required=False,
+        write_only=True,
     )
     cover_image = serializers.ImageField(validators=[validate_volume_image, validate_type_image])
+
     class Meta:
         model = Article
         fields = ['id', 'title', 'summary', 'content', 'category', 'tags',
@@ -61,3 +66,33 @@ class ArticleWriteSerializer(serializers.ModelSerializer):
 
     def validate_cover_image(self, file):
         return process_post_banner(file)
+
+    def _resolve_tags(self, tag_names):
+        """Turn a list of tag name strings into Tag instances, creating any
+        that don't exist yet."""
+        tags = []
+        for name in tag_names:
+            name = name.strip()
+            if not name:
+                continue
+            slug = slugify(name, allow_unicode=True)
+            tag, _ = Tag.objects.get_or_create(slug=slug, defaults={'name': name})
+            tags.append(tag)
+        return tags
+
+    def create(self, validated_data):
+        tag_names = validated_data.pop('tags', [])
+        article = Article.objects.create(**validated_data)
+        article.tags.set(self._resolve_tags(tag_names))
+        return article
+
+    def update(self, instance, validated_data):
+        tag_names = validated_data.pop('tags', [])
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        instance.tags.set(self._resolve_tags(tag_names))
+        return instance
+
+    def validate_content(self, value):
+        return sanitize(value)

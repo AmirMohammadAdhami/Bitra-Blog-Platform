@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
+{% load blog_tags %}
 
 {% block title %}All Stories — Bitra{% endblock %}
+{% block meta_desc %}{{ meta_description }}{% endblock %}
+{% block canonical %}{{ request.build_absolute_uri|strip_query }}{% endblock %}
 
 {% block content %}
 <div class="pagehead">
@@ -14,18 +17,64 @@
 <div class="filterbar" data-filterbar>
   <div class="chips" data-chips>
     <button class="chip" data-cat="" aria-pressed="true">All</button>
+    {% for cat in categories %}
+    <button class="chip" data-cat="{{ cat }}" aria-pressed="false">{{ cat }}</button>
+    {% endfor %}
   </div>
-  <label class="search">
-    <span class="search__ico" aria-hidden="true">⌕</span>
-    <input type="search" placeholder="Search headlines…" data-search aria-label="Search stories">
-  </label>
+  <div class="search-wrap" data-search-wrap>
+    <label class="search">
+      <span class="search__ico" aria-hidden="true">⌕</span>
+      <input type="search" placeholder="Search headlines…" data-search aria-label="Search stories" autocomplete="off">
+    </label>
+    <div class="search-dropdown" data-search-dropdown hidden>
+      <div class="search-dropdown__section" data-recent-section hidden>
+        <h4 class="search-dropdown__title">Recent Searches</h4>
+        <ul class="search-dropdown__list" data-recent-list></ul>
+      </div>
+      <div class="search-dropdown__section" data-trending-section hidden>
+        <h4 class="search-dropdown__title">Trending Now</h4>
+        <ul class="search-dropdown__list" data-trending-list></ul>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div data-index>
+{# ---- Server-rendered article list (crawlers see this immediately) ---- #}
+<div data-index data-ssr>
   <div class="index">
-    <div class="index__row skeleton"><span class="index__num">00</span><div><div class="sk-line w-80"></div><div class="sk-line w-60"></div></div><div class="index__aside"></div></div>
-    <div class="index__row skeleton"><span class="index__num">00</span><div><div class="sk-line w-60"></div><div class="sk-line w-40"></div></div><div class="index__aside"></div></div>
-    <div class="index__row skeleton"><span class="index__num">00</span><div><div class="sk-line w-80"></div><div class="sk-line w-40"></div></div><div class="index__aside"></div></div>
+    {% for a in articles %}
+    <div class="index__row reveal">
+      <span class="index__num">{{ forloop.counter|stringformat:"02d" }}</span>
+      <div>
+        <div class="kicker">{{ a.category.name|default:"Dispatch" }}</div>
+        <h2 class="index__hl"><a href="/articles/{{ a.id }}/">{{ a.title }}</a></h2>
+        {% if a.summary %}
+        <p class="index__sum">{{ a.summary|truncatewords:30 }}</p>
+        {% endif %}
+        <div class="index__meta">
+          {% if a.author %}
+            {% if a.author.profile %}
+            <a href="/profile/{{ a.author.profile.slug }}/" class="wire author-link">{{ a.author.get_full_name|default:a.author.username }}</a>
+            {% else %}
+            <span class="wire">{{ a.author.get_full_name|default:a.author.username }}</span>
+            {% endif %}
+          {% else %}
+            <span class="wire">Bitra</span>
+          {% endif %}
+          <span class="wire"> · {{ a.created_at|date:"j M Y" }}</span>
+        </div>
+      </div>
+      <div class="index__aside">
+        <div class="wire">{{ a.views }} views</div>
+        <div class="wire">{{ a.likes }} likes</div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="note-block">
+      <h2>No stories match.</h2>
+      <p>This section is empty for now.</p>
+    </div>
+    {% endfor %}
   </div>
 </div>
 
@@ -37,5 +86,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{% static 'js/search.js' %}"></script>
 <script src="{% static 'js/index.js' %}"></script>
 {% endblock %}

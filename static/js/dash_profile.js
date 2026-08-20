@@ -9,6 +9,15 @@
   var host = document.querySelector("[data-profile]");
   if (!host) return;
 
+  function initials(u) {
+    var src = (u.full_name || u.username || u.email || "").trim();
+    if (!src) return "·";
+    var parts = src.split(/\s+/);
+    var a = parts[0][0] || "";
+    var b = parts.length > 1 ? parts[parts.length - 1][0] : "";
+    return (a + b).toUpperCase();
+  }
+
   // A compact country list (ISO-2 → name). Any stored code not present is
   // injected on render so it is never silently dropped.
   var COUNTRIES = [
@@ -323,15 +332,6 @@
     var actionsWrap = el("div", { class: "dash__avatar-actions" });
     row.appendChild(actionsWrap);
 
-    function initials(u) {
-      var src = (u.full_name || u.username || u.email || "").trim();
-      if (!src) return "·";
-      var parts = src.split(/\s+/);
-      var a = parts[0][0] || "";
-      var b = parts.length > 1 ? parts[parts.length - 1][0] : "";
-      return (a + b).toUpperCase();
-    }
-
     // --- render the avatar image or initials ---
     function paintAvatar(url) {
       UI.clear(avatar);
@@ -451,7 +451,7 @@
       }
       // Validate size (3 MB)
       if (file.size > 3 * 1024 * 1024) {
-        UI.toast("Image must be under 5 MB.");
+        UI.toast("Image must be under 3 MB.");
         fileInput.value = "";
         return;
       }
@@ -499,34 +499,8 @@
 
   // --- sync sidebar avatar (dashboard shell) ---
   function syncSidebarAvatar(imageUrl, user) {
-    var host = UI.qs("[data-dash-id]");
-    if (!host) return;
-    UI.clear(host);
-    function initials(u) {
-      var src = (u.full_name || u.username || u.email || "").trim();
-      if (!src) return "·";
-      var parts = src.split(/\s+/);
-      var a = parts[0][0] || "";
-      var b = parts.length > 1 ? parts[parts.length - 1][0] : "";
-      return (a + b).toUpperCase();
-    }
-    var avatar = UI.el("div", { class: "dash__avatar", text: initials(user) });
-    host.appendChild(avatar);
-    if (imageUrl) {
-      UI.clear(avatar);
-      avatar.textContent = "";
-      avatar.appendChild(UI.el("img", { src: imageUrl, alt: (user.username || "Profile") + " avatar" }));
-    }
-    var right = UI.el("div", {}, [
-      UI.el("div", { class: "dash__name", text: user.full_name || user.username || "Reader" }),
-      user.email ? UI.el("div", { class: "dash__mail", text: user.email }) : null,
-    ]);
-    if (user.is_author) {
-      right.appendChild(UI.el("div", { class: "dash__role" }, [
-        UI.el("span", { class: "flag", text: "Contributor" }),
-      ]));
-    }
-    host.appendChild(right);
+    // dashboard.js owns the identity card; re-render it with the new image.
+    window.Dash.renderIdentity(user, imageUrl);
   }
 
   /* -------------------------------------------------------------- render */

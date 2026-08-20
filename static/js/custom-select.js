@@ -2,7 +2,7 @@
    Custom select — a searchable dropdown that replaces native <select> elements.
    Used for country and platform pickers in the dashboard profile.
    API:  window.CustomSelect.create(container, opts)
-         opts = { name, options, value, placeholder, onSelect, renderOption }
+         opts = { name, options, value, placeholder }
    ========================================================================= */
 (function (global) {
   "use strict";
@@ -13,11 +13,8 @@
     var options = opts.options || [];   // [{ value, label, icon? }]
     var current = opts.value || "";
     var placeholder = opts.placeholder || "Select…";
-    var onSelect = opts.onSelect || function () {};
-    var renderOption = opts.renderOption; // optional custom renderer
 
-
-    var state = { open: false, query: "", filtered: options.slice() };
+    var state = { open: false, query: "" };
     var wrap, trigger, dropdown, searchInput, listEl, hiddenInput;
 
     // --- build DOM ---
@@ -90,25 +87,21 @@
       listEl.innerHTML = "";
       var q = state.query.toLowerCase();
       var shown = 0;
-      state.filtered.forEach(function (opt) {
+      options.forEach(function (opt) {
         if (q && opt.label.toLowerCase().indexOf(q) === -1) return;
         shown++;
         var item = document.createElement("div");
         item.className = "custom-sel__opt";
         item.setAttribute("role", "option");
         item.setAttribute("aria-selected", String(opt.value === current));
-        if (renderOption) {
-          renderOption(item, opt);
-        } else {
-          if (opt.icon) {
-            var img = document.createElement("img");
-            img.src = opt.icon;
-            img.alt = opt.label;
-            img.onerror = function () { this.style.display = "none"; };
-            item.appendChild(img);
-          }
-          item.appendChild(document.createTextNode(opt.label));
+        if (opt.icon) {
+          var img = document.createElement("img");
+          img.src = opt.icon;
+          img.alt = opt.label;
+          img.onerror = function () { this.style.display = "none"; };
+          item.appendChild(img);
         }
+        item.appendChild(document.createTextNode(opt.label));
         item.addEventListener("click", function () {
           select(opt.value);
         });
@@ -144,7 +137,6 @@
       renderTrigger();
       close();
       trigger.focus();
-      onSelect(val);
     }
 
     // --- events ---
@@ -183,7 +175,7 @@
       }
     });
 
-    // close on outside click (stored for cleanup)
+    // close on outside click
     function onDocClick(e) {
       if (!wrap.contains(e.target)) close();
     }
@@ -204,11 +196,6 @@
     // --- public API ---
     return {
       getValue: function () { return current; },
-      setValue: function (val) { current = val; hiddenInput.value = val; renderTrigger(); },
-      destroy: function () {
-        document.removeEventListener("click", onDocClick);
-        container.removeChild(wrap);
-      },
     };
   }
 

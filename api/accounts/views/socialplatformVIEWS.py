@@ -6,12 +6,14 @@ from ..serializers.socialplatformSZR import SocialPlatformSerializer, SocialPlat
 
 
 class SocialPlatformViewSet(ReadOnlyModelViewSet):
+    """Read-only list of available social platforms."""
     queryset = SocialPlatform.objects.all()
     serializer_class = SocialPlatformSerializer
     permission_classes = [IsAuthenticated]
 
 
 class SocialPlatformLinkViewSet(ModelViewSet):
+    """Manage the caller's social links."""
     serializer_class = SocialPlatformLinkSerializer
     permission_classes = [IsAuthenticated]
 

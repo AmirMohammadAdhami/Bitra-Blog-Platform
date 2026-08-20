@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 
 
 class LoginUserView(LoginView):
+    """Session-based login page; redirects already-authenticated users home."""
     template_name = 'accounts/login.html'
     form_class = LoginForm
     next_page = 'blog:home'

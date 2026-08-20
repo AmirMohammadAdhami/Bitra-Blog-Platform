@@ -1,53 +1,85 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Profile — Bitra{% endblock %}
+{# ---- SEO: dynamic <title> + meta ---- #}
+{% block title %}{{ display_name }} — Bitra{% endblock %}
+{% block meta_desc %}{{ meta_description }}{% endblock %}
+
+{% block head_extra %}
+<meta property="og:type" content="profile">
+<meta property="og:title" content="{{ og_title }}">
+<meta property="og:description" content="{{ og_description }}">
+<meta property="og:url" content="{{ og_url }}">
+{% if og_image %}<meta property="og:image" content="{{ og_image }}">{% endif %}
+<meta name="twitter:card" content="{% if og_image %}summary_large_image{% else %}summary{% endif %}">
+<meta name="twitter:title" content="{{ og_title }}">
+<meta name="twitter:description" content="{{ og_description }}">
+{% if og_image %}<meta name="twitter:image" content="{{ og_image }}">{% endif %}
+<script type="application/ld+json">{{ structured_data|safe }}</script>
+{% endblock %}
 
 {% block content %}
-<div class="pubprof" data-pubprof>
-  <!-- skeleton while loading -->
-  <div class="pubprof__loading skeleton">
-    <div class="pubprof__avatar sk-line" style="width:120px;height:120px;border-radius:50%"></div>
-    <div class="sk-line w-40" style="height:1.6rem;margin-top:1rem"></div>
-    <div class="sk-line w-60" style="height:.9rem;margin-top:.5rem"></div>
-    <div class="sk-line w-80" style="height:.9rem;margin-top:.3rem"></div>
-  </div>
+{# ---- Server-rendered profile (crawlers see this immediately) ---- #}
+<div class="pubprof" data-pubprof data-ssr>
 
-  <!-- profile card (hidden until loaded) -->
-  <div class="pubprof__card" hidden>
+  {# ---- Profile card ---- #}
+  <div class="pubprof__card">
     <div class="pubprof__top">
       <div class="pubprof__avatar-wrap">
-        <img class="pubprof__avatar" data-pubprof-img src="" alt="" />
+        {% if profile.profile_image %}
+        <img class="pubprof__avatar" src="{{ profile.profile_image.url }}" alt="{{ display_name }} avatar">
+        {% else %}
+        <div class="pubprof__avatar pubprof__avatar--placeholder">{{ display_name|first|upper }}</div>
+        {% endif %}
       </div>
       <div class="pubprof__info">
-        <h1 class="pubprof__name" data-pubprof-name></h1>
-        <p class="pubprof__location wire" data-pubprof-location></p>
-        <p class="pubprof__bio" data-pubprof-bio></p>
-        <div class="pubprof__meta wire" data-pubprof-meta></div>
+        <h1 class="pubprof__name">{{ display_name }}</h1>
+        {% if location %}
+        <p class="pubprof__location wire">{{ location }}</p>
+        {% endif %}
+        {% if profile.bio %}
+        <p class="pubprof__bio">{{ profile.bio }}</p>
+        {% endif %}
+        <div class="pubprof__meta wire">Member since {{ profile.created_at|date:"j M Y" }}</div>
       </div>
     </div>
 
-    <!-- social links -->
-    <div class="pubprof__socials" data-pubprof-socials hidden></div>
+    {# Social links #}
+    {% if profile.social_links.all %}
+    <div class="pubprof__socials">
+      {% for link in profile.social_links.all %}
+      <a class="pubprof__social" href="{{ link.url }}" target="_blank" rel="noopener noreferrer" title="{{ link.platform.name }}">
+        {% if link.platform.icon %}
+        <img class="pubprof__social-icon" src="{{ link.platform.icon.url }}" alt="{{ link.platform.name }}">
+        {% else %}
+        <span class="pubprof__social-icon pubprof__social-icon--text">{{ link.platform.name|first|upper }}</span>
+        {% endif %}
+        <span class="pubprof__social-name">{{ link.platform.name }}</span>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
 
-    <!-- author stats (only for authors) -->
-    <div class="pubprof__stats" data-pubprof-stats hidden>
+    {# Author stats #}
+    {% if author_stats %}
+    <div class="pubprof__stats">
       <div class="pubprof__stat">
-        <span class="pubprof__stat-num" data-pubprof-articles>—</span>
+        <span class="pubprof__stat-num">{{ author_stats.total_articles }}</span>
         <span class="pubprof__stat-label">Articles</span>
       </div>
       <div class="pubprof__stat">
-        <span class="pubprof__stat-num" data-pubprof-likes>—</span>
+        <span class="pubprof__stat-num">{{ author_stats.likes }}</span>
         <span class="pubprof__stat-label">Likes</span>
       </div>
       <div class="pubprof__stat">
-        <span class="pubprof__stat-num" data-pubprof-views>—</span>
+        <span class="pubprof__stat-num">{{ author_stats.views }}</span>
         <span class="pubprof__stat-label">Views</span>
       </div>
     </div>
 
-    <!-- author articles (only for authors) -->
-    <div class="pubprof__articles" data-pubprof-articles-section hidden>
+    {# Published articles #}
+    {% if published_articles %}
+    <div class="pubprof__articles">
       <div class="pubprof__articles-head">
         <h2>Published Stories</h2>
         <div class="chips" data-pubprof-filters>
@@ -59,8 +91,25 @@
       </div>
       <div data-pubprof-article-list>
         <div class="index">
-          <div class="index__row skeleton"><span class="index__num">00</span><div><div class="sk-line w-80"></div><div class="sk-line w-60"></div></div></div>
-          <div class="index__row skeleton"><span class="index__num">00</span><div><div class="sk-line w-60"></div><div class="sk-line w-40"></div></div></div>
+          {% for a in published_articles %}
+          <div class="index__row reveal">
+            <span class="index__num">{{ forloop.counter|stringformat:"02d" }}</span>
+            <div>
+              <div class="kicker">{{ a.category.name|default:"Dispatch" }}</div>
+              <h2 class="index__hl"><a href="/articles/{{ a.id }}/">{{ a.title }}</a></h2>
+              {% if a.summary %}
+              <p class="index__sum">{{ a.summary|truncatewords:30 }}</p>
+              {% endif %}
+              <div class="index__meta">
+                <span class="wire">{{ a.created_at|date:"j M Y" }}</span>
+              </div>
+            </div>
+            <div class="index__aside">
+              <div class="wire">{{ a.views }} views</div>
+              <div class="wire">{{ a.likes }} likes</div>
+            </div>
+          </div>
+          {% endfor %}
         </div>
       </div>
       <div class="pager" data-pubprof-pager>
@@ -69,14 +118,10 @@
         <button class="pager__btn" data-pubprof-next aria-label="Next page">Next →</button>
       </div>
     </div>
+    {% endif %}
+    {% endif %}
   </div>
 
-  <!-- error state (hidden) -->
-  <div class="pubprof__error note-block" hidden>
-    <h2>Profile not found.</h2>
-    <p>This author page doesn't exist, or the link may be broken.</p>
-    <a class="btn btn--sm" href="/">Return to the Front Page</a>
-  </div>
 </div>
 {% endblock %}
 

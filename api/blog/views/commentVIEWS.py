@@ -2,21 +2,16 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
+from ..permissions import IsCommentAuthorOrReadOnly
 from api.blog.serializers.commentSZR import CommentSerializer
 from blog.models import Comment, CommentLike
 
 
-class IsCommentAuthorOrReadOnly(BasePermission):
-    """Only the comment's own author may edit or delete it."""
 
-    def has_object_permission(self, request, view, obj):
-        if request.method in ('GET', 'HEAD', 'OPTIONS'):
-            return True
-        return obj.author_id == request.user.id
 
 
 class CommentViewSet(viewsets.ModelViewSet):
+    """Comments: approved ones are readable, authors post their own."""
     queryset = Comment.objects.filter(status=Comment.Status.APPROVED)
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, IsCommentAuthorOrReadOnly]
@@ -27,10 +22,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def mine(self, request):
-        """The signed-in reader's own comments across every status, newest
-        first — so they can see what's live and what's still awaiting
-        approval. Read-only; the default queryset (APPROVED only) that the
-        public article pages rely on is left untouched."""
+        """The caller's own comments across every status."""
         comments = (Comment.objects
                     .filter(author=request.user)
                     .select_related('article')
@@ -40,6 +32,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def likes(self, request, pk=None):
+        """Toggle a like on a comment."""
         comment = self.get_object()
         user = request.user
 

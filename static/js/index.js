@@ -19,6 +19,11 @@
   var pagerInfo = document.querySelector("[data-pager-info]");
   if (!indexHost) return;
 
+  // When the server already rendered the article list (SSR), the initial
+  // content is visible.  We still fetch data for client-side search/filter
+  // but skip the initial chip build (chips are already in the HTML).
+  var ssrRendered = indexHost.hasAttribute("data-ssr");
+
   var PAGE_SIZE = 10;
 
   var state = {
@@ -182,9 +187,17 @@
   fetchAll().then(function (list) {
     state.all = list.filter(isPublic);
     if (!state.all.length) state.all = list;
-    buildChips();
+    if (!ssrRendered) buildChips();
     initSearch();
-    apply();
+    if (!ssrRendered) apply();
+    // For SSR pages, set up the pager info based on existing DOM content.
+    // The server rendered the first page; JS takes over on Next/Prev.
+    if (ssrRendered) {
+      state.filtered = state.all;
+      var total = state.filtered.length;
+      var pages = totalPages();
+      renderPager(total, pages);
+    }
   }).catch(fail);
 
   /* ---------- pager button handlers ---------- */

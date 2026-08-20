@@ -1,28 +1,30 @@
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from accounts.models import Like, Bookmark
+from blog.models import Article
 from ..serializers.likebookmarkSZR import LikeSerializer, BookmarkSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import F
+from blog.models import Article
 
 
 class LikeViewSet(viewsets.ModelViewSet):
+    """The caller's likes, with a toggle action."""
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Like.objects.filter(user=self.request.user)
 
-
     @action(detail=False, methods=['post'])
     def toggle(self, request):
+        """Like or unlike an article by article_id."""
         article_id = request.data.get('article_id')
         if not article_id:
             return Response({'detail': 'we need an article id'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        from blog.models import Article
         try:
             article = Article.objects.get(pk=article_id)
         except Article.DoesNotExist:
@@ -49,6 +51,7 @@ class LikeViewSet(viewsets.ModelViewSet):
 
 
 class BookmarkViewSet(viewsets.ModelViewSet):
+    """The caller's bookmarks, with a toggle action."""
     serializer_class = BookmarkSerializer
     permission_classes = [IsAuthenticated]
 
@@ -56,15 +59,19 @@ class BookmarkViewSet(viewsets.ModelViewSet):
         return Bookmark.objects.filter(user=self.request.user)
 
     @action(detail=False, methods=['post'])
-    def toggle(self,request):
+    def toggle(self, request):
+        """Bookmark or unbookmark an article by article_id."""
         article_id = request.data.get('article_id')
         if not article_id:
-            return Response({'detail':'we need an article id'})
+            return Response({'detail': 'we need an article id'})
+        article = Article.objects.get(pk=article_id)
+        if article.status != Article.Status.REVIEWED:
+            return Response({'detail': 'You can only bookmark published stories.'}, )
 
-        bookmark_obj, created = Bookmark.objects.get_or_create(user=self.request.user,article_id=article_id)
+        bookmark_obj, created = Bookmark.objects.get_or_create(user=self.request.user, article_id=article_id)
 
         if not created:
             bookmark_obj.delete()
-            return Response({'status':'unbookmarked'}, status=status.HTTP_200_OK)
+            return Response({'status': 'unbookmarked'}, status=status.HTTP_200_OK)
 
-        return Response({'status':'bookmarked'}, status=status.HTTP_200_OK)
+        return Response({'status': 'bookmarked'}, status=status.HTTP_200_OK)

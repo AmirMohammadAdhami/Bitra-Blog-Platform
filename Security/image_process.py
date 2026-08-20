@@ -3,9 +3,10 @@ from rest_framework import serializers
 from PIL import Image
 from django.core.files.base import ContentFile
 import io
+import uuid
 
 ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp']
-MAX_IMAGE_SIZE = 5 * 1024 * 1024
+MAX_IMAGE_SIZE = 3 * 1024 * 1024
 
 def validate_type_image(file):
 
@@ -27,21 +28,34 @@ def validate_volume_image(file):
 
 
 def compress_and_resize_image(
-    image_file, max_size=(800, 800), quality=80, format="WEBP"
+        image_file, max_size=(800, 800), quality=80, format="WEBP"
 ):
     img = Image.open(image_file)
 
-    if img.mode in ("RGBA", "P"):
+
+    if format.upper() == "WEBP":
+        if img.mode not in ("RGB", "RGBA"):
+            img = img.convert("RGBA")
+    elif img.mode in ("RGBA", "P"):
         img = img.convert("RGB")
+
 
     img.thumbnail(max_size, Image.Resampling.LANCZOS)
 
     buffer = io.BytesIO()
     img.save(buffer, format=format, quality=quality, optimize=True)
-    buffer.seek(0)
 
-    filename = f"{image_file.name.split('.')[0]}.{format.lower()}"
-    return ContentFile(buffer.read(), name=filename)
+    data = buffer.getvalue()
+
+
+    filename = f"{uuid.uuid4()}.{format.lower()}"
+
+
+    content_file = ContentFile(data, name=filename)
+    content_file.content_type = f"image/{format.lower()}"
+    content_file.size = len(data)
+
+    return content_file
 
 
 
@@ -53,4 +67,9 @@ def process_avatar(image_file):
 def process_post_banner(image_file):
     return compress_and_resize_image(
         image_file, max_size=(1200, 675), quality=80
+    )
+
+def process_post_images(image_file):
+    return compress_and_resize_image(
+        image_file, max_size=(1200,1200), quality=80
     )

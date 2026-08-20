@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from rest_framework.permissions import BasePermission
 
 
 class IsAuthorOwnerOrReadOnly(permissions.BasePermission):
@@ -24,5 +25,24 @@ class IsAuthorOwnerOrReadOnly(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.author_id == request.user.id
+
+
+class IsAuthorOrReadOnly(permissions.BasePermission):
+    message = "Only Authors can create tags"
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        if request.user.is_author:
+            return True
+        return False
+
+
+class IsCommentAuthorOrReadOnly(BasePermission):
+    """Only the comment's own author may edit or delete it."""
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in ('GET', 'HEAD', 'OPTIONS'):
             return True
         return obj.author_id == request.user.id

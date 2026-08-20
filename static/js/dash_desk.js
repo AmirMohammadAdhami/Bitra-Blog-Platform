@@ -191,21 +191,26 @@
   }
 
   // ---- boot ----------------------------------------------------------------
-  var user = API.Session.user || {};
-  if (!user.is_author) {
-    // Signed in but not yet a contributor — point them at the request page.
-    window.Dash.empty(
-      host,
-      "The desk is for contributors.",
-      "Ask for a contributor seat and, once an editor says yes, you can write and submit your own stories here.",
-      "/dashboard/author-request/",
-      "Ask to contribute"
-    );
-    if (countEl) countEl.textContent = "";
-    return;
-  }
+  // `is_author` flips server-side when an editor approves a contributor
+  // request, but the cached Session.user only refreshes at login — so confirm
+  // with the server before refusing a contributor the desk.
+  API.refreshUser().catch(function () { return null; }).then(function (fresh) {
+    var user = fresh || API.Session.user || {};
+    if (!user.is_author) {
+      // Signed in but not yet a contributor — point them at the request page.
+      window.Dash.empty(
+        host,
+        "The desk is for contributors.",
+        "Ask for a contributor seat and, once an editor says yes, you can write and submit your own stories here.",
+        "/accounts/dashboard/author-request/",
+        "Ask to contribute"
+      );
+      if (countEl) countEl.textContent = "";
+      return;
+    }
 
-  if (newBtn) newBtn.hidden = false;
-  load();
-  loadStats();
+    if (newBtn) newBtn.hidden = false;
+    load();
+    loadStats();
+  });
 })();

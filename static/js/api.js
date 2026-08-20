@@ -154,7 +154,7 @@
   // Shape an article payload for the write endpoint. When a cover File is
   // present we must send multipart/form-data (raw() detects FormData and drops
   // the JSON Content-Type so the browser sets the boundary); otherwise the
-  // clean JSON path is used. `tags` is a list of ids in both cases.
+  // clean JSON path is used. `tags` is a list of tag name strings.
   function toArticleBody(fields) {
     fields = fields || {};
     var cover = fields.cover_image;
@@ -213,11 +213,16 @@
       }, { auth: false });
     },
     register: function (payload) {
-      // { username, email, full_name, password }
+      // { username, email, full_name, password } — returns tokens, like login.
       var body = Object.assign({}, payload);
       var ct = global.BitraCAPTCHA && global.BitraCAPTCHA.token;
       if (ct) body.captcha_token = ct;
-      return post("/accounts/register/", body, { auth: false });
+      return post("/accounts/register/", body, { auth: false })
+        .then(function (data) {
+          Tokens.set(data.access, data.refresh);
+          Session.user = data.user;
+          return data.user;
+        });
     },
     logout: function () {
       var token = Tokens.refresh;
@@ -241,7 +246,6 @@
 
     /* ---- taxonomy ---- */
     categories: function () { return get("/blog/categories/").then(asList); },
-    tags: function () { return get("/blog/tags/").then(asList); },
 
     /* ---- comments ---- */
     // Article detail already embeds `approved_comments`; this is for posting.
@@ -265,6 +269,19 @@
     /* ---- profile (dashboard) ---- */
     isAuthenticated: function () { return Session.isAuthed; },
     profileMe: function () { return get("/accounts/profiles/me/"); },
+    // Re-fetch the signed-in user from the server so flags like `is_author`
+    // (which flips when an editor approves a contributor request) stay current.
+    // The cached Session.user only refreshes at login/register, so call this
+    // before gating on role — otherwise an approved author is still treated as
+    // a reader until they log out and back in. Updates the cache and returns
+    // the fresh user object.
+    refreshUser: function () {
+      return get("/accounts/profiles/me/").then(function (p) {
+        var u = p && p.user ? p.user : null;
+        if (u) Session.user = u;
+        return u;
+      });
+    },
     updateProfile: function (payload) { return patch("/accounts/profiles/me/", payload); },
     publicProfile: function (slug) { return get("/accounts/profiles/public/?slug=" + encodeURIComponent(slug)); },
     publicProfileByUsername: function (username) { return get("/accounts/profiles/public/?username=" + encodeURIComponent(username)); },
@@ -278,7 +295,6 @@
 
     /* ---- social links ---- */
     socialPlatforms: function () { return get("/accounts/social-platforms/").then(asList); },
-    socialLinks: function () { return get("/accounts/social-links/").then(asList); },
     addSocialLink: function (platformId, username) {
       return post("/accounts/social-links/", { platform: platformId, username: username });
     },

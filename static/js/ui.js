@@ -31,11 +31,6 @@
   function qs(sel, root) { return (root || document).querySelector(sel); }
   function qsa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
   function clear(node) { while (node && node.firstChild) node.removeChild(node.firstChild); return node; }
-  function esc(s) {
-    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
 
   /* -------------------------------------------------------------- format */
   var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -97,9 +92,9 @@
     article: function (id) { return "/articles/" + id + "/"; },
     login: "/auth/login/",
     register: "/auth/register/",
-    desk: "/dashboard/author/",
-    write: "/dashboard/write/",
-    edit: function (id) { return "/dashboard/write/" + id + "/"; },
+    desk: "/accounts/dashboard/author/",
+    write: "/accounts/dashboard/write/",
+    edit: function (id) { return "/accounts/dashboard/write/" + id + "/"; },
   };
 
   /* ---------------------------------------------- header / auth rendering */
@@ -110,11 +105,11 @@
     var user = API.Session.user;
     if (user) {
       host.appendChild(el("a", {
-        href: "/dashboard/profile/", class: "who",
+        href: "/accounts/dashboard/profile/", class: "who",
         text: "☰ " + (user.username || user.full_name || "Reader"),
       }));
-      if (user.is_author) host.appendChild(el("a", { href: "/dashboard/author/", text: "Desk" }));
-      host.appendChild(el("a", { href: "/dashboard/bookmarks/", text: "Saved" }));
+      if (user.is_author) host.appendChild(el("a", { href: "/accounts/dashboard/author/", text: "Desk" }));
+      host.appendChild(el("a", { href: "/accounts/dashboard/bookmarks/", text: "Saved" }));
       host.appendChild(el("button", {
         class: "util__link", type: "button", text: "Sign out",
         onclick: function () {
@@ -186,6 +181,15 @@
     initNav();
     initDateline();
     initReveals();
+    // `is_author` flips server-side when an editor approves a contributor
+    // request, but the cached Session.user only refreshes at login — so re-check
+    // on every page load and re-render the header once we know the truth. This
+    // is what keeps the "Desk" link honest without a re-login.
+    if (API.Session.user) {
+      API.refreshUser().catch(function () { return null; }).then(function (fresh) {
+        if (fresh && API.Session.user) renderAuth();
+      });
+    }
   }
 
   /* ---------------------------------------------------------- cover image */
@@ -219,13 +223,13 @@
   }
 
   global.UI = {
-    el: el, qs: qs, qsa: qsa, clear: clear, esc: esc,
-    dateline: dateline, longDate: longDate, timeAgo: timeAgo, num: num,
+    el: el, qs: qs, qsa: qsa, clear: clear,
+    dateline: dateline, timeAgo: timeAgo, num: num,
     readTime: readTime, excerpt: excerpt, toast: toast,
-    coverSrc: coverSrc, coverImg: coverImg,
+    coverImg: coverImg,
     authorLink: authorLink,
-    Routes: Routes, renderAuth: renderAuth, requireAuthCTA: requireAuthCTA,
-    initReveals: initReveals, boot: boot,
+    Routes: Routes, requireAuthCTA: requireAuthCTA,
+    initReveals: initReveals,
   };
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

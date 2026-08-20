@@ -3,29 +3,156 @@
 
 {% block title %}Bitra — The Daily Broadsheet{% endblock %}
 
+{% block head_extra %}
+<meta property="og:type" content="website">
+<meta property="og:title" content="Bitra — The Daily Broadsheet">
+<meta property="og:description" content="{{ meta_description }}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"Bitra","url":"{{ request.build_absolute_uri }}"}
+</script>
+{% endblock %}
+
 {% block content %}
-<div id="front" data-front>
-  <!-- Front page is rendered from the API by front.js -->
+{# ---- Server-rendered front page (crawlers see this immediately) ---- #}
+<div id="front" data-front data-ssr>
+
   <section class="frontpage" aria-label="Lead stories">
-    <div class="frontpage__left rail" aria-hidden="true">
-      <div class="skeleton"><div class="sk-line w-60"></div><div class="sk-line w-80"></div><div class="sk-line w-40"></div></div>
-    </div>
+
+    {# ---- Latest rail (left) ---- #}
+    <aside class="frontpage__left rail" aria-label="Latest stories">
+      <div class="rail__title"><span class="flag">Latest</span></div>
+      {% for a in latest %}
+      <div class="rail__item">
+        <a href="/articles/{{ a.id }}/">
+          <div class="rail__hl">{{ a.title }}</div>
+          <div class="rail__meta">
+            <span class="wire">{{ a.author.get_full_name|default:a.author.username }} · {{ a.created_at|date:"j M Y" }}</span>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </aside>
+
+    {# ---- Lead story (center) ---- #}
     <div class="frontpage__mid">
-      <div class="skeleton" style="min-height:14rem"><div class="sk-line w-40"></div><div class="sk-line w-80"></div><div class="sk-line w-60"></div></div>
+      {% if lead %}
+      <article class="lead">
+        <div class="lead__cover">
+          {% if lead.cover_image %}
+          <img src="{{ lead.cover_image.url }}" alt="{{ lead.title }}" loading="lazy">
+          {% else %}
+          <img src="/static/images/placeholder-article.svg" alt="{{ lead.title }}" loading="lazy">
+          {% endif %}
+        </div>
+        <div class="lead__kicker">
+          <span class="flag">{{ lead.category.name|default:"Dispatch" }}</span>
+          <span class="wire">{{ lead.views }} reading</span>
+        </div>
+        <h2 class="lead__headline">
+          <a href="/articles/{{ lead.id }}/">{{ lead.title }}</a>
+        </h2>
+        {% if lead.summary %}
+        <p class="lead__deck">{{ lead.summary|truncatewords:40 }}</p>
+        {% endif %}
+        <div class="lead__byline">
+          <span class="wire">
+            {% if lead.author %}
+              {% if lead.author.profile %}
+              <a href="/profile/{{ lead.author.profile.slug }}/">{{ lead.author.get_full_name|default:lead.author.username }}</a>
+              {% else %}
+              {{ lead.author.get_full_name|default:lead.author.username }}
+              {% endif %}
+            {% else %}
+              Bitra
+            {% endif %}
+          </span>
+          <span class="dot">·</span>
+          <span class="wire">{{ lead.created_at|date:"j M Y" }}</span>
+          <span class="dot">·</span>
+          <span class="wire">{{ lead.views }} reading</span>
+        </div>
+        <div style="margin-top:1rem">
+          <a class="btn btn--ink btn--sm" href="/articles/{{ lead.id }}/">Read the full story →</a>
+        </div>
+      </article>
+      {% else %}
+      <div class="note-block">
+        <h2>The presses are warm.</h2>
+        <p>No stories have been published yet. Check back shortly.</p>
+      </div>
+      {% endif %}
     </div>
-    <div class="frontpage__right rail" aria-hidden="true">
-      <div class="skeleton"><div class="sk-line w-80"></div><div class="sk-line w-60"></div><div class="sk-line w-40"></div></div>
-    </div>
+
+    {# ---- Most Read rail (right) ---- #}
+    <aside class="frontpage__right rail" aria-label="Most Read">
+      <div class="rail__title"><span class="flag">Most Read</span></div>
+      {% for a in most_read %}
+      <div class="rail__item">
+        <a href="/articles/{{ a.id }}/">
+          <div class="rail__hl">{{ a.title }}</div>
+          <div class="rail__meta">
+            <span class="wire">{{ a.views }} views · {{ a.likes }} likes</span>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </aside>
+
   </section>
+
+  <hr class="rule" style="margin-top:2rem">
+
+  {# ---- Category sections ---- #}
+  {% for cat_name, articles in category_groups.items %}
+  <div class="section-head">
+    <span class="flag">{{ cat_name }}</span>
+    <span class="wire">{{ articles|length }} {{ articles|length|pluralize:"story,stories" }}</span>
+  </div>
+  <div class="grid">
+    {% for a in articles %}
+    <article class="story">
+      <div class="story__cover">
+        {% if a.cover_image %}
+        <img src="{{ a.cover_image.url }}" alt="{{ a.title }}" loading="lazy">
+        {% else %}
+        <img src="/static/images/placeholder-article.svg" alt="{{ a.title }}" loading="lazy">
+        {% endif %}
+      </div>
+      <div class="story__kicker"><span class="kicker">{{ a.category.name|default:"Dispatch" }}</span></div>
+      <h3 class="story__headline"><a href="/articles/{{ a.id }}/">{{ a.title }}</a></h3>
+      {% if a.summary %}
+      <p class="story__summary">{{ a.summary|truncatewords:20 }}</p>
+      {% endif %}
+      <div class="story__foot">
+        <span class="wire">
+          {% if a.author %}
+            {% if a.author.profile %}
+            <a href="/profile/{{ a.author.profile.slug }}/">{{ a.author.get_full_name|default:a.author.username }}</a>
+            {% else %}
+            {{ a.author.get_full_name|default:a.author.username }}
+            {% endif %}
+          {% else %}
+            Bitra
+          {% endif %}
+          · {{ a.created_at|date:"j M Y" }}
+        </span>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endfor %}
+
 </div>
 
-<!-- Popular Authors (rendered by front.js — outside [data-front] so UI.clear() doesn't wipe it) -->
+{# ---- Popular Authors (still JS-rendered — non-critical for SEO) ---- #}
 <section class="popular-authors" data-popular-authors aria-label="Popular Authors">
   <div class="shell">
     <div class="section-head">
       <span class="flag">Popular Authors</span>
     </div>
     <div class="popauth-grid" data-popauth-grid>
+      {# Skeleton placeholders — replaced by front.js #}
       <div class="popauth-card skeleton"><div class="sk-line" style="width:64px;height:64px;border-radius:50%"></div><div class="sk-line w-60" style="margin-top:.8rem"></div><div class="sk-line w-40" style="margin-top:.4rem"></div></div>
       <div class="popauth-card skeleton"><div class="sk-line" style="width:64px;height:64px;border-radius:50%"></div><div class="sk-line w-60" style="margin-top:.8rem"></div><div class="sk-line w-40" style="margin-top:.4rem"></div></div>
       <div class="popauth-card skeleton"><div class="sk-line" style="width:64px;height:64px;border-radius:50%"></div><div class="sk-line w-60" style="margin-top:.8rem"></div><div class="sk-line w-40" style="margin-top:.4rem"></div></div>

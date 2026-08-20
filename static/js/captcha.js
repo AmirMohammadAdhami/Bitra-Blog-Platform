@@ -7,7 +7,8 @@
    Security:
    • The "challenge" is a server-generated, session-bound token — no secrets
      in JavaScript.
-   • Verification checks real elapsed drag time (>1.5 s), blocking instant bots.
+   • Elapsed time is measured server-side (challenge creation → verify); the
+     client never reports timing, so a script cannot fake a slow drag.
    • A signed, HMAC-SHA256 token with a single-use nonce is returned on success.
    • The token is exposed as BitraCAPTCHA.token for auth forms to include in
      their requests.
@@ -39,7 +40,7 @@
     }).then(function (r) { return r.json(); });
   }
 
-  function fetchVerify(challengeToken, elapsedMs) {
+  function fetchVerify(challengeToken) {
     return fetch(API_BASE + "/verify/", {
       method: "POST",
       credentials: "same-origin",
@@ -47,7 +48,7 @@
         "Accept": "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id: challengeToken, elapsed: Math.round(elapsedMs) }),
+      body: JSON.stringify({ id: challengeToken }),
     }).then(function (r) {
       return r.json().then(function (data) {
         if (!r.ok) throw new Error(data.detail || "Verification failed");
@@ -113,7 +114,6 @@
     var trackWidth = 0;
     var thumbWidth = 0;
     var maxDrag = 0;
-    var startTime = 0;
 
     function getTrackWidth() {
       return track.getBoundingClientRect().width;
@@ -146,7 +146,6 @@
       maxDrag = trackWidth - thumbWidth;
       startX = (e.clientX || (e.touches && e.touches[0].clientX) || 0);
       thumbLeft = parseFloat(thumb.style.left) || 0;
-      startTime = Date.now();
       thumb.classList.add("captcha__thumb--dragging");
       track.classList.add("captcha__track--dragging");
 
@@ -171,7 +170,6 @@
       document.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerup", onPointerUp);
 
-      var elapsed = Date.now() - startTime;
       var currentLeft = parseFloat(thumb.style.left) || 0;
 
       // If not at the end → reset
@@ -180,11 +178,11 @@
         return;
       }
 
-      // Reached the end — verify with server
+      // Reached the end — verify with server (drag time is measured server-side)
       showVerifying(parts);
       var myChallengeId = challengeId;
 
-      fetchVerify(myChallengeId, elapsed).then(function (data) {
+      fetchVerify(myChallengeId).then(function (data) {
         token = data.captcha_token;
         showSuccess(parts);
       }).catch(function (err) {
@@ -234,7 +232,6 @@
         // If at end on ArrowRight or End, auto-verify
         var pos = parseFloat(thumb.style.left) || 0;
         if (pos >= maxDrag - 4 && (e.key === "ArrowRight" || e.key === "End")) {
-          startTime = Date.now() - 2000; // simulate enough time for keyboard
           onPointerUp({ clientX: 0 });
         }
       }
@@ -243,19 +240,22 @@
 
   /* ------------------------------------------------------------- states */
   function resetThumb(parts) {
-    var anim = REDUCED_MOTION ? "none" : "";
-    parts.thumb.style.transition = anim ? "left .3s cubic-bezier(.4,0,.2,1)" : "none";
-    parts.fill.style.transition = anim ? "width .3s cubic-bezier(.4,0,.2,1)" : "none";
+    // prefers-reduced-motion → snap back instantly, no animation.
+    var animThumb = REDUCED_MOTION ? "none" : "left .3s cubic-bezier(.4,0,.2,1)";
+    var animFill = REDUCED_MOTION ? "none" : "width .3s cubic-bezier(.4,0,.2,1)";
+    parts.thumb.style.transition = animThumb;
+    parts.fill.style.transition = animFill;
     parts.thumb.style.left = "0px";
     parts.fill.style.width = "0px";
     parts.thumb.setAttribute("aria-valuenow", "0");
     parts.text.style.opacity = "1";
-    parts.thumb.classList.remove("captcha__thumb--error");
+    parts.thumb.classList.remove("captcha__thumb--error", "captcha__thumb--done");
+    parts.track.classList.remove("captcha__track--verifying");
 
     setTimeout(function () {
       parts.thumb.style.transition = "";
       parts.fill.style.transition = "";
-    }, anim ? 350 : 0);
+    }, REDUCED_MOTION ? 0 : 350);
   }
 
   function showVerifying(parts) {
@@ -282,9 +282,6 @@
 
     // Update aria
     thumb.setAttribute("aria-valuenow", "100");
-
-    // Dispatch custom event so forms can listen
-    wrap.dispatchEvent(new CustomEvent("captcha:verified", { bubbles: true }));
   }
 
   function showTemporaryError(parts, msg) {
@@ -316,30 +313,25 @@
       parts.text.textContent = "TEMPORARY ERROR — RETRY";
     });
 
-    active = {
-      el: container,
-      parts: parts,
-    };
+    active = parts;
   }
 
   /* -------------------------------------------------------------- public API */
   var BitraCAPTCHA = {
     /** The signed captcha_token — null until verified. */
     get token() { return token; },
-    /** Whether the captcha has been successfully solved. */
-    get verified() { return !!token; },
     /** Force-reset the captcha (e.g. after a failed auth attempt). */
     reset: function () {
       token = null;
       challengeId = null;
       if (active) {
-        resetThumb(active.parts);
-        active.parts.wrap.classList.remove("captcha--verified");
-        active.parts.track.classList.remove("captcha__track--verified", "captcha__track--verifying");
-        active.parts.thumb.classList.remove("captcha__thumb--done", "captcha__thumb--verified");
-        active.parts.thumb.setAttribute("aria-label", "Slide to verify you are human");
-        active.parts.text.textContent = "SLIDE TO VERIFY";
-        active.parts.text.className = "captcha__text";
+        resetThumb(active);
+        active.wrap.classList.remove("captcha--verified");
+        active.track.classList.remove("captcha__track--verified", "captcha__track--verifying");
+        active.thumb.classList.remove("captcha__thumb--done", "captcha__thumb--verified");
+        active.thumb.setAttribute("aria-label", "Slide to verify you are human");
+        active.text.textContent = "SLIDE TO VERIFY";
+        active.text.className = "captcha__text";
         // Re-fetch challenge
         fetchChallenge().then(function (data) {
           challengeId = data.id;

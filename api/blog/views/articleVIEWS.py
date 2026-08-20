@@ -5,6 +5,7 @@ from ipware import get_client_ip
 from api.blog.serializers.articleSZR import (
     ArticleListSerializer, ArticleDetailSerializer, ArticleWriteSerializer,
 )
+from django.db import IntegrityError
 from api.blog.permissions import IsAuthorOwnerOrReadOnly
 from blog.models import Article, ArticleView
 from accounts.models import Like, Bookmark
@@ -13,6 +14,7 @@ from rest_framework.decorators import action
 from ..pagination import ArticleListPagination
 
 class ArticleViewSet(viewsets.ModelViewSet):
+    """Articles: public reads of REVIEWED stories, author-owned writes."""
     permission_classes = [IsAuthorOwnerOrReadOnly]
     pagination_class = ArticleListPagination
 
@@ -74,17 +76,28 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        # Only count a public read as a view — not an author previewing a draft.
         if instance.status == Article.Status.REVIEWED:
             ip_address, is_routable = get_client_ip(request)
-            ArticleView.objects.create(article=instance, ip_address=ip_address)
-            Article.objects.filter(pk=instance.pk).update(views=F('views') + 1)
+            lookup = {'article': instance}
+            if request.user.is_authenticated:
+                lookup['user'] = request.user
+            elif ip_address:
+                lookup['ip_address'] = ip_address
+            else:
+                lookup = None
+            if lookup:
+                try:
+                    _, created = ArticleView.objects.get_or_create(**lookup)
+                    if created:
+                        Article.objects.filter(pk=instance.pk).update(views=F('views') + 1)
+                except IntegrityError:
+                    pass
+
         return super().retrieve(request, *args, **kwargs)
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def mine(self, request):
-        """The contributor's own stories across every status, newest edit
-        first — powers the writers' desk."""
+        """The caller's own stories across every status (writers' desk)."""
         articles = self.get_queryset()
         serializer = ArticleListSerializer(articles, many=True)
         return Response(serializer.data)
@@ -113,10 +126,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def like(self, request, pk=None):
-        """Toggle a like on a published story. Uses the Like model for
-        per-user dedup so one reader can't inflate the counter.
-        Any signed-in reader may like any published story; the class-level
-        owner check is overridden here."""
+        """Toggle a like on a published story (deduped per user)."""
         article = self.get_object()
         if article.status != Article.Status.REVIEWED:
             return Response(
@@ -143,9 +153,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def author_stats(self, request):
-        """Aggregate stats for the current author's articles:
-        total articles, published count, total likes, total views,
-        and total bookmarks across all their articles."""
+        """Aggregate stats for the caller's articles."""
         user = request.user
         articles = Article.objects.filter(author=user)
         published = articles.filter(status=Article.Status.REVIEWED)

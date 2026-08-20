@@ -69,10 +69,9 @@
       }
       if (payload.password.length < 8) { showNote(rNote, "err", "Use at least 8 characters for your password."); return; }
       rBtn.disabled = true; rBtn.textContent = "Creating…";
-      API.register(payload).then(function () {
-        // Registration doesn't return tokens — sign in immediately.
-        return API.login(payload.email, payload.password);
-      }).then(function (user) {
+      API.register(payload).then(function (user) {
+        // Registration returns JWT tokens directly (server-side), so no
+        // second CAPTCHA solve is needed for an automatic sign-in.
         UI.toast("Account created. Welcome, " + (user.username || "reader") + ".");
         location.href = nextUrl();
       }).catch(function (err) {

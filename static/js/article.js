@@ -13,6 +13,11 @@
 
   var host = document.querySelector("[data-article]");
   if (!host) return;
+
+  // When the server already rendered the article (SSR), the host will contain
+  // a .article__body element.  In that case we skip the full rebuild and only
+  // wire up interactive features (like / save / share / comments).
+  var ssrRendered = !!host.querySelector(".article__body");
   var commentsSection = document.querySelector("[data-comments]");
   var gateHost = document.querySelector("[data-comment-gate]");
   var listHost = document.querySelector("[data-comment-list]");
@@ -20,8 +25,6 @@
   // /articles/<id>/  →  id
   var m = location.pathname.match(/\/articles\/(\d+)/);
   var articleId = m ? Number(m[1]) : null;
-
-  var current = null;
 
   /* ---------------------------------------------------- content rendering */
   // Content is rich HTML from CKEditor — render as live DOM.
@@ -64,6 +67,76 @@
   }
 
   /* ------------------------------------------------------- action bar */
+  // Wire the like / save / share buttons and reflect existing state.
+  // Shared by the client-rendered action bar and the SSR enhancement.
+  function wireEngagement(a, refs) {
+    var likeBtn = refs.like, saveBtn = refs.save, shareBtn = refs.share, statLikes = refs.statLikes;
+    var likeCount = a.likes || 0;
+
+    function setLike(pressed) {
+      if (!likeBtn) return;
+      likeBtn.setAttribute("aria-pressed", pressed ? "true" : "false");
+      likeBtn.querySelector(".lbl").textContent = pressed ? "Liked" : "Like";
+    }
+
+    if (likeBtn) {
+      likeBtn.addEventListener("click", function () {
+        if (!API.Session.isAuthed) { UI.toast("Sign in to like this story."); location.href = UI.Routes.login; return; }
+        var was = likeBtn.getAttribute("aria-pressed") === "true";
+        setLike(!was);
+        likeCount += was ? -1 : 1;
+        if (statLikes) statLikes.querySelector("b").textContent = UI.num(Math.max(0, likeCount));
+        API.toggleLike(a.id).catch(function () {
+          setLike(was); likeCount += was ? 1 : -1;
+          if (statLikes) statLikes.querySelector("b").textContent = UI.num(Math.max(0, likeCount));
+          UI.toast("Could not register your like.");
+        });
+      });
+    }
+
+    if (saveBtn) {
+      saveBtn.addEventListener("click", function () {
+        if (!API.Session.isAuthed) { UI.toast("Sign in to save stories."); location.href = UI.Routes.login; return; }
+        var was = saveBtn.getAttribute("aria-pressed") === "true";
+        saveBtn.setAttribute("aria-pressed", was ? "false" : "true");
+        saveBtn.querySelector(".lbl").textContent = was ? "Save" : "Saved";
+        API.toggleBookmark(a.id)
+          .then(function (r) { UI.toast(r && r.status === "unbookmarked" ? "Removed from your list." : "Saved to your list."); })
+          .catch(function () {
+            saveBtn.setAttribute("aria-pressed", was ? "true" : "false");
+            saveBtn.querySelector(".lbl").textContent = was ? "Saved" : "Save";
+            UI.toast("Could not update your list.");
+          });
+      });
+    }
+
+    if (shareBtn) {
+      shareBtn.addEventListener("click", function () {
+        var url = location.href;
+        if (navigator.share) { navigator.share({ title: a.title, url: url }).catch(function(){}); return; }
+        navigator.clipboard.writeText(url).then(
+          function () { UI.toast("Link copied to clipboard."); },
+          function () { UI.toast(url); }
+        );
+      });
+    }
+
+    // reflect existing like/bookmark state for signed-in readers
+    if (API.Session.isAuthed) {
+      API.myLikes().then(function (rows) {
+        if (rows.some(function (r) { return r.article === a.id; })) setLike(true);
+      }).catch(function(){});
+      API.myBookmarks().then(function (rows) {
+        if (rows.some(function (r) { return r.article === a.id; })) {
+          if (saveBtn) {
+            saveBtn.setAttribute("aria-pressed", "true");
+            saveBtn.querySelector(".lbl").textContent = "Saved";
+          }
+        }
+      }).catch(function(){});
+    }
+  }
+
   function actionBar(a) {
     var authed = API.Session.isAuthed;
 
@@ -81,64 +154,10 @@
       class: "btn btn--sm", type: "button", title: "Copy link",
     }, [ el("span", { class: "btn__ico", text: "↗" }), "Share" ]);
 
-    var likeCount = a.likes || 0;
-
-    function setLike(pressed) {
-      likeBtn.setAttribute("aria-pressed", pressed ? "true" : "false");
-      likeBtn.querySelector(".lbl").textContent = pressed ? "Liked" : "Like";
-    }
-
-    likeBtn.addEventListener("click", function () {
-      if (!API.Session.isAuthed) { UI.toast("Sign in to like this story."); location.href = UI.Routes.login; return; }
-      var was = likeBtn.getAttribute("aria-pressed") === "true";
-      setLike(!was);
-      likeCount += was ? -1 : 1;
-      statLikes.querySelector("b").textContent = UI.num(Math.max(0, likeCount));
-      API.toggleLike(a.id).catch(function () {
-        setLike(was); likeCount += was ? 1 : -1;
-        statLikes.querySelector("b").textContent = UI.num(Math.max(0, likeCount));
-        UI.toast("Could not register your like.");
-      });
-    });
-
-    saveBtn.addEventListener("click", function () {
-      if (!API.Session.isAuthed) { UI.toast("Sign in to save stories."); location.href = UI.Routes.login; return; }
-      var was = saveBtn.getAttribute("aria-pressed") === "true";
-      saveBtn.setAttribute("aria-pressed", was ? "false" : "true");
-      saveBtn.querySelector(".lbl").textContent = was ? "Save" : "Saved";
-      API.toggleBookmark(a.id)
-        .then(function (r) { UI.toast(r && r.status === "unbookmarked" ? "Removed from your list." : "Saved to your list."); })
-        .catch(function () {
-          saveBtn.setAttribute("aria-pressed", was ? "true" : "false");
-          saveBtn.querySelector(".lbl").textContent = was ? "Saved" : "Save";
-          UI.toast("Could not update your list.");
-        });
-    });
-
-    shareBtn.addEventListener("click", function () {
-      var url = location.href;
-      if (navigator.share) { navigator.share({ title: a.title, url: url }).catch(function(){}); return; }
-      navigator.clipboard.writeText(url).then(
-        function () { UI.toast("Link copied to clipboard."); },
-        function () { UI.toast(url); }
-      );
-    });
-
     var statViews = el("div", { class: "stat" }, [ el("b", { text: UI.num(a.views) }), el("span", { class: "wire", text: "views" }) ]);
-    var statLikes = el("div", { class: "stat" }, [ el("b", { text: UI.num(likeCount) }), el("span", { class: "wire", text: "likes" }) ]);
+    var statLikes = el("div", { class: "stat" }, [ el("b", { text: UI.num(a.likes) }), el("span", { class: "wire", text: "likes" }) ]);
 
-    // reflect existing like/bookmark state for signed-in readers
-    if (authed) {
-      API.myLikes().then(function (rows) {
-        if (rows.some(function (r) { return r.article === a.id; })) setLike(true);
-      }).catch(function(){});
-      API.myBookmarks().then(function (rows) {
-        if (rows.some(function (r) { return r.article === a.id; })) {
-          saveBtn.setAttribute("aria-pressed", "true");
-          saveBtn.querySelector(".lbl").textContent = "Saved";
-        }
-      }).catch(function(){});
-    }
+    wireEngagement(a, { like: likeBtn, save: saveBtn, share: shareBtn, statLikes: statLikes });
 
     return el("div", { class: "actions" }, [
       likeBtn, saveBtn, shareBtn,
@@ -158,7 +177,6 @@
 
   /* --------------------------------------------------------------- render */
   function render(a) {
-    current = a;
     document.title = a.title + " — Bitra";
     UI.clear(host);
 
@@ -368,6 +386,23 @@
     ]));
   }
 
+  /* ---- SSR enhancement ---- */
+  function enhanceSSR(a) {
+    document.title = a.title + " — Bitra";
+
+    // Wire up the server-rendered action buttons
+    var likeBtn = host.querySelector(".actions .btn:first-child");
+    var saveBtn = host.querySelector(".actions .btn:nth-child(2)");
+    var shareBtn = host.querySelector(".actions .btn:nth-child(3)");
+    var statLikes = host.querySelector(".actions .stat:nth-child(2)");
+
+    wireEngagement(a, { like: likeBtn, save: saveBtn, share: shareBtn, statLikes: statLikes });
+
+    // Load comments
+    renderComments(a);
+    loadRelated(a);
+  }
+
   if (!articleId) { fail({ status: 404 }); return; }
-  API.article(articleId).then(render).catch(fail);
+  API.article(articleId).then(ssrRendered ? enhanceSSR : render).catch(ssrRendered ? function(){} : fail);
 })();

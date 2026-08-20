@@ -29,11 +29,34 @@ class ArticleView(models.Model):
         on_delete=models.CASCADE
     )
 
-    ip_address = models.GenericIPAddressField()
+    user = models.ForeignKey(
+        User,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True
+    )
+
+    ip_address = models.GenericIPAddressField(
+        null=True,
+        blank=True
+    )
 
     created_at = models.DateTimeField(
         auto_now_add=True
     )
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['article', 'user'],
+                condition=models.Q(user__isnull = False),
+                name= 'unique_article_view_per_user'
+            ),
+            models.UniqueConstraint(
+                fields=['article', 'ip_address'],
+                condition=models.Q(user__isnull = True),
+                name= 'unique_article_view_per_ip_address_when_anonymous'
+            )
+        ]
 
 
 class Article(models.Model):

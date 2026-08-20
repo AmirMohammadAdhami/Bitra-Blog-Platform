@@ -1,5 +1,5 @@
 /* ============================================================================
-   Dashboard shell controller — shared by every /dashboard/* page.
+   Dashboard shell controller — shared by every /accounts/dashboard/* page.
    - Enforces auth (JWT). No token → bounce to sign-in with ?next=.
    - Paints the subscriber identity card.
    - Marks the active account-nav link.
@@ -25,14 +25,22 @@
     return (a + b).toUpperCase();
   }
 
-  function fillIdentity() {
+  // Paint (or re-paint) the subscriber identity card in the sidebar.
+  // Shared with dash_profile.js via Dash.renderIdentity so avatar edits can
+  // refresh the card without duplicating the markup.
+  function renderIdentity(user, imageUrl) {
     var host = UI.qs("[data-dash-id]");
     if (!host) return;
-    var user = API.Session.user || {};
+    user = user || {};
     UI.clear(host);
 
     var avatar = UI.el("div", { class: "dash__avatar", text: initials(user) });
     host.appendChild(avatar);
+    if (imageUrl) {
+      UI.clear(avatar);
+      avatar.textContent = "";
+      avatar.appendChild(UI.el("img", { src: imageUrl, alt: (user.username || "Profile") + " avatar" }));
+    }
 
     var right = UI.el("div", {}, [
       UI.el("div", { class: "dash__name", text: user.full_name || user.username || "Reader" }),
@@ -44,14 +52,19 @@
       ]));
     }
     host.appendChild(right);
+  }
 
-    // Load profile image and replace initials
+  function fillIdentity() {
+    var user = API.Session.user || {};
+    renderIdentity(user, null);
+    // Load the fresh profile + user. `is_author` flips server-side when an
+    // editor approves a contributor request, but the cached Session.user only
+    // refreshes at login — so adopt the server truth and re-paint the identity
+    // card and nav (desk link, contributor badge) once we have it.
     API.profileMe().then(function (p) {
-      if (p && p.profile_image) {
-        UI.clear(avatar);
-        avatar.textContent = "";
-        avatar.appendChild(UI.el("img", { src: p.profile_image, alt: (user.username || "Profile") + " avatar" }));
-      }
+      if (p && p.user) { API.Session.user = p.user; user = p.user; }
+      renderIdentity(user, p && p.profile_image ? p.profile_image : null);
+      markNav();
     }).catch(function () { /* no profile image — keep initials */ });
   }
 
@@ -105,5 +118,6 @@
         UI.el("p", { text: (err && err.message) ? err.message : "Could not reach the newsroom API." }),
       ]));
     },
+    renderIdentity: renderIdentity,
   };
 })();

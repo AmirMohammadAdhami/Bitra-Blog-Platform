@@ -6,6 +6,7 @@ from ..serializers.profile_image_SZR import ProfileImageSerializer
 
 
 class ProfileImageViewSet(viewsets.ModelViewSet):
+    """Upload or manage the caller's profile image."""
     queryset = Profile.objects.all()
     serializer_class = ProfileImageSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]

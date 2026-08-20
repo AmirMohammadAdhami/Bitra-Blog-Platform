@@ -7,6 +7,7 @@ from django.contrib.auth import login, logout
 
 
 class RegisterCreateView(CreateView):
+    """Session-based registration; logs the new user in automatically."""
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             messages.error(request, 'You are already registered.')

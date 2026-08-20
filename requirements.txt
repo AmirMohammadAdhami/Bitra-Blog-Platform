@@ -9,4 +9,5 @@ djangorestframework-simplejwt
 django-ckeditor
 django-jet-reboot
 python-magic
-python-magic-bin
+bleach
+#python-magic-bin

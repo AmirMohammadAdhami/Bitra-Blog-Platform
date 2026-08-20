@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from accounts.models import Profile
-from ...services.image_process import validate_type_image,validate_volume_image, process_avatar
+from Security.image_process import validate_type_image,validate_volume_image, process_avatar
 
 
 

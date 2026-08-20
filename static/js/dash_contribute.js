@@ -23,7 +23,7 @@
   function showContributor() {
     card("You’re a contributor.", "Your byline is live. Head to the writers’ desk to draft and submit stories.",
       el("div", { class: "dash__aside-actions", style: "margin-top:.4rem" }, [
-        el("a", { class: "btn btn--sm btn--ink", href: "/dashboard/author/", text: "Go to the desk →" }),
+        el("a", { class: "btn btn--sm btn--ink", href: "/accounts/dashboard/author/", text: "Go to the desk →" }),
       ]));
   }
 
@@ -58,11 +58,15 @@
       wrap);
   }
 
-  // Already a contributor? Short-circuit.
-  var user = API.Session.user || {};
-  if (user.is_author) { showContributor(); return; }
-
-  API.authorRequests().then(function (rows) {
+  // Already a contributor? Short-circuit. `is_author` flips server-side when an
+  // editor approves a request, but the cached Session.user only refreshes at
+  // login — so confirm with the server before deciding.
+  API.refreshUser().catch(function () { return null; }).then(function (fresh) {
+    var user = fresh || API.Session.user || {};
+    if (user.is_author) { showContributor(); return null; }
+    return API.authorRequests();
+  }).then(function (rows) {
+    if (!rows) return; // already a contributor — handled above
     var req = (rows || [])[0]; // one-per-user
     if (!req) { showInvite(); return; }
     var s = (req.status || "").toUpperCase();

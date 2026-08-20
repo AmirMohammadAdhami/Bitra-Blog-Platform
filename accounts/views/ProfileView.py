@@ -3,16 +3,11 @@ from accounts.models import Profile
 
 
 class UserProfileEdit(TemplateView):
-    """
-    Renders the dashboard shell. Auth is JWT-based (stored client-side in
-    localStorage), so the Django session is not authoritative here — the
-    page itself is public, but dashboard.js checks BitraAPI.isAuthenticated()
-    on load and redirects to /accounts/login/ if the visitor has no valid
-    access token, then populates the page via the profile API.
-    """
+    """Renders the dashboard shell; auth is enforced client-side (JWT)."""
     template_name = 'dashboard/dashboard.html'
 
 
 class SideBar(DetailView):
+    """Renders the dashboard sidebar."""
     template_name = 'dashboard/includes/_sidebar.html'
     model = Profile

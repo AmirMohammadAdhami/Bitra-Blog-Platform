@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 
 
 def logout_view(request):
+    """Log out the current session user and redirect home."""
     if request.user.is_authenticated:
         logout(request)
         messages.success(request, 'You are now logged out.')

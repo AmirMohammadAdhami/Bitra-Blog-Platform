@@ -1,18 +1,105 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Story — Bitra{% endblock %}
+{# ---- SEO: dynamic <title> + meta ---- #}
+{% block title %}{{ article.title }} — Bitra{% endblock %}
+{% block meta_desc %}{{ meta_description }}{% endblock %}
+
+{# ---- Open Graph & Twitter Card (override base blocks) ---- #}
+{% block head_extra %}
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{ og_title }}">
+<meta property="og:description" content="{{ og_description }}">
+<meta property="og:url" content="{{ og_url }}">
+{% if og_image %}<meta property="og:image" content="{{ og_image }}">{% endif %}
+<meta name="twitter:card" content="{% if og_image %}summary_large_image{% else %}summary{% endif %}">
+<meta name="twitter:title" content="{{ og_title }}">
+<meta name="twitter:description" content="{{ og_description }}">
+{% if og_image %}<meta name="twitter:image" content="{{ og_image }}">{% endif %}
+{# JSON-LD structured data for Google rich results #}
+<script type="application/ld+json">{{ structured_data|safe }}</script>
+{% endblock %}
 
 {% block content %}
+{# ---- Server-rendered article (crawlers see this immediately) ---- #}
 <article class="article" data-article>
-  <div class="skeleton" style="min-height:20rem">
-    <div class="sk-line w-40"></div>
-    <div class="sk-line w-80"></div>
-    <div class="sk-line w-60"></div>
-    <div class="sk-line w-80"></div>
+
+  {% if article.cover_image %}
+  <div class="article__cover">
+    <img src="{{ article.cover_image.url }}" alt="{{ article.title }}">
   </div>
+  {% endif %}
+
+  <div class="article__kicker">
+    {% if article.category %}
+    <a class="flag" href="/articles/?cat={{ article.category.slug }}">{{ article.category.name }}</a>
+    {% endif %}
+    <span class="wire">Filed {{ article.created_at|date:"j M Y" }}</span>
+  </div>
+
+  <h1 class="article__headline">{{ article.title }}</h1>
+
+  {% if article.summary %}
+  <p class="article__deck">{{ article.summary }}</p>
+  {% endif %}
+
+  <div class="article__byline">
+    <span class="wire">
+      <span>By </span>
+      {% if article.author %}
+        {% if article.author.profile %}
+        <a href="/profile/{{ article.author.profile.slug }}/">{{ article.author.get_full_name|default:article.author.username }}</a>
+        {% else %}
+        <span>{{ article.author.get_full_name|default:article.author.username }}</span>
+        {% endif %}
+      {% else %}
+        <span>Bitra</span>
+      {% endif %}
+    </span>
+    <span class="dot">·</span>
+    <span class="wire">{{ article.created_at|date:"j M Y" }}</span>
+    <span class="dot">·</span>
+    <span class="wire">{{ article.views }} views</span>
+  </div>
+
+  {# Article body — raw HTML from CKEditor, rendered server-side #}
+  <div class="article__body">{{ article.content|safe }}</div>
+
+  {% if article.tags.all %}
+  <div style="margin-top:1.4rem">
+    <div class="tags">
+      {% for tag in article.tags.all %}
+      <a class="tag" href="/articles/?tag={{ tag.slug }}">#{{ tag.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="article__foot">
+    <div class="actions">
+      <button class="btn btn--sm" type="button" aria-pressed="false" title="Sign in to like">
+        <span class="btn__ico">♥</span><span class="lbl">Like</span>
+      </button>
+      <button class="btn btn--sm" type="button" aria-pressed="false" title="Sign in to save">
+        <span class="btn__ico">❏</span><span class="lbl">Save</span>
+      </button>
+      <button class="btn btn--sm" type="button" title="Copy link">
+        <span class="btn__ico">↗</span>Share
+      </button>
+      <div class="actions__stats">
+        <div class="stat"><b>{{ article.views }}</b><span class="wire">views</span></div>
+        <div class="stat"><b>{{ article.likes }}</b><span class="wire">likes</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem">
+    <a class="btn btn--sm" href="/articles/">← Back to the index</a>
+  </div>
+
 </article>
 
+{# ---- Comments section (rendered by article.js for interactivity) ---- #}
 <section class="comments" data-comments hidden>
   <div class="section-head"><span class="flag">Letters</span></div>
   <div data-comment-gate></div>

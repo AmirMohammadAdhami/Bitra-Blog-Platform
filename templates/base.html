@@ -1,4 +1,5 @@
 {% load static %}
+{% load tz %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,11 @@
   <meta name="theme-color" content="#17140f">
   <title>{% block title %}Bitra — The Daily Broadsheet{% endblock %}</title>
   <meta name="description" content="{% block meta_desc %}Bitra — an independent broadsheet of essays, reportage and criticism.{% endblock %}">
+  <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+
+  {# Open Graph / Twitter Card defaults — child templates override via head_extra #}
+  <meta property="og:site_name" content="Bitra">
+  {% block og_tags %}{% endblock %}
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +25,7 @@
   <!-- wire-service utility bar -->
   <div class="util">
     <div class="shell util__row">
-      <span data-today>Today</span>
+      <span data-today>{% now "l, F j, Y" %}</span>
       <span class="util__mid">— Bitra —</span>
       <span class="util__auth" data-auth-slot></span>
     </div>
@@ -41,7 +47,7 @@
       <a href="/" aria-label="Bitra — home">
         <h1 class="nameplate">Bitra</h1>
       </a>
-      <p class="masthead__motto">“All the thought that’s fit to type.”</p>
+      <p class="masthead__motto">"All the thought that's fit to type."</p>
       <div class="masthead__rules">
         <hr class="rule-double">
       </div>
@@ -56,7 +62,7 @@
         <li><a class="nav__link" href="/">Front Page</a></li>
         <li><a class="nav__link" href="/articles/">All Stories</a></li>
         <li><a class="nav__link" href="/articles/?sort=views">Most Read</a></li>
-        <li><a class="nav__link" href="/articles/?sort=likes">Editors’ Picks</a></li>
+        <li><a class="nav__link" href="/articles/?sort=likes">Editors' Picks</a></li>
         <li><a class="nav__link" href="/auth/register/">Subscribe</a></li>
       </ul>
     </div>
@@ -86,18 +92,18 @@
             <h4>Account</h4>
             <a href="/auth/login/">Sign in</a>
             <a href="/auth/register/">Subscribe</a>
-            <a href="/dashboard/bookmarks/">Saved stories</a>
+            <a href="{% url 'accounts:dashboard_bookmarks' %}">Saved stories</a>
           </div>
           <div class="foot__col">
             <h4>Desk</h4>
-            <a href="/dashboard/author/">Contributors</a>
-            <a href="/dashboard/author-request/">Write for us</a>
+            <a href="{% url 'accounts:dashboard_author' %}">Contributors</a>
+            <a href="{% url 'accounts:dashboard_author_request' %}">Write for us</a>
             <a href="/api/schema/swagger-ui/">API</a>
           </div>
         </div>
       </div>
       <div class="foot__colophon">
-        <span>© <span data-year></span> Bitra. Set in Playfair Display, PT Serif &amp; IBM Plex Mono.</span>
+        <span>© <span data-year>{% now "Y" %}</span> Bitra. Set in Playfair Display, PT Serif &amp; IBM Plex Mono.</span>
         <span>Printed to screen · No trees harmed</span>
       </div>
     </div>
