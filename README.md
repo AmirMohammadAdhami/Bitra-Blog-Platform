@@ -88,7 +88,7 @@ docker-compose.yml     # Web service with .env file and :8000 port mapping
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/AmirMohammadAdhami/Bitra-Technology-Blog-Platform
+git clone https://github.com/AmirMohammadAdhami/Bitra-Blog-Platform
 cd <repository-directory>
 ```
 
